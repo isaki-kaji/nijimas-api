@@ -1,0 +1,74 @@
+Project Nijimas {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Nijimas Database
+  '''
+}
+
+Table user as U {
+  user_id bigserial [pk]
+  uid varchar(255) [not null]
+  username varchar(255) [not null]
+  currency varchar(3) [ref: > CU.currency, not null]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table post as P {
+  post_id bigserial [pk]
+  user_id bigint [ref: > U.user_id, not null]
+  main_category varchar(255) [ref: > MC.category_name, not null]
+  sub_category1 varchar(255) [ref: > SC.category_name]
+  sub_category2 varchar(255) [ref: > SC.category_name]
+  room_id varchar(255) [ref: > R.room_id]
+  post_text text 
+  photo_url varchar(2000)
+  location geometry
+  meal_flag boolean [not null, default: false]
+  public_type_no char(1) [not null, note: '1:公開、2:ルーム内で公開、3:非公開']
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table comment as CO {
+  comment_id bigserial [pk]
+  post_id bigint [ref: > P.post_id, not null]
+  user_id bigint [ref: > U.user_id, not null]
+  comment_text text [not null]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table main_category as MC {
+  category_name varchar(255) [pk]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table sub_category as SC {
+  category_name varchar(255) [pk]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table room as R {
+  room_id bigserial [pk]
+  room_name varchar(255)
+  owner_id bigint [ref: > U.user_id]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table follow_category as FC {
+  follow_category_id bigserial [pk]
+  user_id bigint [ref: > U.user_id, not null]
+  custom_category_id bigint [ref: > R.room_id, not null]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table currency as CU {
+  currency varchar(3) [pk]
+  created_at timestamptz [not null, default: `now()`]
+}
+
+Table meal as M {
+  meal_id bigserial [pk]
+  post_id bigint [ref: > P.post_id, not null]
+  user_id bigint [ref: > U.user_id, not null]
+  calorie bigint [not null, default: 0]
+  created_at timestamptz [not null, default: `now()`]
+}
