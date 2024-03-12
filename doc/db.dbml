@@ -11,6 +11,11 @@ Table user as U {
   username varchar(255) [not null]
   currency varchar(3) [ref: > CU.currency, not null]
   created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    uid
+    username
+  }
 }
 
 Table post as P {
@@ -24,12 +29,22 @@ Table post as P {
   meal_flag boolean [not null, default: false]
   public_type_no char(1) [not null, note: '1:公開、2:ルーム内で公開、3:非公開']
   created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    user_id
+    room_id
+    created_at
+  }
 }
 
 Table post_subcategory as PS {
   post_subcategory_id bigserial [pk]
   post_id bigint [ref: > P.post_id, not null]
   category_name varchar(255) [ref: > SC.category_name, not null]
+
+  indexes {
+    (post_id, category_name)
+  }
 }
 
 Table comment as CO {
