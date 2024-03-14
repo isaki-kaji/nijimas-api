@@ -22,7 +22,7 @@ Table post as P {
   post_id bigserial [pk]
   user_id bigint [ref: > U.user_id, not null]
   main_category varchar(255) [ref: > MC.category_name, not null]
-  room_id varchar(255) [ref: > R.room_id]
+  room_id bigint [ref: > R.room_id]
   post_text text 
   photo_url varchar(2000)
   location geometry

@@ -1,7 +1,3 @@
--- SQL dump generated using DBML (dbml-lang.org)
--- Database: PostgreSQL
--- Generated at: 2024-03-12T15:19:31.053Z
-
 CREATE TABLE "user" (
   "user_id" bigserial PRIMARY KEY,
   "uid" varchar(255) NOT NULL,
