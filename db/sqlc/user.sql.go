@@ -7,7 +7,37 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
+
+const createUser = `-- name: CreateUser :one
+INSERT INTO "user" (
+  "uid",
+  "username",
+  "currency"
+) VALUES (
+  $1, $2, $3
+) RETURNING user_id, uid, username, currency, created_at
+`
+
+type CreateUserParams struct {
+	Uid      string `json:"uid"`
+	Username string `json:"username"`
+	Currency string `json:"currency"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createUser, arg.Uid, arg.Username, arg.Currency)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Uid,
+		&i.Username,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
 
 const getUser = `-- name: GetUser :one
 SELECT user_id, uid, username, currency, created_at FROM "user"
@@ -16,6 +46,89 @@ WHERE "uid" = $1
 
 func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, uid)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Uid,
+		&i.Username,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT user_id, uid, username, currency, created_at FROM "user"
+WHERE "username" = $1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.UserID,
+		&i.Uid,
+		&i.Username,
+		&i.Currency,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUsersByRoomID = `-- name: GetUsersByRoomID :many
+SELECT
+"user"."user_id", 
+"user"."username"
+FROM "user"
+JOIN "follow_room"
+ON "user"."user_id" = "follow_room"."user_id"
+WHERE "follow_room"."room_id" = $1
+`
+
+type GetUsersByRoomIDRow struct {
+	UserID   int64  `json:"user_id"`
+	Username string `json:"username"`
+}
+
+func (q *Queries) GetUsersByRoomID(ctx context.Context, roomID int64) ([]GetUsersByRoomIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersByRoomID, roomID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetUsersByRoomIDRow{}
+	for rows.Next() {
+		var i GetUsersByRoomIDRow
+		if err := rows.Scan(&i.UserID, &i.Username); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE "user" SET
+  "username" = COALESCE($1, "username"),
+  "currency" = COALESCE($2, "currency")
+WHERE "uid" = $3
+RETURNING user_id, uid, username, currency, created_at
+`
+
+type UpdateUserParams struct {
+	Username sql.NullString `json:"username"`
+	Currency sql.NullString `json:"currency"`
+	Uid      string         `json:"uid"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser, arg.Username, arg.Currency, arg.Uid)
 	var i User
 	err := row.Scan(
 		&i.UserID,

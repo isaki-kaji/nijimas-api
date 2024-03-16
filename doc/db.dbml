@@ -2,6 +2,7 @@ Project Nijimas {
   database_type: 'PostgreSQL'
   Note: '''
     # Nijimas Database
+    **markdown content here**
   '''
 }
 

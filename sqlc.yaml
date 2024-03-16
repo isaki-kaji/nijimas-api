@@ -1,12 +1,12 @@
 version: "2"
 sql:
-  - schema: "./doc/schema.sql"
-    queries: "./db/query/"
+  - schema: "db/migration"
+    queries: "db/query"
     engine: "postgresql"
     gen:
       go:
         package: "db"
-        out: "./db/sqlc"
+        out: "db/sqlc"
         sql_package: "qgx/v5"
         emit_json_tags: true
         emit_interface: true
@@ -14,3 +14,5 @@ sql:
         overrides:
           - db_type: "timestamptz"
             go_type: "time.Time"
+          - db_type: "uuid"
+            go_type: "github.com/google/uuid.UUID"
