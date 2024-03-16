@@ -30,5 +30,8 @@ migratedown1:
 sqlc:
 	sqlc generate
 
+server:
+	go run main.go
 
-.PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres
+
+.PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres server
