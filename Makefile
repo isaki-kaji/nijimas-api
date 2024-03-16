@@ -1,7 +1,7 @@
-DB_URL=postgresql://root:password@localhost:5432/nijimas?sslmode=disable
+DB_URL=postgresql://nijimas:password@localhost:5432/nijimas?sslmode=disable
 
 postgres:
-	docker run --name nijimas-postgres -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=password -d postgis/postgis:16-3.4 
+	docker run --name nijimas-postgres -p 5432:5432 -e POSTGRES_USER=nijimas -e POSTGRES_PASSWORD=password -d postgis/postgis:16-3.4 
 
 createdb:
 	docker exec -it nijimas-postgres createdb --username=root nijimas
