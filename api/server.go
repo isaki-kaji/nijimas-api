@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/isaki-kaji/nijimas-api/api/route"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
 )
@@ -20,10 +19,14 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 		store:  store,
 	}
 
-	server.router = route.SetupRouter()
+	server.router = server.SetupRouter()
 	return server, nil
 }
 
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }
