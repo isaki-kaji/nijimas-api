@@ -9,6 +9,7 @@ import (
 )
 
 type Querier interface {
+	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)

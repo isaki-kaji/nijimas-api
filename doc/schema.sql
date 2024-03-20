@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-03-16T07:01:41.097Z
+-- Generated at: 2024-03-20T10:11:25.994Z
 
 CREATE TABLE "user" (
   "user_id" bigserial PRIMARY KEY,
@@ -26,6 +26,7 @@ CREATE TABLE "post" (
 CREATE TABLE "post_subcategory" (
   "post_subcategory_id" bigserial PRIMARY KEY,
   "post_id" bigint NOT NULL,
+  "category_no" char(1) NOT NULL,
   "category_name" varchar(255) NOT NULL
 );
 

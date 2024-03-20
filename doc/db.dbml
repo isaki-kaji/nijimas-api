@@ -41,6 +41,7 @@ Table post as P {
 Table post_subcategory as PS {
   post_subcategory_id bigserial [pk]
   post_id bigint [ref: > P.post_id, not null]
+  category_no char(1) [not null]
   category_name varchar(255) [ref: > SC.category_name, not null]
 
   indexes {
