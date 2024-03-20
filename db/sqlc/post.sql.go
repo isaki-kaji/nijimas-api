@@ -16,13 +16,12 @@ INSERT INTO "post" (
   "main_category",
   "post_text",
   "photo_url",
-  "room_id",
   "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING post_id, user_id, main_category, room_id, post_text, photo_url, location, meal_flag, public_type_no, created_at
+  $1, $2, $3, $4, $5, $6, $7
+) RETURNING post_id, user_id, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
 `
 
 type CreatePostParams struct {
@@ -30,7 +29,6 @@ type CreatePostParams struct {
 	MainCategory string         `json:"main_category"`
 	PostText     sql.NullString `json:"post_text"`
 	PhotoUrl     sql.NullString `json:"photo_url"`
-	RoomID       sql.NullInt64  `json:"room_id"`
 	MealFlag     bool           `json:"meal_flag"`
 	Location     interface{}    `json:"location"`
 	PublicTypeNo string         `json:"public_type_no"`
@@ -42,7 +40,6 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.MainCategory,
 		arg.PostText,
 		arg.PhotoUrl,
-		arg.RoomID,
 		arg.MealFlag,
 		arg.Location,
 		arg.PublicTypeNo,
@@ -52,13 +49,58 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.PostID,
 		&i.UserID,
 		&i.MainCategory,
-		&i.RoomID,
 		&i.PostText,
 		&i.PhotoUrl,
 		&i.Location,
 		&i.MealFlag,
 		&i.PublicTypeNo,
 		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getPostById = `-- name: GetPostById :one
+SELECT 
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE p."post_id" = $1
+`
+
+type GetPostByIdRow struct {
+	Username      string         `json:"username"`
+	MainCategory  string         `json:"main_category"`
+	SubCategory   sql.NullString `json:"sub_category"`
+	SubCategory_2 sql.NullString `json:"sub_category_2"`
+	PostText      sql.NullString `json:"post_text"`
+	PhotoUrl      sql.NullString `json:"photo_url"`
+	Location      interface{}    `json:"location"`
+	PublicTypeNo  string         `json:"public_type_no"`
+}
+
+func (q *Queries) GetPostById(ctx context.Context, postID int64) (GetPostByIdRow, error) {
+	row := q.db.QueryRowContext(ctx, getPostById, postID)
+	var i GetPostByIdRow
+	err := row.Scan(
+		&i.Username,
+		&i.MainCategory,
+		&i.SubCategory,
+		&i.SubCategory_2,
+		&i.PostText,
+		&i.PhotoUrl,
+		&i.Location,
+		&i.PublicTypeNo,
 	)
 	return i, err
 }

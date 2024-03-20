@@ -22,11 +22,11 @@ UPDATE "user" SET
 WHERE "uid" = sqlc.arg(uid)
 RETURNING *;
 
--- name: GetUsersByRoomID :many
+-- name: GetForrowUsers :many
 SELECT
 "user"."user_id", 
 "user"."username"
 FROM "user"
-JOIN "follow_room"
-ON "user"."user_id" = "follow_room"."user_id"
-WHERE "follow_room"."room_id" = $1;  
+JOIN "follow_user"
+ON "user"."user_id" = "follow_user"."follow_user_id"
+WHERE "follow_user"."user_id" = $1;  

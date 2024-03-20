@@ -11,9 +11,10 @@ import (
 type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetForrowUsers(ctx context.Context, userID int64) ([]GetForrowUsersRow, error)
+	GetPostById(ctx context.Context, postID int64) (GetPostByIdRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
-	GetUsersByRoomID(ctx context.Context, roomID int64) ([]GetUsersByRoomIDRow, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

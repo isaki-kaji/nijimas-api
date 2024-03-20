@@ -4,20 +4,30 @@ INSERT INTO "post" (
   "main_category",
   "post_text",
   "photo_url",
-  "room_id",
   "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;  
   
 -- name: GetPostById :one
 SELECT 
-  "user"."username",
-  "post"."main_category",
-  "post".
-FROM "post"
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE p."post_id" = $1;
   
 
 

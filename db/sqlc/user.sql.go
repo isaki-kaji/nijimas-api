@@ -39,6 +39,44 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	return i, err
 }
 
+const getForrowUsers = `-- name: GetForrowUsers :many
+SELECT
+"user"."user_id", 
+"user"."username"
+FROM "user"
+JOIN "follow_user"
+ON "user"."user_id" = "follow_user"."follow_user_id"
+WHERE "follow_user"."user_id" = $1
+`
+
+type GetForrowUsersRow struct {
+	UserID   int64  `json:"user_id"`
+	Username string `json:"username"`
+}
+
+func (q *Queries) GetForrowUsers(ctx context.Context, userID int64) ([]GetForrowUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getForrowUsers, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetForrowUsersRow{}
+	for rows.Next() {
+		var i GetForrowUsersRow
+		if err := rows.Scan(&i.UserID, &i.Username); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUser = `-- name: GetUser :one
 SELECT user_id, uid, username, currency, created_at FROM "user"
 WHERE "uid" = $1
@@ -73,44 +111,6 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const getUsersByRoomID = `-- name: GetUsersByRoomID :many
-SELECT
-"user"."user_id", 
-"user"."username"
-FROM "user"
-JOIN "follow_room"
-ON "user"."user_id" = "follow_room"."user_id"
-WHERE "follow_room"."room_id" = $1
-`
-
-type GetUsersByRoomIDRow struct {
-	UserID   int64  `json:"user_id"`
-	Username string `json:"username"`
-}
-
-func (q *Queries) GetUsersByRoomID(ctx context.Context, roomID int64) ([]GetUsersByRoomIDRow, error) {
-	rows, err := q.db.QueryContext(ctx, getUsersByRoomID, roomID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []GetUsersByRoomIDRow{}
-	for rows.Next() {
-		var i GetUsersByRoomIDRow
-		if err := rows.Scan(&i.UserID, &i.Username); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const updateUser = `-- name: UpdateUser :one

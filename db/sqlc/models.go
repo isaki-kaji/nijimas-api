@@ -22,10 +22,10 @@ type Currency struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type FollowRoom struct {
-	FollowRoomID int64     `json:"follow_room_id"`
+type FollowUser struct {
+	FollowID     int64     `json:"follow_id"`
 	UserID       int64     `json:"user_id"`
-	RoomID       int64     `json:"room_id"`
+	FollowUserID int64     `json:"follow_user_id"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
@@ -46,12 +46,11 @@ type Post struct {
 	PostID       int64          `json:"post_id"`
 	UserID       int64          `json:"user_id"`
 	MainCategory string         `json:"main_category"`
-	RoomID       sql.NullInt64  `json:"room_id"`
 	PostText     sql.NullString `json:"post_text"`
 	PhotoUrl     sql.NullString `json:"photo_url"`
 	Location     interface{}    `json:"location"`
 	MealFlag     bool           `json:"meal_flag"`
-	// 1:公開、2:ルーム内で公開、3:非公開
+	// 1:公開、2:フォロワーにのみ公開、3:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`
 }
@@ -59,17 +58,8 @@ type Post struct {
 type PostSubcategory struct {
 	PostSubcategoryID int64  `json:"post_subcategory_id"`
 	PostID            int64  `json:"post_id"`
-	CategoryName      string `json:"category_name"`
-}
-
-type Room struct {
-	RoomID          int64          `json:"room_id"`
-	OwnerID         sql.NullInt64  `json:"owner_id"`
-	RoomName        sql.NullString `json:"room_name"`
-	RoomDescription sql.NullString `json:"room_description"`
-	// TRUE:自由に出入り可能、FALSE:ownerの許可が必要
-	FreeEntryFlag bool      `json:"free_entry_flag"`
-	CreatedAt     time.Time `json:"created_at"`
+	SubcategoryNo     string `json:"subcategory_no"`
+	SubCategory       string `json:"sub_category"`
 }
 
 type SubCategory struct {

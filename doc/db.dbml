@@ -23,17 +23,15 @@ Table post as P {
   post_id bigserial [pk]
   user_id bigint [ref: > U.user_id, not null]
   main_category varchar(255) [ref: > MC.category_name, not null]
-  room_id bigint [ref: > R.room_id]
   post_text text 
   photo_url varchar(2000)
   location geometry
   meal_flag boolean [not null, default: false]
-  public_type_no char(1) [not null, note: '1:公開、2:ルーム内で公開、3:非公開']
+  public_type_no char(1) [not null, note: '1:公開、2:フォロワーにのみ公開、3:非公開']
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
     user_id
-    room_id
     created_at
   }
 }
@@ -41,11 +39,11 @@ Table post as P {
 Table post_subcategory as PS {
   post_subcategory_id bigserial [pk]
   post_id bigint [ref: > P.post_id, not null]
-  category_no char(1) [not null]
-  category_name varchar(255) [ref: > SC.category_name, not null]
+  subcategory_no char(1) [not null]
+  sub_category varchar(255) [ref: > SC.category_name, not null]
 
   indexes {
-    (post_id, category_name)
+    (post_id, sub_category)
   }
 }
 
@@ -67,19 +65,10 @@ Table sub_category as SC {
   created_at timestamptz [not null, default: `now()`]
 }
 
-Table room as R {
-  room_id bigserial [pk]
-  owner_id bigint [ref: > U.user_id]
-  room_name varchar(255)
-  room_description text
-  free_entry_flag boolean [not null, note: 'TRUE:自由に出入り可能、FALSE:ownerの許可が必要']
-  created_at timestamptz [not null, default: `now()`]
-}
-
-Table follow_room as FR {
-  follow_room_id bigserial [pk]
+Table follow_user as FU {
+  follow_id bigserial [pk]
   user_id bigint [ref: > U.user_id, not null]
-  room_id bigint [ref: > R.room_id, not null]
+  follow_user_id biging [ref: > U.user_id, not null]
   created_at timestamptz [not null, default: `now()`]
 }
 
