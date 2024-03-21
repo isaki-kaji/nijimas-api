@@ -104,3 +104,325 @@ func (q *Queries) GetPostById(ctx context.Context, postID int64) (GetPostByIdRow
 	)
 	return i, err
 }
+
+const getPostsByCategory = `-- name: GetPostsByCategory :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE 
+  (p."main_category" = $1 OR $1 IS NULL) AND
+  (ps1."sub_category" = $2 OR $2 IS NULL) AND
+  (ps2."sub_category" = $3 OR $3 IS NULL)
+ORDER BY p."created_at" DESC
+LIMIT 50
+`
+
+type GetPostsByCategoryParams struct {
+	MainCategory  string `json:"main_category"`
+	SubCategory   string `json:"sub_category"`
+	SubCategory_2 string `json:"sub_category_2"`
+}
+
+type GetPostsByCategoryRow struct {
+	PostID        int64          `json:"post_id"`
+	Username      string         `json:"username"`
+	MainCategory  string         `json:"main_category"`
+	SubCategory   sql.NullString `json:"sub_category"`
+	SubCategory_2 sql.NullString `json:"sub_category_2"`
+	PostText      sql.NullString `json:"post_text"`
+	PhotoUrl      sql.NullString `json:"photo_url"`
+	Location      interface{}    `json:"location"`
+	PublicTypeNo  string         `json:"public_type_no"`
+}
+
+func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsByCategory, arg.MainCategory, arg.SubCategory, arg.SubCategory_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPostsByCategoryRow{}
+	for rows.Next() {
+		var i GetPostsByCategoryRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.Username,
+			&i.MainCategory,
+			&i.SubCategory,
+			&i.SubCategory_2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Location,
+			&i.PublicTypeNo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPostsByFollowing = `-- name: GetPostsByFollowing :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "follow_user" AS f ON f."follow_user_id" = p."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE f."user_id" = $1
+ORDER BY p."created_at" DESC
+LIMIT 50
+`
+
+type GetPostsByFollowingRow struct {
+	PostID        int64          `json:"post_id"`
+	Username      string         `json:"username"`
+	MainCategory  string         `json:"main_category"`
+	SubCategory   sql.NullString `json:"sub_category"`
+	SubCategory_2 sql.NullString `json:"sub_category_2"`
+	PostText      sql.NullString `json:"post_text"`
+	PhotoUrl      sql.NullString `json:"photo_url"`
+	Location      interface{}    `json:"location"`
+	PublicTypeNo  string         `json:"public_type_no"`
+}
+
+func (q *Queries) GetPostsByFollowing(ctx context.Context, userID int64) ([]GetPostsByFollowingRow, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsByFollowing, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPostsByFollowingRow{}
+	for rows.Next() {
+		var i GetPostsByFollowingRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.Username,
+			&i.MainCategory,
+			&i.SubCategory,
+			&i.SubCategory_2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Location,
+			&i.PublicTypeNo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPostsBySubCategory = `-- name: GetPostsBySubCategory :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE 
+  (ps1."sub_category" = $1 OR $1 IS NULL) AND
+  (ps2."sub_category" = $2 OR $2 IS NULL)
+ORDER BY p."created_at" DESC
+LIMIT 50
+`
+
+type GetPostsBySubCategoryParams struct {
+	SubCategory   string `json:"sub_category"`
+	SubCategory_2 string `json:"sub_category_2"`
+}
+
+type GetPostsBySubCategoryRow struct {
+	PostID        int64          `json:"post_id"`
+	Username      string         `json:"username"`
+	MainCategory  string         `json:"main_category"`
+	SubCategory   sql.NullString `json:"sub_category"`
+	SubCategory_2 sql.NullString `json:"sub_category_2"`
+	PostText      sql.NullString `json:"post_text"`
+	PhotoUrl      sql.NullString `json:"photo_url"`
+	Location      interface{}    `json:"location"`
+	PublicTypeNo  string         `json:"public_type_no"`
+}
+
+func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsBySubCategory, arg.SubCategory, arg.SubCategory_2)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPostsBySubCategoryRow{}
+	for rows.Next() {
+		var i GetPostsBySubCategoryRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.Username,
+			&i.MainCategory,
+			&i.SubCategory,
+			&i.SubCategory_2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Location,
+			&i.PublicTypeNo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPostsByUserId = `-- name: GetPostsByUserId :many
+SELECT
+  p."post_id",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE p."user_id" = $1
+ORDER BY p."created_at" DESC
+LIMIT 50
+`
+
+type GetPostsByUserIdRow struct {
+	PostID        int64          `json:"post_id"`
+	MainCategory  string         `json:"main_category"`
+	SubCategory   sql.NullString `json:"sub_category"`
+	SubCategory_2 sql.NullString `json:"sub_category_2"`
+	PostText      sql.NullString `json:"post_text"`
+	PhotoUrl      sql.NullString `json:"photo_url"`
+	Location      interface{}    `json:"location"`
+	PublicTypeNo  string         `json:"public_type_no"`
+}
+
+func (q *Queries) GetPostsByUserId(ctx context.Context, userID int64) ([]GetPostsByUserIdRow, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsByUserId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetPostsByUserIdRow{}
+	for rows.Next() {
+		var i GetPostsByUserIdRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.MainCategory,
+			&i.SubCategory,
+			&i.SubCategory_2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Location,
+			&i.PublicTypeNo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updatePost = `-- name: UpdatePost :one
+UPDATE "post" SET
+  "main_category" = COALESCE($1, "main_category"),
+  "post_text" = COALESCE($2, "post_text"),
+  "photo_url" = COALESCE($3, "photo_url"),
+  "public_type_no" = COALESCE($4, "public_type_no")
+WHERE "post_id" = $5
+RETURNING post_id, user_id, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
+`
+
+type UpdatePostParams struct {
+	MainCategory sql.NullString `json:"main_category"`
+	PostText     sql.NullString `json:"post_text"`
+	PhotoUrl     sql.NullString `json:"photo_url"`
+	PublicTypeNo sql.NullString `json:"public_type_no"`
+	PostID       int64          `json:"post_id"`
+}
+
+func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error) {
+	row := q.db.QueryRowContext(ctx, updatePost,
+		arg.MainCategory,
+		arg.PostText,
+		arg.PhotoUrl,
+		arg.PublicTypeNo,
+		arg.PostID,
+	)
+	var i Post
+	err := row.Scan(
+		&i.PostID,
+		&i.UserID,
+		&i.MainCategory,
+		&i.PostText,
+		&i.PhotoUrl,
+		&i.Location,
+		&i.MealFlag,
+		&i.PublicTypeNo,
+		&i.CreatedAt,
+	)
+	return i, err
+}

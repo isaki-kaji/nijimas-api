@@ -29,24 +29,99 @@ LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
 WHERE p."post_id" = $1;
   
+-- name: GetPostsByUserId :many
+SELECT
+  p."post_id",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE p."user_id" = $1
+ORDER BY p."created_at" DESC
+LIMIT 50;
 
+-- name: GetPostsByCategory :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE 
+  (p."main_category" = $1 OR $1 IS NULL) AND
+  (ps1."sub_category" = $2 OR $2 IS NULL) AND
+  (ps2."sub_category" = $3 OR $3 IS NULL)
+ORDER BY p."created_at" DESC
+LIMIT 50;
 
--- -- name: GetUserByUsername :one
--- SELECT * FROM "user"
--- WHERE "username" = $1;
+-- name: GetPostsBySubCategory :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE 
+  (ps1."sub_category" = $1 OR $1 IS NULL) AND
+  (ps2."sub_category" = $2 OR $2 IS NULL)
+ORDER BY p."created_at" DESC
+LIMIT 50;
 
--- -- name: UpdateUser :one
--- UPDATE "user" SET
---   "username" = COALESCE(sqlc.narg(username), "username"),
---   "currency" = COALESCE(sqlc.narg(currency), "currency")
--- WHERE "uid" = sqlc.arg(uid)
--- RETURNING *;
+-- name: GetPostsByFollowing :many
+SELECT 
+  p."post_id",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."location",
+  p."public_type_no"
+FROM "post" AS p
+JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "follow_user" AS f ON f."follow_user_id" = p."user_id"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+WHERE f."user_id" = $1
+ORDER BY p."created_at" DESC
+LIMIT 50;
 
--- -- name: GetUsersByRoomID :many
--- SELECT
--- "user"."user_id", 
--- "user"."username"
--- FROM "user"
--- JOIN "follow_room"
--- ON "user"."user_id" = "follow_room"."user_id"
--- WHERE "follow_room"."room_id" = $1;  
+-- name: UpdatePost :one
+UPDATE "post" SET
+  "main_category" = COALESCE(sqlc.narg(main_category), "main_category"),
+  "post_text" = COALESCE(sqlc.narg(post_text), "post_text"),
+  "photo_url" = COALESCE(sqlc.narg(photo_url), "photo_url"),
+  "public_type_no" = COALESCE(sqlc.narg(public_type_no), "public_type_no")
+WHERE "post_id" = sqlc.arg(post_id)
+RETURNING *;
