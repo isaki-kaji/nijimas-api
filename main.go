@@ -9,6 +9,8 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/isaki-kaji/nijimas-api/api"
+	"github.com/isaki-kaji/nijimas-api/api/controller"
+	"github.com/isaki-kaji/nijimas-api/api/route"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/service"
 	"github.com/isaki-kaji/nijimas-api/util"
@@ -41,6 +43,8 @@ func main() {
 		db.Module,
 		service.Module,
 		api.Module,
+		controller.Module,
+		route.Module,
 		fx.Invoke(StartServer),
 	)
 	if err := app.Err(); err != nil {

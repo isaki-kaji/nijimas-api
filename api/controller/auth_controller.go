@@ -1,11 +1,20 @@
-package api
+package controller
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
+	"github.com/isaki-kaji/nijimas-api/domain"
 )
+
+type AuthController struct {
+	service domain.AuthService
+}
+
+func NewAuthController(service domain.AuthService) *AuthController {
+	return &AuthController{service: service}
+}
 
 type createUserRequest struct {
 	Uid      string `json:"uid" binding:"required"`
@@ -13,7 +22,7 @@ type createUserRequest struct {
 	Currency string `json:"currency" binding:"required"`
 }
 
-func (server *Server) Signup(ctx *gin.Context) {
+func (u *AuthController) Signup(ctx *gin.Context) {
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -26,7 +35,7 @@ func (server *Server) Signup(ctx *gin.Context) {
 		Currency: req.Currency,
 	}
 
-	user, err := server.service.CreateUser(ctx, arg)
+	user, err := u.service.SignupUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
