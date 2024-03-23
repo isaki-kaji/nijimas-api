@@ -26,7 +26,7 @@ func (server *Server) Signup(ctx *gin.Context) {
 		Currency: req.Currency,
 	}
 
-	user, err := server.store.CreateUser(ctx, arg)
+	user, err := server.service.CreateUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

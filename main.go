@@ -1,35 +1,60 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"log"
 
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
+	"go.uber.org/fx"
 
 	"github.com/isaki-kaji/nijimas-api/api"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
+	"github.com/isaki-kaji/nijimas-api/service"
 	"github.com/isaki-kaji/nijimas-api/util"
 )
 
+func NewConfig() (*util.Config, error) {
+	return util.LoadConfig(".")
+}
+
+func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			log.Printf("Starting server at %s", config.ServerAddress)
+			if err := server.Start(config.ServerAddress); err != nil {
+				log.Printf("Failed to start server: %v", err)
+				return err
+			}
+			log.Printf("Server started successfully")
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			return nil
+		},
+	})
+}
+
 func main() {
-	config, err := util.LoadConfig(".")
-	if err != nil {
-		log.Fatal("cannot connect db:", err)
+	app := fx.New(
+		fx.Provide(NewConfig),
+		db.Module,
+		service.Module,
+		api.Module,
+		fx.Invoke(StartServer),
+	)
+	if err := app.Err(); err != nil {
+		log.Fatalf("Failed to start application: %v", err)
 	}
-	conn, err := sql.Open(config.DBDriver, config.DBSource)
-	if err != nil {
-		log.Fatal("cannot connect to db: ", err)
+	startCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := app.Start(startCtx); err != nil {
+		log.Fatal(err)
 	}
 
-	store := db.NewStore(conn)
-	server, err := api.NewServer(config, store)
-	if err != nil {
-		log.Fatal("cannot create server:", err)
-	}
-
-	err = server.Start(config.ServerAddress)
-	if err != nil {
-		log.Fatal("cannot start server:", err)
+	stopCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	if err := app.Stop(stopCtx); err != nil {
+		log.Fatal(err)
 	}
 }

@@ -22,7 +22,7 @@ UPDATE "user" SET
 WHERE "uid" = sqlc.arg(uid)
 RETURNING *;
 
--- name: GetForrowUsers :many
+-- name: GetFollowUsers :many
 SELECT
 "user"."user_id", 
 "user"."username"
