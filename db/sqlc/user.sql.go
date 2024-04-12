@@ -14,32 +14,32 @@ const createUser = `-- name: CreateUser :one
 INSERT INTO "user" (
   "uid",
   "username",
-  "currency"
+  "country_code"
 ) VALUES (
   $1, $2, $3
-) RETURNING user_id, uid, username, currency, created_at
+) RETURNING user_id, uid, username, country_code, created_at
 `
 
 type CreateUserParams struct {
-	Uid      string `json:"uid"`
-	Username string `json:"username"`
-	Currency string `json:"currency"`
+	Uid         string         `json:"uid"`
+	Username    string         `json:"username"`
+	CountryCode sql.NullString `json:"country_code"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Uid, arg.Username, arg.Currency)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Uid, arg.Username, arg.CountryCode)
 	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.Uid,
 		&i.Username,
-		&i.Currency,
+		&i.CountryCode,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getForrowUsers = `-- name: GetForrowUsers :many
+const getFollowUsers = `-- name: GetFollowUsers :many
 SELECT
 "user"."user_id", 
 "user"."username"
@@ -49,20 +49,20 @@ ON "user"."user_id" = "follow_user"."follow_user_id"
 WHERE "follow_user"."user_id" = $1
 `
 
-type GetForrowUsersRow struct {
+type GetFollowUsersRow struct {
 	UserID   int64  `json:"user_id"`
 	Username string `json:"username"`
 }
 
-func (q *Queries) GetForrowUsers(ctx context.Context, userID int64) ([]GetForrowUsersRow, error) {
-	rows, err := q.db.QueryContext(ctx, getForrowUsers, userID)
+func (q *Queries) GetFollowUsers(ctx context.Context, userID int64) ([]GetFollowUsersRow, error) {
+	rows, err := q.db.QueryContext(ctx, getFollowUsers, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []GetForrowUsersRow{}
+	items := []GetFollowUsersRow{}
 	for rows.Next() {
-		var i GetForrowUsersRow
+		var i GetFollowUsersRow
 		if err := rows.Scan(&i.UserID, &i.Username); err != nil {
 			return nil, err
 		}
@@ -78,7 +78,7 @@ func (q *Queries) GetForrowUsers(ctx context.Context, userID int64) ([]GetForrow
 }
 
 const getUser = `-- name: GetUser :one
-SELECT user_id, uid, username, currency, created_at FROM "user"
+SELECT user_id, uid, username, country_code, created_at FROM "user"
 WHERE "uid" = $1
 `
 
@@ -89,14 +89,14 @@ func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 		&i.UserID,
 		&i.Uid,
 		&i.Username,
-		&i.Currency,
+		&i.CountryCode,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT user_id, uid, username, currency, created_at FROM "user"
+SELECT user_id, uid, username, country_code, created_at FROM "user"
 WHERE "username" = $1
 `
 
@@ -107,7 +107,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.UserID,
 		&i.Uid,
 		&i.Username,
-		&i.Currency,
+		&i.CountryCode,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -115,26 +115,24 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user" SET
-  "username" = COALESCE($1, "username"),
-  "currency" = COALESCE($2, "currency")
-WHERE "uid" = $3
-RETURNING user_id, uid, username, currency, created_at
+  "username" = COALESCE($1, "username")
+WHERE "uid" = $2
+RETURNING user_id, uid, username, country_code, created_at
 `
 
 type UpdateUserParams struct {
 	Username sql.NullString `json:"username"`
-	Currency sql.NullString `json:"currency"`
 	Uid      string         `json:"uid"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser, arg.Username, arg.Currency, arg.Uid)
+	row := q.db.QueryRowContext(ctx, updateUser, arg.Username, arg.Uid)
 	var i User
 	err := row.Scan(
 		&i.UserID,
 		&i.Uid,
 		&i.Username,
-		&i.Currency,
+		&i.CountryCode,
 		&i.CreatedAt,
 	)
 	return i, err

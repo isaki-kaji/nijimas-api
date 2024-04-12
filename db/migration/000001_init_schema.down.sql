@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS favorite;
 DROP TABLE IF EXISTS meal;
 DROP TABLE IF EXISTS post_subcategory;
 DROP TABLE IF EXISTS follow_room;
@@ -7,4 +7,3 @@ DROP TABLE IF EXISTS room;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS main_category;
 DROP TABLE IF EXISTS sub_category;
-DROP TABLE IF EXISTS currency;

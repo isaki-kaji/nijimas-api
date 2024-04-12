@@ -11,7 +11,7 @@ import (
 type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	GetForrowUsers(ctx context.Context, userID int64) ([]GetForrowUsersRow, error)
+	GetFollowUsers(ctx context.Context, userID int64) ([]GetFollowUsersRow, error)
 	GetPostById(ctx context.Context, postID int64) (GetPostByIdRow, error)
 	GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error)
 	GetPostsByFollowing(ctx context.Context, userID int64) ([]GetPostsByFollowingRow, error)

@@ -11,14 +11,14 @@ var Module = fx.Options(
 )
 
 func NewRouter(
-	AuthController *controller.AuthController,
+	AuthController *controller.UserController,
 ) *gin.Engine {
 	router := gin.Default()
 
 	publicRouter := router.Group("")
 	//privateRouter := router.Group("")
 
-	NewSignupRouter(publicRouter, AuthController)
+	NewUserRouter(publicRouter, AuthController)
 
 	return router
 }

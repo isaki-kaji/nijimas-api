@@ -2,7 +2,7 @@
 INSERT INTO "user" (
   "uid",
   "username",
-  "currency"
+  "country_code"
 ) VALUES (
   $1, $2, $3
 ) RETURNING *;  
@@ -17,8 +17,7 @@ WHERE "username" = $1;
 
 -- name: UpdateUser :one
 UPDATE "user" SET
-  "username" = COALESCE(sqlc.narg(username), "username"),
-  "currency" = COALESCE(sqlc.narg(currency), "currency")
+  "username" = COALESCE(sqlc.narg(username), "username")
 WHERE "uid" = sqlc.arg(uid)
 RETURNING *;
 

@@ -9,17 +9,11 @@ import (
 	"time"
 )
 
-type Comment struct {
-	CommentID   int64     `json:"comment_id"`
-	PostID      int64     `json:"post_id"`
-	UserID      int64     `json:"user_id"`
-	CommentText string    `json:"comment_text"`
-	CreatedAt   time.Time `json:"created_at"`
-}
-
-type Currency struct {
-	Currency  string    `json:"currency"`
-	CreatedAt time.Time `json:"created_at"`
+type Favorite struct {
+	FavoriteID int64     `json:"favorite_id"`
+	PostID     int64     `json:"post_id"`
+	UserID     int64     `json:"user_id"`
+	CreatedAt  time.Time `json:"created_at"`
 }
 
 type FollowUser struct {
@@ -68,9 +62,9 @@ type SubCategory struct {
 }
 
 type User struct {
-	UserID    int64     `json:"user_id"`
-	Uid       string    `json:"uid"`
-	Username  string    `json:"username"`
-	Currency  string    `json:"currency"`
-	CreatedAt time.Time `json:"created_at"`
+	UserID      int64          `json:"user_id"`
+	Uid         string         `json:"uid"`
+	Username    string         `json:"username"`
+	CountryCode sql.NullString `json:"country_code"`
+	CreatedAt   time.Time      `json:"created_at"`
 }

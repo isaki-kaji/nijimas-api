@@ -10,7 +10,7 @@ Table user as U {
   user_id bigserial [pk]
   uid varchar(255) [not null]
   username varchar(255) [not null]
-  currency varchar(3) [ref: > CU.currency, not null]
+  country_code char(2)
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
@@ -47,11 +47,10 @@ Table post_subcategory as PS {
   }
 }
 
-Table comment as CO {
-  comment_id bigserial [pk]
+Table favorite as FA {
+  favorite_id bigserial [pk]
   post_id bigint [ref: > P.post_id, not null]
   user_id bigint [ref: > U.user_id, not null]
-  comment_text text [not null]
   created_at timestamptz [not null, default: `now()`]
 }
 
@@ -68,12 +67,7 @@ Table sub_category as SC {
 Table follow_user as FU {
   follow_id bigserial [pk]
   user_id bigint [ref: > U.user_id, not null]
-  follow_user_id biging [ref: > U.user_id, not null]
-  created_at timestamptz [not null, default: `now()`]
-}
-
-Table currency as CU {
-  currency varchar(3) [pk]
+  follow_user_id bigint [ref: > U.user_id, not null]
   created_at timestamptz [not null, default: `now()`]
 }
 

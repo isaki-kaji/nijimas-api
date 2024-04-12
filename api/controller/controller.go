@@ -6,7 +6,7 @@ import (
 )
 
 var Module = fx.Options(
-	fx.Provide(NewAuthController),
+	fx.Provide(NewUserController),
 )
 
 func errorResponse(err error) gin.H {

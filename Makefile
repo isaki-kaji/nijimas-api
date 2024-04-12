@@ -4,10 +4,10 @@ postgres:
 	docker run --name nijimas-postgres -p 5432:5432 -e POSTGRES_USER=nijimas -e POSTGRES_PASSWORD=password -d postgis/postgis:16-3.4 
 
 createdb:
-	docker exec -it nijimas-postgres createdb --username=root nijimas
+	docker exec -it nijimas-postgres createdb --username=nijimas nijimas
 
 dropdb:
-	docker exec -it nijimas-postgres dropdb --username=root nijimas
+	docker exec -it nijimas-postgres dropdb --username=nijimas nijimas
 
 db_docs:
 	dbdocs build doc/db.dbml
