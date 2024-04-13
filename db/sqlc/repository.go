@@ -1,10 +1,11 @@
 package db
 
 import (
-	"database/sql"
-	"log"
+	"context"
 
 	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/fx"
 )
 
@@ -13,27 +14,30 @@ type Repository interface {
 }
 
 type SQLRepository struct {
+	connPool *pgxpool.Pool
 	*Queries
-	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) Repository {
+func NewRepository(connPool *pgxpool.Pool) Repository {
 	return &SQLRepository{
-		db:      db,
-		Queries: New(db),
+		connPool: connPool,
+		Queries:  New(connPool),
 	}
 }
 
-func NewDB(config *util.Config) (*sql.DB, error) {
-	db, err := sql.Open(config.DBDriver, config.DBSource)
+func NewPool(config *util.Config) (*pgxpool.Pool, error) {
+	dbConfig, err := pgxpool.ParseConfig(config.DBSource)
 	if err != nil {
-		log.Fatal("cannot connect to db:", err)
 		return nil, err
 	}
-	return db, nil
+	dbConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		_, err := conn.Exec(ctx, "SET TIME ZONE 'UTC'")
+		return err
+	}
+	return pgxpool.NewWithConfig(context.Background(), dbConfig)
 }
 
 var Module = fx.Options(
 	fx.Provide(NewRepository),
-	fx.Provide(NewDB),
+	fx.Provide(NewPool),
 )

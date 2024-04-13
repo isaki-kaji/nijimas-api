@@ -2,10 +2,12 @@ package service
 
 import (
 	"context"
-	"database/sql"
+	"errors"
+	"fmt"
 
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/util"
 )
 
 type UserService struct {
@@ -17,13 +19,21 @@ func NewUserService(repository db.Repository) domain.UserService {
 }
 
 func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserRequest) (db.User, error) {
-	param := db.CreateUserParams{
-		Uid:      arg.Uid,
-		Username: arg.Username,
-		CountryCode: sql.NullString{
-			String: arg.CountryCode,
-			Valid:  arg.CountryCode != "",
-		},
+	_, err := s.repository.GetUser(ctx, arg.Uid)
+	if err != nil {
+		if errors.Is(err, db.ErrRecordNotFound) {
+			param := db.CreateUserParams{
+				Uid:         arg.Uid,
+				Username:    arg.Username,
+				CountryCode: &arg.CountryCode,
+			}
+			newUser, err := s.repository.CreateUser(ctx, param)
+			if err != nil {
+				return db.User{}, err
+			}
+			return newUser, nil
+		}
+		return db.User{}, err
 	}
-	return s.repository.CreateUser(ctx, param)
+	return db.User{}, fmt.Errorf(util.UserAlreadyExists)
 }

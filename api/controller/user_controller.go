@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/util"
 )
 
 type UserController struct {
@@ -25,6 +26,11 @@ func (u *UserController) Create(ctx *gin.Context) {
 	}
 	user, err := u.service.CreateUser(ctx, req)
 	if err != nil {
+		if err.Error() == util.UserAlreadyExists {
+			ctx.JSON(http.StatusConflict, errorResponse(err))
+			fmt.Print(err)
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		fmt.Print(err)
 		return
