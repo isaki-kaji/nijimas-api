@@ -13,5 +13,5 @@ type UserService interface {
 type CreateUserRequest struct {
 	Uid         string `json:"uid" binding:"required"`
 	Username    string `json:"username" binding:"required"`
-	CountryCode string `json:"country_code" binding:"len=2"`
+	CountryCode string `json:"country_code" binding:"omitempty,len=2"`
 }

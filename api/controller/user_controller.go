@@ -35,5 +35,5 @@ func (u *UserController) Create(ctx *gin.Context) {
 		fmt.Print(err)
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusCreated, user)
 }

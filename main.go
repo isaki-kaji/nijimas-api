@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 
-	_ "github.com/jackc/pgx/v5"
 	_ "github.com/lib/pq"
 	"go.uber.org/fx"
 
@@ -39,6 +38,7 @@ func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
 
 func main() {
 	app := fx.New(
+		util.Module,
 		fx.Provide(NewConfig),
 		db.Module,
 		service.Module,
