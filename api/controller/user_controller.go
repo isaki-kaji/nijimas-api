@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/isaki-kaji/nijimas-api/domain"
 	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/jackc/pgx/v5"
 )
 
 type UserController struct {
@@ -36,4 +37,20 @@ func (u *UserController) Create(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, user)
+}
+
+func (u *UserController) Get(ctx *gin.Context) {
+	uid := ctx.Param("id")
+	user, err := u.service.GetUser(ctx, uid)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			fmt.Print(err)
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		fmt.Print(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
 }

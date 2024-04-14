@@ -14,11 +14,9 @@ func NewRouter(
 	AuthController *controller.UserController,
 ) *gin.Engine {
 	router := gin.Default()
+	authRouter := router.Group("/").Use(authMiddleware())
 
-	publicRouter := router.Group("")
-	//privateRouter := router.Group("")
-
-	NewUserRouter(publicRouter, AuthController)
+	NewUserRouter(router, authRouter, AuthController)
 
 	return router
 }

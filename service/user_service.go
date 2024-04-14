@@ -37,3 +37,11 @@ func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserReque
 	}
 	return db.User{}, fmt.Errorf(util.UserAlreadyExists)
 }
+
+func (s *UserService) GetUser(ctx context.Context, uid string) (db.User, error) {
+	user, err := s.repository.GetUser(ctx, uid)
+	if err != nil {
+		return db.User{}, err
+	}
+	return user, nil
+}
