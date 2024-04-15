@@ -6,6 +6,9 @@ CREATE TABLE "user" (
   "user_id" bigserial PRIMARY KEY,
   "uid" varchar(255) NOT NULL,
   "username" varchar(255) NOT NULL,
+  "self_intro" text,
+  "profile_image_url" varchar(2000),
+  "banner_image_url" varchar(2000),
   "country_code" char(2),
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -92,4 +95,3 @@ ALTER TABLE "follow_user" ADD FOREIGN KEY ("follow_user_id") REFERENCES "user" (
 ALTER TABLE "meal" ADD FOREIGN KEY ("post_id") REFERENCES "post" ("post_id");
 
 ALTER TABLE "meal" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("user_id");
-

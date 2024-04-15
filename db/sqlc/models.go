@@ -61,9 +61,12 @@ type SubCategory struct {
 }
 
 type User struct {
-	UserID      int64     `json:"user_id"`
-	Uid         string    `json:"uid"`
-	Username    string    `json:"username"`
-	CountryCode *string   `json:"country_code"`
-	CreatedAt   time.Time `json:"created_at"`
+	UserID          int64     `json:"user_id"`
+	Uid             string    `json:"uid"`
+	Username        string    `json:"username"`
+	SelfIntro       *string   `json:"self_intro"`
+	ProfileImageUrl *string   `json:"profile_image_url"`
+	BannerImageUrl  *string   `json:"banner_image_url"`
+	CountryCode     *string   `json:"country_code"`
+	CreatedAt       time.Time `json:"created_at"`
 }
