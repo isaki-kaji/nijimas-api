@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -43,7 +44,7 @@ func (u *UserController) Get(ctx *gin.Context) {
 	uid := ctx.Param("id")
 	user, err := u.service.GetUser(ctx, uid)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			fmt.Print(err)
 			return

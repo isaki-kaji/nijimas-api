@@ -8,6 +8,7 @@ import (
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/domain"
 	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/jackc/pgx/v5"
 )
 
 type UserService struct {
@@ -21,7 +22,7 @@ func NewUserService(repository db.Repository) domain.UserService {
 func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserRequest) (db.User, error) {
 	_, err := s.repository.GetUser(ctx, arg.Uid)
 	if err != nil {
-		if errors.Is(err, db.ErrRecordNotFound) {
+		if errors.Is(err, pgx.ErrNoRows) {
 			param := db.CreateUserParams{
 				Uid:         arg.Uid,
 				Username:    arg.Username,
