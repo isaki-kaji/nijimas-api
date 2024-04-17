@@ -25,9 +25,9 @@ RETURNING *;
 
 -- name: GetFollowUsers :many
 SELECT
-"user"."user_id", 
+"user"."uid", 
 "user"."username"
 FROM "user"
 JOIN "follow_user"
-ON "user"."user_id" = "follow_user"."follow_user_id"
-WHERE "follow_user"."user_id" = $1;  
+ON "user"."uid" = "follow_user"."follow_user_id"
+WHERE "follow_user"."uid" = $1;  

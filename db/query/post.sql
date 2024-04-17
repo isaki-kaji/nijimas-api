@@ -1,6 +1,7 @@
 -- name: CreatePost :one
 INSERT INTO "post" (
-  "user_id",
+  "post_id",
+  "uid",
   "main_category",
   "post_text",
   "photo_url",
@@ -8,7 +9,7 @@ INSERT INTO "post" (
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
+  $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING *;  
   
 -- name: GetPostById :one
@@ -22,7 +23,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -44,7 +45,7 @@ LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
-WHERE p."user_id" = $1
+WHERE p."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50;
 
@@ -60,7 +61,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -84,7 +85,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -107,13 +108,13 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
-JOIN "follow_user" AS f ON f."follow_user_id" = p."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
+JOIN "follow_user" AS f ON f."follow_uid" = p."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
-WHERE f."user_id" = $1
+WHERE f."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50;
 

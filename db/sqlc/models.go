@@ -6,19 +6,21 @@ package db
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Favorite struct {
 	FavoriteID int64     `json:"favorite_id"`
-	PostID     int64     `json:"post_id"`
-	UserID     int64     `json:"user_id"`
+	PostID     uuid.UUID `json:"post_id"`
+	Uid        string    `json:"uid"`
 	CreatedAt  time.Time `json:"created_at"`
 }
 
 type FollowUser struct {
 	FollowID     int64     `json:"follow_id"`
-	UserID       int64     `json:"user_id"`
-	FollowUserID int64     `json:"follow_user_id"`
+	Uid          string    `json:"uid"`
+	FollowUserID string    `json:"follow_user_id"`
 	CreatedAt    time.Time `json:"created_at"`
 }
 
@@ -29,15 +31,15 @@ type MainCategory struct {
 
 type Meal struct {
 	MealID    int64     `json:"meal_id"`
-	PostID    int64     `json:"post_id"`
-	UserID    int64     `json:"user_id"`
+	PostID    uuid.UUID `json:"post_id"`
+	Uid       string    `json:"uid"`
 	Calorie   int64     `json:"calorie"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 type Post struct {
-	PostID       int64       `json:"post_id"`
-	UserID       int64       `json:"user_id"`
+	PostID       uuid.UUID   `json:"post_id"`
+	Uid          string      `json:"uid"`
 	MainCategory string      `json:"main_category"`
 	PostText     *string     `json:"post_text"`
 	PhotoUrl     *string     `json:"photo_url"`
@@ -49,10 +51,10 @@ type Post struct {
 }
 
 type PostSubcategory struct {
-	PostSubcategoryID int64  `json:"post_subcategory_id"`
-	PostID            int64  `json:"post_id"`
-	SubcategoryNo     string `json:"subcategory_no"`
-	SubCategory       string `json:"sub_category"`
+	PostSubcategoryID int64     `json:"post_subcategory_id"`
+	PostID            uuid.UUID `json:"post_id"`
+	SubcategoryNo     string    `json:"subcategory_no"`
+	SubCategory       string    `json:"sub_category"`
 }
 
 type SubCategory struct {
@@ -61,7 +63,6 @@ type SubCategory struct {
 }
 
 type User struct {
-	UserID          int64     `json:"user_id"`
 	Uid             string    `json:"uid"`
 	Username        string    `json:"username"`
 	SelfIntro       *string   `json:"self_intro"`

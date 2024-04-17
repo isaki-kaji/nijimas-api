@@ -7,11 +7,14 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createPost = `-- name: CreatePost :one
 INSERT INTO "post" (
-  "user_id",
+  "post_id",
+  "uid",
   "main_category",
   "post_text",
   "photo_url",
@@ -19,12 +22,13 @@ INSERT INTO "post" (
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7
-) RETURNING post_id, user_id, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
+  $1, $2, $3, $4, $5, $6, $7, $8
+) RETURNING post_id, uid, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
 `
 
 type CreatePostParams struct {
-	UserID       int64       `json:"user_id"`
+	PostID       uuid.UUID   `json:"post_id"`
+	Uid          string      `json:"uid"`
 	MainCategory string      `json:"main_category"`
 	PostText     *string     `json:"post_text"`
 	PhotoUrl     *string     `json:"photo_url"`
@@ -35,7 +39,8 @@ type CreatePostParams struct {
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
 	row := q.db.QueryRow(ctx, createPost,
-		arg.UserID,
+		arg.PostID,
+		arg.Uid,
 		arg.MainCategory,
 		arg.PostText,
 		arg.PhotoUrl,
@@ -46,7 +51,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 	var i Post
 	err := row.Scan(
 		&i.PostID,
-		&i.UserID,
+		&i.Uid,
 		&i.MainCategory,
 		&i.PostText,
 		&i.PhotoUrl,
@@ -69,7 +74,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -88,7 +93,7 @@ type GetPostByIdRow struct {
 	PublicTypeNo  string      `json:"public_type_no"`
 }
 
-func (q *Queries) GetPostById(ctx context.Context, postID int64) (GetPostByIdRow, error) {
+func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error) {
 	row := q.db.QueryRow(ctx, getPostById, postID)
 	var i GetPostByIdRow
 	err := row.Scan(
@@ -116,7 +121,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -136,7 +141,7 @@ type GetPostsByCategoryParams struct {
 }
 
 type GetPostsByCategoryRow struct {
-	PostID        int64       `json:"post_id"`
+	PostID        uuid.UUID   `json:"post_id"`
 	Username      string      `json:"username"`
 	MainCategory  string      `json:"main_category"`
 	SubCategory   *string     `json:"sub_category"`
@@ -189,19 +194,19 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
-JOIN "follow_user" AS f ON f."follow_user_id" = p."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
+JOIN "follow_user" AS f ON f."follow_uid" = p."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
-WHERE f."user_id" = $1
+WHERE f."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50
 `
 
 type GetPostsByFollowingRow struct {
-	PostID        int64       `json:"post_id"`
+	PostID        uuid.UUID   `json:"post_id"`
 	Username      string      `json:"username"`
 	MainCategory  string      `json:"main_category"`
 	SubCategory   *string     `json:"sub_category"`
@@ -212,8 +217,8 @@ type GetPostsByFollowingRow struct {
 	PublicTypeNo  string      `json:"public_type_no"`
 }
 
-func (q *Queries) GetPostsByFollowing(ctx context.Context, userID int64) ([]GetPostsByFollowingRow, error) {
-	rows, err := q.db.Query(ctx, getPostsByFollowing, userID)
+func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error) {
+	rows, err := q.db.Query(ctx, getPostsByFollowing, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +259,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
-JOIN "user" AS u ON p."user_id" = u."user_id"
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
@@ -272,7 +277,7 @@ type GetPostsBySubCategoryParams struct {
 }
 
 type GetPostsBySubCategoryRow struct {
-	PostID        int64       `json:"post_id"`
+	PostID        uuid.UUID   `json:"post_id"`
 	Username      string      `json:"username"`
 	MainCategory  string      `json:"main_category"`
 	SubCategory   *string     `json:"sub_category"`
@@ -328,13 +333,13 @@ LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
 LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
-WHERE p."user_id" = $1
+WHERE p."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50
 `
 
 type GetPostsByUserIdRow struct {
-	PostID        int64       `json:"post_id"`
+	PostID        uuid.UUID   `json:"post_id"`
 	MainCategory  string      `json:"main_category"`
 	SubCategory   *string     `json:"sub_category"`
 	SubCategory_2 *string     `json:"sub_category_2"`
@@ -344,8 +349,8 @@ type GetPostsByUserIdRow struct {
 	PublicTypeNo  string      `json:"public_type_no"`
 }
 
-func (q *Queries) GetPostsByUserId(ctx context.Context, userID int64) ([]GetPostsByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, getPostsByUserId, userID)
+func (q *Queries) GetPostsByUserId(ctx context.Context, uid string) ([]GetPostsByUserIdRow, error) {
+	rows, err := q.db.Query(ctx, getPostsByUserId, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -380,15 +385,15 @@ UPDATE "post" SET
   "photo_url" = COALESCE($3, "photo_url"),
   "public_type_no" = COALESCE($4, "public_type_no")
 WHERE "post_id" = $5
-RETURNING post_id, user_id, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
+RETURNING post_id, uid, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
 `
 
 type UpdatePostParams struct {
-	MainCategory *string `json:"main_category"`
-	PostText     *string `json:"post_text"`
-	PhotoUrl     *string `json:"photo_url"`
-	PublicTypeNo *string `json:"public_type_no"`
-	PostID       int64   `json:"post_id"`
+	MainCategory *string   `json:"main_category"`
+	PostText     *string   `json:"post_text"`
+	PhotoUrl     *string   `json:"photo_url"`
+	PublicTypeNo *string   `json:"public_type_no"`
+	PostID       uuid.UUID `json:"post_id"`
 }
 
 func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error) {
@@ -402,7 +407,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 	var i Post
 	err := row.Scan(
 		&i.PostID,
-		&i.UserID,
+		&i.Uid,
 		&i.MainCategory,
 		&i.PostText,
 		&i.PhotoUrl,

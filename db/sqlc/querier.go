@@ -6,17 +6,19 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	GetFollowUsers(ctx context.Context, userID int64) ([]GetFollowUsersRow, error)
-	GetPostById(ctx context.Context, postID int64) (GetPostByIdRow, error)
+	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
+	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
 	GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error)
-	GetPostsByFollowing(ctx context.Context, userID int64) ([]GetPostsByFollowingRow, error)
+	GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error)
 	GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error)
-	GetPostsByUserId(ctx context.Context, userID int64) ([]GetPostsByUserIdRow, error)
+	GetPostsByUserId(ctx context.Context, uid string) ([]GetPostsByUserIdRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)

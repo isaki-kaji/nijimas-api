@@ -7,9 +7,11 @@ Project Nijimas {
 }
 
 Table user as U {
-  user_id bigserial [pk]
-  uid varchar(255) [not null]
+  uid varchar(255) [pk, not null]
   username varchar(255) [not null]
+  self_intro text
+  profile_image_url varchar(2000)
+  banner_image_url varchar(2000) 
   country_code char(2)
   created_at timestamptz [not null, default: `now()`]
 
@@ -20,8 +22,8 @@ Table user as U {
 }
 
 Table post as P {
-  post_id bigserial [pk]
-  user_id bigint [ref: > U.user_id, not null]
+  post_id uuid [pk]
+  uid varchar(255) [ref: > U.uid, not null]
   main_category varchar(255) [ref: > MC.category_name, not null]
   post_text text 
   photo_url varchar(2000)
@@ -31,14 +33,14 @@ Table post as P {
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
-    user_id
+    uid
     created_at
   }
 }
 
 Table post_subcategory as PS {
   post_subcategory_id bigserial [pk]
-  post_id bigint [ref: > P.post_id, not null]
+  post_id uuid [ref: > P.post_id, not null]
   subcategory_no char(1) [not null]
   sub_category varchar(255) [ref: > SC.category_name, not null]
 
@@ -49,8 +51,8 @@ Table post_subcategory as PS {
 
 Table favorite as FA {
   favorite_id bigserial [pk]
-  post_id bigint [ref: > P.post_id, not null]
-  user_id bigint [ref: > U.user_id, not null]
+  post_id uuid [ref: > P.post_id, not null]
+  uid varchar(255) [ref: > U.uid, not null]
   created_at timestamptz [not null, default: `now()`]
 }
 
@@ -66,15 +68,17 @@ Table sub_category as SC {
 
 Table follow_user as FU {
   follow_id bigserial [pk]
-  user_id bigint [ref: > U.user_id, not null]
-  follow_user_id bigint [ref: > U.user_id, not null]
+  uid varchar(255) [ref: > U.uid, not null]
+  follow_user_id varchar(255) [ref: > U.uid, not null]
   created_at timestamptz [not null, default: `now()`]
 }
 
 Table meal as M {
   meal_id bigserial [pk]
-  post_id bigint [ref: > P.post_id, not null]
-  user_id bigint [ref: > U.user_id, not null]
+  post_id uuid [ref: > P.post_id, not null]
+  uid varchar(255) [ref: > U.uid, not null]
   calorie bigint [not null, default: 0]
   created_at timestamptz [not null, default: `now()`]
 }
+
+

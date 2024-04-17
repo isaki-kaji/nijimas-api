@@ -1,4 +1,4 @@
-package route
+package middleware
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func authMiddleware(authClient *auth.Client) gin.HandlerFunc {
+func AuthMiddleware(authClient *auth.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authorizationHeader := ctx.GetHeader("Authorization")
 		if authorizationHeader == "" {

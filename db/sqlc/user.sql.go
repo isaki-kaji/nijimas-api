@@ -16,7 +16,7 @@ INSERT INTO "user" (
   "country_code"
 ) VALUES (
   $1, $2, $3
-) RETURNING user_id, uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at
+) RETURNING uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at
 `
 
 type CreateUserParams struct {
@@ -29,7 +29,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	row := q.db.QueryRow(ctx, createUser, arg.Uid, arg.Username, arg.CountryCode)
 	var i User
 	err := row.Scan(
-		&i.UserID,
 		&i.Uid,
 		&i.Username,
 		&i.SelfIntro,
@@ -43,21 +42,21 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const getFollowUsers = `-- name: GetFollowUsers :many
 SELECT
-"user"."user_id", 
+"user"."uid", 
 "user"."username"
 FROM "user"
 JOIN "follow_user"
-ON "user"."user_id" = "follow_user"."follow_user_id"
-WHERE "follow_user"."user_id" = $1
+ON "user"."uid" = "follow_user"."follow_user_id"
+WHERE "follow_user"."uid" = $1
 `
 
 type GetFollowUsersRow struct {
-	UserID   int64  `json:"user_id"`
+	Uid      string `json:"uid"`
 	Username string `json:"username"`
 }
 
-func (q *Queries) GetFollowUsers(ctx context.Context, userID int64) ([]GetFollowUsersRow, error) {
-	rows, err := q.db.Query(ctx, getFollowUsers, userID)
+func (q *Queries) GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error) {
+	rows, err := q.db.Query(ctx, getFollowUsers, uid)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func (q *Queries) GetFollowUsers(ctx context.Context, userID int64) ([]GetFollow
 	items := []GetFollowUsersRow{}
 	for rows.Next() {
 		var i GetFollowUsersRow
-		if err := rows.Scan(&i.UserID, &i.Username); err != nil {
+		if err := rows.Scan(&i.Uid, &i.Username); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -77,7 +76,7 @@ func (q *Queries) GetFollowUsers(ctx context.Context, userID int64) ([]GetFollow
 }
 
 const getUser = `-- name: GetUser :one
-SELECT user_id, uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at FROM "user"
+SELECT uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at FROM "user"
 WHERE "uid" = $1
 `
 
@@ -85,7 +84,6 @@ func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 	row := q.db.QueryRow(ctx, getUser, uid)
 	var i User
 	err := row.Scan(
-		&i.UserID,
 		&i.Uid,
 		&i.Username,
 		&i.SelfIntro,
@@ -98,7 +96,7 @@ func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT user_id, uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at FROM "user"
+SELECT uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at FROM "user"
 WHERE "username" = $1
 `
 
@@ -106,7 +104,6 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	row := q.db.QueryRow(ctx, getUserByUsername, username)
 	var i User
 	err := row.Scan(
-		&i.UserID,
 		&i.Uid,
 		&i.Username,
 		&i.SelfIntro,
@@ -124,7 +121,7 @@ UPDATE "user" SET
   "profile_image_url" = COALESCE($2, "profile_image_url"),
   "banner_image_url" = COALESCE($3, "banner_image_url")
 WHERE "uid" = $4
-RETURNING user_id, uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at
+RETURNING uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at
 `
 
 type UpdateUserParams struct {
@@ -143,7 +140,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 	)
 	var i User
 	err := row.Scan(
-		&i.UserID,
 		&i.Uid,
 		&i.Username,
 		&i.SelfIntro,
