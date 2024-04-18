@@ -11,10 +11,15 @@ import (
 )
 
 type Querier interface {
+	CreateMainCategory(ctx context.Context, categoryName string) (MainCategory, error)
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
+	CreatePostSubCategory(ctx context.Context, arg CreatePostSubCategoryParams) (PostSubcategory, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
+	GetMainCategories(ctx context.Context) ([]MainCategory, error)
+	GetMainCategory(ctx context.Context, categoryName string) (MainCategory, error)
 	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
+	GetPostSubCategoryByPostId(ctx context.Context, postID uuid.UUID) ([]PostSubcategory, error)
 	GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error)
 	GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error)
 	GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error)
