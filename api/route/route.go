@@ -13,13 +13,15 @@ var Module = fx.Options(
 )
 
 func NewRouter(
-	AuthController *controller.UserController,
+	UserController *controller.UserController,
+	PostController *controller.PostController,
 	AuthClient *auth.Client,
 ) *gin.Engine {
 	router := gin.Default()
 	authRouter := router.Group("/").Use(middleware.AuthMiddleware(AuthClient))
 
-	NewUserRouter(router, authRouter, AuthController)
+	NewUserRouter(router, authRouter, UserController)
+	NewPostRouter(router, authRouter, PostController)
 
 	return router
 }
