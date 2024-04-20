@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/domain"
@@ -21,22 +20,22 @@ func NewUserService(repository db.Repository) domain.UserService {
 
 func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserRequest) (db.User, error) {
 	_, err := s.repository.GetUser(ctx, arg.Uid)
-	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			param := db.CreateUserParams{
-				Uid:         arg.Uid,
-				Username:    arg.Username,
-				CountryCode: &arg.CountryCode,
-			}
-			newUser, err := s.repository.CreateUser(ctx, param)
-			if err != nil {
-				return db.User{}, err
-			}
-			return newUser, nil
-		}
+	if err == nil {
+		return db.User{}, errors.New(util.UserAlreadyExists)
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
 		return db.User{}, err
 	}
-	return db.User{}, fmt.Errorf(util.UserAlreadyExists)
+	param := db.CreateUserParams{
+		Uid:         arg.Uid,
+		Username:    arg.Username,
+		CountryCode: &arg.CountryCode,
+	}
+	newUser, err := s.repository.CreateUser(ctx, param)
+	if err != nil {
+		return db.User{}, err
+	}
+	return newUser, nil
 }
 
 func (s *UserService) GetUser(ctx context.Context, uid string) (db.User, error) {
