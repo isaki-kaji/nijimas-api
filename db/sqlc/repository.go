@@ -11,6 +11,7 @@ import (
 
 type Repository interface {
 	Querier
+	CreatePostTx(ctx context.Context, param CreatePostTxParam) (Post, error)
 }
 
 type SQLRepository struct {
