@@ -14,6 +14,7 @@ CREATE TABLE "post" (
   "main_category" varchar(255) NOT NULL,
   "post_text" text,
   "photo_url" varchar(2000),
+  "expense" bigint,
   "location" geometry,
   "meal_flag" boolean NOT NULL DEFAULT false,
   "public_type_no" char(1) NOT NULL,

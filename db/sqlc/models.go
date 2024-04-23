@@ -43,6 +43,7 @@ type Post struct {
 	MainCategory string      `json:"main_category"`
 	PostText     *string     `json:"post_text"`
 	PhotoUrl     *string     `json:"photo_url"`
+	Expense      *int64      `json:"expense"`
 	Location     interface{} `json:"location"`
 	MealFlag     bool        `json:"meal_flag"`
 	// 1:公開、2:フォロワーにのみ公開、3:非公開
