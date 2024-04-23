@@ -2,12 +2,11 @@ package service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/domain"
-	"github.com/jackc/pgx/v5"
+	"github.com/isaki-kaji/nijimas-api/util"
 )
 
 type PostService struct {
@@ -24,54 +23,18 @@ func (s *PostService) CreatePost(ctx context.Context, arg domain.CreatePostReque
 		return db.Post{}, err
 	}
 
-	param := db.CreatePostParams{
+	param := db.CreatePostTxParam{
 		PostID:       uuid,
 		Uid:          arg.Uid,
 		MainCategory: arg.MainCategory,
-		PostText:     PointerOrNil(arg.PostText),
-		PhotoUrl:     PointerOrNil(arg.PhotoUrl),
+		PostText:     util.PointerOrNil(arg.PostText),
+		PhotoUrl:     util.PointerOrNil(arg.PhotoUrl),
+		SubCategory1: arg.SubCategory1,
+		SubCategory2: arg.SubCategory2,
 		Location:     arg.Location,
-		Expense:      PointerOrNil(arg.Expense),
+		Expense:      util.PointerOrNil(arg.Expense),
 		MealFlag:     arg.MealFlag,
-		PublicTypeNo: arg.PublicTypeNo,
-	}
-	newPost, err := s.repository.CreatePost(ctx, param)
-	if err != nil {
-		return db.Post{}, err
-	}
+		PublicTypeNo: arg.PublicTypeNo}
 
-	err = s.handleSubCategory(ctx, uuid, arg.SubCategory1, "1")
-	if err != nil {
-		return db.Post{}, err
-	}
-	err = s.handleSubCategory(ctx, uuid, arg.SubCategory2, "2")
-	if err != nil {
-		return db.Post{}, err
-	}
-	return newPost, nil
-}
-
-func (s *PostService) handleSubCategory(ctx context.Context, uuid uuid.UUID, subCategory string, subCategoryNo string) error {
-	if subCategory == "" {
-		return nil
-	}
-	if _, err := s.repository.GetSubCategory(ctx, subCategory); err != nil {
-		if !errors.Is(err, pgx.ErrNoRows) {
-			return err
-		}
-		_, err := s.repository.CreateSubCategory(ctx, subCategory)
-		if err != nil {
-			return err
-		}
-	}
-	createPostSubCategoryParam := db.CreatePostSubCategoryParams{
-		PostID:        uuid,
-		SubcategoryNo: subCategoryNo,
-		SubCategory:   subCategory,
-	}
-	_, err := s.repository.CreatePostSubCategory(ctx, createPostSubCategoryParam)
-	if err != nil {
-		return err
-	}
-	return nil
+	return s.repository.CreatePostTx(ctx, param)
 }
