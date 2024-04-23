@@ -31,6 +31,7 @@ func (s *PostService) CreatePost(ctx context.Context, arg domain.CreatePostReque
 		PostText:     PointerOrNil(arg.PostText),
 		PhotoUrl:     PointerOrNil(arg.PhotoUrl),
 		Location:     arg.Location,
+		Expense:      PointerOrNil(arg.Expense),
 		MealFlag:     arg.MealFlag,
 		PublicTypeNo: arg.PublicTypeNo,
 	}

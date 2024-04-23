@@ -5,11 +5,12 @@ INSERT INTO "post" (
   "main_category",
   "post_text",
   "photo_url",
+  "expense",
   "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
 ) RETURNING *;  
   
 -- name: GetPostById :one
@@ -20,6 +21,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -38,6 +40,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -58,6 +61,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -82,6 +86,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -105,6 +110,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -123,6 +129,7 @@ UPDATE "post" SET
   "main_category" = COALESCE(sqlc.narg(main_category), "main_category"),
   "post_text" = COALESCE(sqlc.narg(post_text), "post_text"),
   "photo_url" = COALESCE(sqlc.narg(photo_url), "photo_url"),
+  "expense" = COALESCE(sqlc.narg(expense), "expense"),
   "public_type_no" = COALESCE(sqlc.narg(public_type_no), "public_type_no")
 WHERE "post_id" = sqlc.arg(post_id)
 RETURNING *;

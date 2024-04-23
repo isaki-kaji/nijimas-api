@@ -27,6 +27,7 @@ Table post as P {
   main_category varchar(255) [ref: > MC.category_name, not null]
   post_text text 
   photo_url varchar(2000)
+  expense bigint
   location geometry
   meal_flag boolean [not null, default: false]
   public_type_no char(1) [not null, note: '1:公開、2:フォロワーにのみ公開、3:非公開']

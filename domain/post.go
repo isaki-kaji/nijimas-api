@@ -18,6 +18,7 @@ type CreatePostRequest struct {
 	SubCategory2 string      `json:"sub_category2" binding:"max=255"`
 	PostText     string      `json:"post_text"`
 	PhotoUrl     string      `json:"photo_url" binding:"max=2000"`
+	Expense      int64       `json:"expense"`
 	Location     interface{} `json:"location"`
 	MealFlag     bool        `json:"meal_flag" binding:"required"`
 	PublicTypeNo string      `json:"public_type_no" binding:"required,oneof=1 2 3"`

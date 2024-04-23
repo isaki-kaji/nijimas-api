@@ -18,12 +18,13 @@ INSERT INTO "post" (
   "main_category",
   "post_text",
   "photo_url",
+  "expense",
   "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING post_id, uid, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
+  $1, $2, $3, $4, $5, $6, $7, $8, $9
+) RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, meal_flag, public_type_no, created_at
 `
 
 type CreatePostParams struct {
@@ -32,6 +33,7 @@ type CreatePostParams struct {
 	MainCategory string      `json:"main_category"`
 	PostText     *string     `json:"post_text"`
 	PhotoUrl     *string     `json:"photo_url"`
+	Expense      *int64      `json:"expense"`
 	MealFlag     bool        `json:"meal_flag"`
 	Location     interface{} `json:"location"`
 	PublicTypeNo string      `json:"public_type_no"`
@@ -44,6 +46,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.MainCategory,
 		arg.PostText,
 		arg.PhotoUrl,
+		arg.Expense,
 		arg.MealFlag,
 		arg.Location,
 		arg.PublicTypeNo,
@@ -55,6 +58,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.MainCategory,
 		&i.PostText,
 		&i.PhotoUrl,
+		&i.Expense,
 		&i.Location,
 		&i.MealFlag,
 		&i.PublicTypeNo,
@@ -71,6 +75,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -89,6 +94,7 @@ type GetPostByIdRow struct {
 	SubCategory_2 *string     `json:"sub_category_2"`
 	PostText      *string     `json:"post_text"`
 	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
 	Location      interface{} `json:"location"`
 	PublicTypeNo  string      `json:"public_type_no"`
 }
@@ -103,6 +109,7 @@ func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByI
 		&i.SubCategory_2,
 		&i.PostText,
 		&i.PhotoUrl,
+		&i.Expense,
 		&i.Location,
 		&i.PublicTypeNo,
 	)
@@ -118,6 +125,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -148,6 +156,7 @@ type GetPostsByCategoryRow struct {
 	SubCategory_2 *string     `json:"sub_category_2"`
 	PostText      *string     `json:"post_text"`
 	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
 	Location      interface{} `json:"location"`
 	PublicTypeNo  string      `json:"public_type_no"`
 }
@@ -169,6 +178,7 @@ func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategory
 			&i.SubCategory_2,
 			&i.PostText,
 			&i.PhotoUrl,
+			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
 		); err != nil {
@@ -191,6 +201,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -213,6 +224,7 @@ type GetPostsByFollowingRow struct {
 	SubCategory_2 *string     `json:"sub_category_2"`
 	PostText      *string     `json:"post_text"`
 	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
 	Location      interface{} `json:"location"`
 	PublicTypeNo  string      `json:"public_type_no"`
 }
@@ -234,6 +246,7 @@ func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPos
 			&i.SubCategory_2,
 			&i.PostText,
 			&i.PhotoUrl,
+			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
 		); err != nil {
@@ -256,6 +269,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -284,6 +298,7 @@ type GetPostsBySubCategoryRow struct {
 	SubCategory_2 *string     `json:"sub_category_2"`
 	PostText      *string     `json:"post_text"`
 	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
 	Location      interface{} `json:"location"`
 	PublicTypeNo  string      `json:"public_type_no"`
 }
@@ -305,6 +320,7 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 			&i.SubCategory_2,
 			&i.PostText,
 			&i.PhotoUrl,
+			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
 		); err != nil {
@@ -326,6 +342,7 @@ SELECT
   ps2."sub_category",
   p."post_text",
   p."photo_url",
+  p."expense",
   p."location",
   p."public_type_no"
 FROM "post" AS p
@@ -345,6 +362,7 @@ type GetPostsByUserIdRow struct {
 	SubCategory_2 *string     `json:"sub_category_2"`
 	PostText      *string     `json:"post_text"`
 	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
 	Location      interface{} `json:"location"`
 	PublicTypeNo  string      `json:"public_type_no"`
 }
@@ -365,6 +383,7 @@ func (q *Queries) GetPostsByUserId(ctx context.Context, uid string) ([]GetPostsB
 			&i.SubCategory_2,
 			&i.PostText,
 			&i.PhotoUrl,
+			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
 		); err != nil {
@@ -383,15 +402,17 @@ UPDATE "post" SET
   "main_category" = COALESCE($1, "main_category"),
   "post_text" = COALESCE($2, "post_text"),
   "photo_url" = COALESCE($3, "photo_url"),
-  "public_type_no" = COALESCE($4, "public_type_no")
-WHERE "post_id" = $5
-RETURNING post_id, uid, main_category, post_text, photo_url, location, meal_flag, public_type_no, created_at
+  "expense" = COALESCE($4, "expense"),
+  "public_type_no" = COALESCE($5, "public_type_no")
+WHERE "post_id" = $6
+RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, meal_flag, public_type_no, created_at
 `
 
 type UpdatePostParams struct {
 	MainCategory *string   `json:"main_category"`
 	PostText     *string   `json:"post_text"`
 	PhotoUrl     *string   `json:"photo_url"`
+	Expense      *int64    `json:"expense"`
 	PublicTypeNo *string   `json:"public_type_no"`
 	PostID       uuid.UUID `json:"post_id"`
 }
@@ -401,6 +422,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		arg.MainCategory,
 		arg.PostText,
 		arg.PhotoUrl,
+		arg.Expense,
 		arg.PublicTypeNo,
 		arg.PostID,
 	)
@@ -411,6 +433,7 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		&i.MainCategory,
 		&i.PostText,
 		&i.PhotoUrl,
+		&i.Expense,
 		&i.Location,
 		&i.MealFlag,
 		&i.PublicTypeNo,
