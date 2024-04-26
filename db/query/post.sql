@@ -6,11 +6,10 @@ INSERT INTO "post" (
   "post_text",
   "photo_url",
   "expense",
-  "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8, $9
+  $1, $2, $3, $4, $5, $6, $7, $8
 ) RETURNING *;  
   
 -- name: GetPostById :one

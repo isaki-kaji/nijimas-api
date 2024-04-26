@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-04-23T02:18:37.358Z
+-- Generated at: 2024-04-26T07:19:11.088Z
 
 CREATE TABLE "user" (
   "uid" varchar(255) PRIMARY KEY NOT NULL,
@@ -20,7 +20,6 @@ CREATE TABLE "post" (
   "photo_url" varchar(2000),
   "expense" bigint,
   "location" geometry,
-  "meal_flag" boolean NOT NULL DEFAULT false,
   "public_type_no" char(1) NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -56,14 +55,6 @@ CREATE TABLE "follow_user" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "meal" (
-  "meal_id" bigserial PRIMARY KEY,
-  "post_id" uuid NOT NULL,
-  "uid" varchar(255) NOT NULL,
-  "calorie" bigint NOT NULL DEFAULT 0,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
-);
-
 CREATE INDEX ON "user" ("uid");
 
 CREATE INDEX ON "user" ("username");
@@ -91,7 +82,3 @@ ALTER TABLE "favorite" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
 ALTER TABLE "follow_user" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
 
 ALTER TABLE "follow_user" ADD FOREIGN KEY ("follow_user_id") REFERENCES "user" ("uid");
-
-ALTER TABLE "meal" ADD FOREIGN KEY ("post_id") REFERENCES "post" ("post_id");
-
-ALTER TABLE "meal" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");

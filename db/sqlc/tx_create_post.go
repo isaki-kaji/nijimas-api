@@ -37,7 +37,6 @@ func (r *SQLRepository) CreatePostTx(ctx context.Context, param CreatePostTxPara
 		PostText:     param.PostText,
 		PhotoUrl:     param.PhotoUrl,
 		Expense:      param.Expense,
-		MealFlag:     param.MealFlag,
 		Location:     param.Location,
 		PublicTypeNo: param.PublicTypeNo,
 	}

@@ -29,7 +29,6 @@ Table post as P {
   photo_url varchar(2000)
   expense bigint
   location geometry
-  meal_flag boolean [not null, default: false]
   public_type_no char(1) [not null, note: '1:公開、2:フォロワーにのみ公開、3:非公開']
   created_at timestamptz [not null, default: `now()`]
 
@@ -74,12 +73,5 @@ Table follow_user as FU {
   created_at timestamptz [not null, default: `now()`]
 }
 
-Table meal as M {
-  meal_id bigserial [pk]
-  post_id uuid [ref: > P.post_id, not null]
-  uid varchar(255) [ref: > U.uid, not null]
-  calorie bigint [not null, default: 0]
-  created_at timestamptz [not null, default: `now()`]
-}
 
 

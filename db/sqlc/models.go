@@ -29,14 +29,6 @@ type MainCategory struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
-type Meal struct {
-	MealID    int64     `json:"meal_id"`
-	PostID    uuid.UUID `json:"post_id"`
-	Uid       string    `json:"uid"`
-	Calorie   int64     `json:"calorie"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
 type Post struct {
 	PostID       uuid.UUID   `json:"post_id"`
 	Uid          string      `json:"uid"`
@@ -45,7 +37,6 @@ type Post struct {
 	PhotoUrl     *string     `json:"photo_url"`
 	Expense      *int64      `json:"expense"`
 	Location     interface{} `json:"location"`
-	MealFlag     bool        `json:"meal_flag"`
 	// 1:公開、2:フォロワーにのみ公開、3:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`

@@ -19,12 +19,11 @@ INSERT INTO "post" (
   "post_text",
   "photo_url",
   "expense",
-  "meal_flag",
   "location",
   "public_type_no"
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8, $9
-) RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, meal_flag, public_type_no, created_at
+  $1, $2, $3, $4, $5, $6, $7, $8
+) RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, public_type_no, created_at
 `
 
 type CreatePostParams struct {
@@ -34,7 +33,6 @@ type CreatePostParams struct {
 	PostText     *string     `json:"post_text"`
 	PhotoUrl     *string     `json:"photo_url"`
 	Expense      *int64      `json:"expense"`
-	MealFlag     bool        `json:"meal_flag"`
 	Location     interface{} `json:"location"`
 	PublicTypeNo string      `json:"public_type_no"`
 }
@@ -47,7 +45,6 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.PostText,
 		arg.PhotoUrl,
 		arg.Expense,
-		arg.MealFlag,
 		arg.Location,
 		arg.PublicTypeNo,
 	)
@@ -60,7 +57,6 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		&i.PhotoUrl,
 		&i.Expense,
 		&i.Location,
-		&i.MealFlag,
 		&i.PublicTypeNo,
 		&i.CreatedAt,
 	)
@@ -405,7 +401,7 @@ UPDATE "post" SET
   "expense" = COALESCE($4, "expense"),
   "public_type_no" = COALESCE($5, "public_type_no")
 WHERE "post_id" = $6
-RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, meal_flag, public_type_no, created_at
+RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, public_type_no, created_at
 `
 
 type UpdatePostParams struct {
@@ -435,7 +431,6 @@ func (q *Queries) UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, e
 		&i.PhotoUrl,
 		&i.Expense,
 		&i.Location,
-		&i.MealFlag,
 		&i.PublicTypeNo,
 		&i.CreatedAt,
 	)

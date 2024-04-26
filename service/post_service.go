@@ -33,7 +33,6 @@ func (s *PostService) CreatePost(ctx context.Context, arg domain.CreatePostReque
 		SubCategory2: arg.SubCategory2,
 		Location:     arg.Location,
 		Expense:      util.PointerOrNil(arg.Expense),
-		MealFlag:     arg.MealFlag,
 		PublicTypeNo: arg.PublicTypeNo}
 
 	return s.repository.CreatePostTx(ctx, param)
