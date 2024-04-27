@@ -4,12 +4,15 @@ go 1.21.4
 
 require (
 	github.com/gin-gonic/gin v1.9.1
+	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.18.2
 	go.uber.org/fx v1.21.0
 	google.golang.org/api v0.170.0
 )
+
+require gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 
 require (
 	cloud.google.com/go v0.112.1 // indirect

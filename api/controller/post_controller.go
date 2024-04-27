@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator"
 	"github.com/isaki-kaji/nijimas-api/domain"
 )
 
@@ -19,14 +20,22 @@ func NewPostController(service domain.PostService) *PostController {
 func (p *PostController) Create(ctx *gin.Context) {
 	var req domain.CreatePostRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		// バリデーションエラーの詳細をログに記録
+		if validationErrs, ok := err.(validator.ValidationErrors); ok {
+			for _, vErr := range validationErrs {
+				// 各フィールドのエラーをログに出力
+				slog.Warn("Validation error on field '%s': %s", vErr.Field(), vErr.ActualTag())
+			}
+		}
+		// バリデーションエラーの詳細をクライアントに送信
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		slog.Warn("failed to bind json to CreatePostRequest")
 		return
 	}
+
 	post, err := p.service.CreatePost(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		slog.Warn("failed to create post because of internal server error")
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, post)

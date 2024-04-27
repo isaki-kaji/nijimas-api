@@ -15,7 +15,7 @@ CREATE TABLE "post" (
   "post_text" text,
   "photo_url" varchar(2000),
   "expense" bigint,
-  "location" geometry,
+  "location" varchar(2000),
   "public_type_no" char(1) NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );

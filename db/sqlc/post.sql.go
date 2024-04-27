@@ -27,14 +27,14 @@ INSERT INTO "post" (
 `
 
 type CreatePostParams struct {
-	PostID       uuid.UUID   `json:"post_id"`
-	Uid          string      `json:"uid"`
-	MainCategory string      `json:"main_category"`
-	PostText     *string     `json:"post_text"`
-	PhotoUrl     *string     `json:"photo_url"`
-	Expense      *int64      `json:"expense"`
-	Location     interface{} `json:"location"`
-	PublicTypeNo string      `json:"public_type_no"`
+	PostID       uuid.UUID `json:"post_id"`
+	Uid          string    `json:"uid"`
+	MainCategory string    `json:"main_category"`
+	PostText     *string   `json:"post_text"`
+	PhotoUrl     *string   `json:"photo_url"`
+	Expense      *int64    `json:"expense"`
+	Location     *string   `json:"location"`
+	PublicTypeNo string    `json:"public_type_no"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -84,15 +84,15 @@ WHERE p."post_id" = $1
 `
 
 type GetPostByIdRow struct {
-	Username      string      `json:"username"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      interface{} `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
+	Username      string  `json:"username"`
+	MainCategory  string  `json:"main_category"`
+	SubCategory   *string `json:"sub_category"`
+	SubCategory_2 *string `json:"sub_category_2"`
+	PostText      *string `json:"post_text"`
+	PhotoUrl      *string `json:"photo_url"`
+	Expense       *int64  `json:"expense"`
+	Location      *string `json:"location"`
+	PublicTypeNo  string  `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error) {
@@ -145,16 +145,16 @@ type GetPostsByCategoryParams struct {
 }
 
 type GetPostsByCategoryRow struct {
-	PostID        uuid.UUID   `json:"post_id"`
-	Username      string      `json:"username"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      interface{} `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
+	PostID        uuid.UUID `json:"post_id"`
+	Username      string    `json:"username"`
+	MainCategory  string    `json:"main_category"`
+	SubCategory   *string   `json:"sub_category"`
+	SubCategory_2 *string   `json:"sub_category_2"`
+	PostText      *string   `json:"post_text"`
+	PhotoUrl      *string   `json:"photo_url"`
+	Expense       *int64    `json:"expense"`
+	Location      *string   `json:"location"`
+	PublicTypeNo  string    `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error) {
@@ -213,16 +213,16 @@ LIMIT 50
 `
 
 type GetPostsByFollowingRow struct {
-	PostID        uuid.UUID   `json:"post_id"`
-	Username      string      `json:"username"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      interface{} `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
+	PostID        uuid.UUID `json:"post_id"`
+	Username      string    `json:"username"`
+	MainCategory  string    `json:"main_category"`
+	SubCategory   *string   `json:"sub_category"`
+	SubCategory_2 *string   `json:"sub_category_2"`
+	PostText      *string   `json:"post_text"`
+	PhotoUrl      *string   `json:"photo_url"`
+	Expense       *int64    `json:"expense"`
+	Location      *string   `json:"location"`
+	PublicTypeNo  string    `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error) {
@@ -287,16 +287,16 @@ type GetPostsBySubCategoryParams struct {
 }
 
 type GetPostsBySubCategoryRow struct {
-	PostID        uuid.UUID   `json:"post_id"`
-	Username      string      `json:"username"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      interface{} `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
+	PostID        uuid.UUID `json:"post_id"`
+	Username      string    `json:"username"`
+	MainCategory  string    `json:"main_category"`
+	SubCategory   *string   `json:"sub_category"`
+	SubCategory_2 *string   `json:"sub_category_2"`
+	PostText      *string   `json:"post_text"`
+	PhotoUrl      *string   `json:"photo_url"`
+	Expense       *int64    `json:"expense"`
+	Location      *string   `json:"location"`
+	PublicTypeNo  string    `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error) {
@@ -352,15 +352,15 @@ LIMIT 50
 `
 
 type GetPostsByUserIdRow struct {
-	PostID        uuid.UUID   `json:"post_id"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      interface{} `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
+	PostID        uuid.UUID `json:"post_id"`
+	MainCategory  string    `json:"main_category"`
+	SubCategory   *string   `json:"sub_category"`
+	SubCategory_2 *string   `json:"sub_category_2"`
+	PostText      *string   `json:"post_text"`
+	PhotoUrl      *string   `json:"photo_url"`
+	Expense       *int64    `json:"expense"`
+	Location      *string   `json:"location"`
+	PublicTypeNo  string    `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostsByUserId(ctx context.Context, uid string) ([]GetPostsByUserIdRow, error) {

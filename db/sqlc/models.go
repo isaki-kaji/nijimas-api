@@ -30,13 +30,13 @@ type MainCategory struct {
 }
 
 type Post struct {
-	PostID       uuid.UUID   `json:"post_id"`
-	Uid          string      `json:"uid"`
-	MainCategory string      `json:"main_category"`
-	PostText     *string     `json:"post_text"`
-	PhotoUrl     *string     `json:"photo_url"`
-	Expense      *int64      `json:"expense"`
-	Location     interface{} `json:"location"`
+	PostID       uuid.UUID `json:"post_id"`
+	Uid          string    `json:"uid"`
+	MainCategory string    `json:"main_category"`
+	PostText     *string   `json:"post_text"`
+	PhotoUrl     *string   `json:"photo_url"`
+	Expense      *int64    `json:"expense"`
+	Location     *string   `json:"location"`
 	// 1:公開、2:フォロワーにのみ公開、3:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`

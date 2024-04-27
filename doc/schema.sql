@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-04-26T07:19:11.088Z
+-- Generated at: 2024-04-26T08:05:04.533Z
 
 CREATE TABLE "user" (
   "uid" varchar(255) PRIMARY KEY NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE "post" (
   "post_text" text,
   "photo_url" varchar(2000),
   "expense" bigint,
-  "location" geometry,
+  "location" varchar(2000),
   "public_type_no" char(1) NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
