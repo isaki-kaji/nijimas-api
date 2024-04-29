@@ -21,6 +21,7 @@ func (p *PostController) Create(ctx *gin.Context) {
 	var req domain.CreatePostRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// バリデーションエラーの詳細をログに記録
+		//型アサーションを使って、エラーがバリデーションエラーかどうかを判定
 		if validationErrs, ok := err.(validator.ValidationErrors); ok {
 			for _, vErr := range validationErrs {
 				// 各フィールドのエラーをログに出力
