@@ -33,3 +33,18 @@ func createRandomUser(t *testing.T) User {
 func TestCreateUser(t *testing.T) {
 	createRandomUser(t)
 }
+
+func TestGetUser(t *testing.T) {
+	user1 := createRandomUser(t)
+	user2, err := testRepository.GetUser(context.Background(), user1.Uid)
+	require.NoError(t, err)
+	require.NotEmpty(t, user2)
+
+	require.Equal(t, user1.Uid, user2.Uid)
+	require.Equal(t, user1.Username, user2.Username)
+	require.Equal(t, user1.CountryCode, user2.CountryCode)
+	require.Equal(t, user1.SelfIntro, user2.SelfIntro)
+	require.Equal(t, user1.ProfileImageUrl, user2.ProfileImageUrl)
+	require.Equal(t, user1.BannerImageUrl, user2.BannerImageUrl)
+	require.Equal(t, user1.CreatedAt, user2.CreatedAt)
+}

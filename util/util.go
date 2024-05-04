@@ -32,3 +32,13 @@ func RandomCountryCode() *string {
 	countryCodes := []string{"JP", "US", "GB", "CA", "FR", "DE", "IT", "ES", "AU", "BR", "RU", "KR", "CN", "IN", "ID", "MX", "NL", "SA", "SE", "TR"}
 	return &countryCodes[rand.Intn(len(countryCodes))]
 }
+
+func RandomMainCategory() string {
+	mainCategories := []string{"食事", "趣味", "ファッション", "雑貨", "日用品", "旅行", "交際費", "交通費", "その他"}
+	return mainCategories[rand.Intn(len(mainCategories))]
+}
+
+func RandomPublicTypeNo() string {
+	publicTypeNos := []string{"1", "2", "3"}
+	return publicTypeNos[rand.Intn(len(publicTypeNos))]
+}
