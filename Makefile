@@ -33,5 +33,8 @@ sqlc:
 server:
 	go run main.go
 
+mockdb:
+	mockgen -package mockdb  -destination db/mock/repository.go  github.com/isaki-kaji/nijimas-api/db/sqlc Repository
+
 
 .PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres server

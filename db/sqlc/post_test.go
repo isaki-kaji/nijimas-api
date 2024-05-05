@@ -16,10 +16,10 @@ func createRandomPost(t *testing.T) Post {
 		PostID:       uuid.New(),
 		Uid:          user.Uid,
 		MainCategory: util.RandomMainCategory(),
-		PostText:     util.PointerOrNil(util.RandomString(100)),
-		PhotoUrl:     util.PointerOrNil(util.RandomString(100)),
-		Expense:      util.PointerOrNil(rand.Int63n(10000)),
-		Location:     util.PointerOrNil(util.RandomString(20)),
+		PostText:     util.ToPointerOrNil(util.RandomString(100)),
+		PhotoUrl:     util.ToPointerOrNil(util.RandomString(100)),
+		Expense:      util.ToPointerOrNil(rand.Int63n(10000)),
+		Location:     util.ToPointerOrNil(util.RandomString(20)),
 		PublicTypeNo: util.RandomPublicTypeNo(),
 	}
 

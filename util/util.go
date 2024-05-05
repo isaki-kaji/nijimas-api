@@ -5,12 +5,19 @@ import (
 	"strings"
 )
 
-func PointerOrNil[T comparable](value T) *T {
+func ToPointerOrNil[T comparable](value T) *T {
 	var zero T
 	if value == zero {
 		return nil
 	}
 	return &value
+}
+
+func StringPointerToString(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
 }
 
 func RandomString(n int) string {

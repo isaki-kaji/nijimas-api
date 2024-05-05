@@ -29,7 +29,7 @@ func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserReque
 	param := db.CreateUserParams{
 		Uid:         arg.Uid,
 		Username:    arg.Username,
-		CountryCode: util.PointerOrNil(arg.CountryCode),
+		CountryCode: util.ToPointerOrNil(arg.CountryCode),
 	}
 	newUser, err := s.repository.CreateUser(ctx, param)
 	if err != nil {
