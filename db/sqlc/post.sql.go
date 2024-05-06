@@ -64,7 +64,8 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 }
 
 const getPostById = `-- name: GetPostById :one
-SELECT 
+SELECT
+  p."post_id",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -84,21 +85,23 @@ WHERE p."post_id" = $1
 `
 
 type GetPostByIdRow struct {
-	Username      string  `json:"username"`
-	MainCategory  string  `json:"main_category"`
-	SubCategory   *string `json:"sub_category"`
-	SubCategory_2 *string `json:"sub_category_2"`
-	PostText      *string `json:"post_text"`
-	PhotoUrl      *string `json:"photo_url"`
-	Expense       *int64  `json:"expense"`
-	Location      *string `json:"location"`
-	PublicTypeNo  string  `json:"public_type_no"`
+	PostID        uuid.UUID `json:"post_id"`
+	Username      string    `json:"username"`
+	MainCategory  string    `json:"main_category"`
+	SubCategory   *string   `json:"sub_category"`
+	SubCategory_2 *string   `json:"sub_category_2"`
+	PostText      *string   `json:"post_text"`
+	PhotoUrl      *string   `json:"photo_url"`
+	Expense       *int64    `json:"expense"`
+	Location      *string   `json:"location"`
+	PublicTypeNo  string    `json:"public_type_no"`
 }
 
 func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error) {
 	row := q.db.QueryRow(ctx, getPostById, postID)
 	var i GetPostByIdRow
 	err := row.Scan(
+		&i.PostID,
 		&i.Username,
 		&i.MainCategory,
 		&i.SubCategory,
@@ -330,7 +333,7 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 	return items, nil
 }
 
-const getPostsByUserId = `-- name: GetPostsByUserId :many
+const getPostsByUid = `-- name: GetPostsByUid :many
 SELECT
   p."post_id",
   p."main_category",
@@ -351,7 +354,7 @@ ORDER BY p."created_at" DESC
 LIMIT 50
 `
 
-type GetPostsByUserIdRow struct {
+type GetPostsByUidRow struct {
 	PostID        uuid.UUID `json:"post_id"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
@@ -363,15 +366,15 @@ type GetPostsByUserIdRow struct {
 	PublicTypeNo  string    `json:"public_type_no"`
 }
 
-func (q *Queries) GetPostsByUserId(ctx context.Context, uid string) ([]GetPostsByUserIdRow, error) {
-	rows, err := q.db.Query(ctx, getPostsByUserId, uid)
+func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUidRow, error) {
+	rows, err := q.db.Query(ctx, getPostsByUid, uid)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []GetPostsByUserIdRow{}
+	items := []GetPostsByUidRow{}
 	for rows.Next() {
-		var i GetPostsByUserIdRow
+		var i GetPostsByUidRow
 		if err := rows.Scan(
 			&i.PostID,
 			&i.MainCategory,

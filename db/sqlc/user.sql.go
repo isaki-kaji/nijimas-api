@@ -95,26 +95,6 @@ func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 	return i, err
 }
 
-const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at FROM "user"
-WHERE "username" = $1
-`
-
-func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
-	row := q.db.QueryRow(ctx, getUserByUsername, username)
-	var i User
-	err := row.Scan(
-		&i.Uid,
-		&i.Username,
-		&i.SelfIntro,
-		&i.ProfileImageUrl,
-		&i.BannerImageUrl,
-		&i.CountryCode,
-		&i.CreatedAt,
-	)
-	return i, err
-}
-
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user" SET
   "username" = COALESCE($1, "username"),

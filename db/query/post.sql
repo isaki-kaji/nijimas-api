@@ -13,7 +13,8 @@ INSERT INTO "post" (
 ) RETURNING *;  
   
 -- name: GetPostById :one
-SELECT 
+SELECT
+  p."post_id",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -31,7 +32,7 @@ LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
 WHERE p."post_id" = $1;
   
--- name: GetPostsByUserId :many
+-- name: GetPostsByUid :many
 SELECT
   p."post_id",
   p."main_category",

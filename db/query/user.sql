@@ -11,10 +11,6 @@ INSERT INTO "user" (
 SELECT * FROM "user"
 WHERE "uid" = $1;
 
--- name: GetUserByUsername :one
-SELECT * FROM "user"
-WHERE "username" = $1;
-
 -- name: UpdateUser :one
 UPDATE "user" SET
   "username" = COALESCE(sqlc.narg(username), "username"),

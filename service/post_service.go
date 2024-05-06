@@ -27,12 +27,12 @@ func (s *PostService) CreatePost(ctx context.Context, arg domain.CreatePostReque
 		PostID:       uuid,
 		Uid:          arg.Uid,
 		MainCategory: arg.MainCategory,
-		PostText:     util.PointerOrNil(arg.PostText),
-		PhotoUrl:     util.PointerOrNil(arg.PhotoUrl),
+		PostText:     util.ToPointerOrNil(arg.PostText),
+		PhotoUrl:     util.ToPointerOrNil(arg.PhotoUrl),
 		SubCategory1: arg.SubCategory1,
 		SubCategory2: arg.SubCategory2,
-		Location:     util.PointerOrNil(arg.Location),
-		Expense:      util.PointerOrNil(arg.Expense),
+		Location:     util.ToPointerOrNil(arg.Location),
+		Expense:      util.ToPointerOrNil(arg.Expense),
 		PublicTypeNo: arg.PublicTypeNo}
 
 	return s.repository.CreatePostTx(ctx, param)
