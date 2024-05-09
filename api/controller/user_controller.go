@@ -30,7 +30,6 @@ func (u *UserController) Create(ctx *gin.Context) {
 	if err != nil {
 		if err.Error() == util.UserAlreadyExists {
 			ctx.JSON(http.StatusConflict, errorResponse(err))
-			fmt.Print(err)
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
