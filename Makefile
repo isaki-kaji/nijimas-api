@@ -36,5 +36,11 @@ server:
 mockdb:
 	mockgen -package mockdb  -destination db/mock/repository.go  github.com/isaki-kaji/nijimas-api/db/sqlc Repository
 
+mockuserservice:
+	mockgen -package mockservice  -destination service/mock/user_service.go  github.com/isaki-kaji/nijimas-api/domain UserService
+
+mockpostservice:
+	mockgen -package mockservice  -destination service/mock/post_service.go  github.com/isaki-kaji/nijimas-api/domain PostService
+
 
 .PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres server

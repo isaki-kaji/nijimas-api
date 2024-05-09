@@ -15,7 +15,7 @@ import (
 )
 
 func TestCreateUser(t *testing.T) {
-	testUser := randomUser()
+	testUser := randomNewUser()
 
 	testCases := []struct {
 		name       string
@@ -51,7 +51,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: User already exists",
+			name: "User already exists",
 			body: domain.CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
@@ -71,7 +71,7 @@ func TestCreateUser(t *testing.T) {
 				require.EqualError(t, err, util.UserAlreadyExists)
 			},
 		}, {
-			name: "NG: Get user error",
+			name: "Get user error",
 			body: domain.CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
@@ -91,7 +91,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: Create user error",
+			name: "Create user error",
 			body: domain.CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
@@ -129,7 +129,7 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-	testUser := randomUser()
+	testUser := randomNewUser()
 
 	testCases := []struct {
 		name       string
@@ -154,7 +154,7 @@ func TestGetUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: User not found",
+			name: "User not found",
 			uid:  testUser.Uid,
 			buildStubs: func(repository *mockdb.MockRepository) {
 				repository.EXPECT().
@@ -168,7 +168,7 @@ func TestGetUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: Other error",
+			name: "Other error",
 			uid:  testUser.Uid,
 			buildStubs: func(repository *mockdb.MockRepository) {
 				repository.EXPECT().
@@ -197,7 +197,7 @@ func TestGetUser(t *testing.T) {
 	}
 }
 
-func randomUser() (user db.User) {
+func randomNewUser() (user db.User) {
 	user = db.User{
 		Uid:         util.RandomUid(),
 		Username:    util.RandomString(5),
