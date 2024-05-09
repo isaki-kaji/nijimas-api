@@ -15,6 +15,7 @@ import (
 	"github.com/isaki-kaji/nijimas-api/domain"
 	mockservice "github.com/isaki-kaji/nijimas-api/service/mock"
 	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
 )
 
@@ -42,19 +43,6 @@ func TestCreateUser(t *testing.T) {
 			},
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusCreated, recorder.Code)
-			}}, {
-			name: "NG: BadRequest(uid required)",
-			body: gin.H{
-				"username":     testUser.Username,
-				"country_code": testUser.CountryCode,
-			},
-			buildStubs: func(service *mockservice.MockUserService) {
-				service.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			check: func(recorder *httptest.ResponseRecorder) {
-				require.Equal(t, http.StatusBadRequest, recorder.Code)
 			},
 		},
 		{
@@ -71,8 +59,9 @@ func TestCreateUser(t *testing.T) {
 			},
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusCreated, recorder.Code)
-			}}, {
-			name: "NG: BadRequest(uid required)",
+			}},
+		{
+			name: "BadRequest(uid required)",
 			body: gin.H{
 				"username":     testUser.Username,
 				"country_code": testUser.CountryCode,
@@ -87,7 +76,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: BadRequest(username required)",
+			name: "BadRequest(username required)",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"country_code": testUser.CountryCode,
@@ -102,7 +91,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: BadRequest(username character limit exceeded)",
+			name: "BadRequest(username character limit exceeded)",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"username":     util.RandomString(15),
@@ -118,7 +107,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "NG: BadRequest(country_code must be 2 characters)",
+			name: "BadRequest(country_code must be 2 characters)",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"username":     testUser.Username,
@@ -132,8 +121,9 @@ func TestCreateUser(t *testing.T) {
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusBadRequest, recorder.Code)
 			},
-		}, {
-			name: "NG: Conflict(user already exists)",
+		},
+		{
+			name: "Conflict(user already exists)",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"username":     testUser.Username,
@@ -148,8 +138,9 @@ func TestCreateUser(t *testing.T) {
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusConflict, recorder.Code)
 			},
-		}, {
-			name: "NG: Conflict(other error)",
+		},
+		{
+			name: "InternalServerError(other error)",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"username":     testUser.Username,
@@ -188,6 +179,77 @@ func TestCreateUser(t *testing.T) {
 			tc.check(recorder)
 		})
 
+	}
+}
+
+func TestGetUser(t *testing.T) {
+	testUser := randomNewUser()
+
+	testCases := []struct {
+		name       string
+		uid        string
+		buildStubs func(service *mockservice.MockUserService)
+		check      func(recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "OK",
+			uid:  testUser.Uid,
+			buildStubs: func(service *mockservice.MockUserService) {
+				service.EXPECT().
+					GetUser(gomock.Any(), testUser.Uid).
+					Times(1).
+					Return(testUser, nil)
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+			},
+		},
+		{
+			name: "NotFound",
+			uid:  testUser.Uid,
+			buildStubs: func(service *mockservice.MockUserService) {
+				service.EXPECT().
+					GetUser(gomock.Any(), testUser.Uid).
+					Times(1).
+					Return(db.User{}, pgx.ErrNoRows)
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
+			name: "InternalServerError(other error)",
+			uid:  testUser.Uid,
+			buildStubs: func(service *mockservice.MockUserService) {
+				service.EXPECT().
+					GetUser(gomock.Any(), testUser.Uid).
+					Times(1).
+					Return(db.User{}, errors.New("other error"))
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		}}
+
+	for i := range testCases {
+		tc := testCases[i]
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			service := mockservice.NewMockUserService(ctrl)
+			tc.buildStubs(service)
+
+			server := NewTestUserServer(t, service)
+			recorder := httptest.NewRecorder()
+
+			url := "/users/" + tc.uid
+			req, err := http.NewRequest(http.MethodGet, url, nil)
+			require.NoError(t, err)
+
+			server.router.ServeHTTP(recorder, req)
+			tc.check(recorder)
+		})
 	}
 }
 
