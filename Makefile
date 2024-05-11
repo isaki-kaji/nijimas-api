@@ -33,6 +33,9 @@ sqlc:
 server:
 	go run main.go
 
+test:
+	go test -v -cover -short ./...
+
 mockdb:
 	mockgen -package mockdb  -destination db/mock/repository.go  github.com/isaki-kaji/nijimas-api/db/sqlc Repository
 
@@ -43,4 +46,4 @@ mockpostservice:
 	mockgen -package mockservice  -destination service/mock/post_service.go  github.com/isaki-kaji/nijimas-api/domain PostService
 
 
-.PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres server
+.PHONY: db_docs db_schema createdb dropdb migrateup migrateup1 migratedown migratedown1 sqlc postgres server test mockdb mockuserservice mockpostservice
