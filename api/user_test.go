@@ -91,7 +91,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "BadRequest(username character limit exceeded)",
+			name: "BadRequest(username too )",
 			body: gin.H{
 				"uid":          testUser.Uid,
 				"username":     util.RandomString(15),
@@ -268,7 +268,7 @@ func NewTestUserServer(t *testing.T, userService domain.UserService) *Server {
 		t.Fatalf("Failed to load config: %v", err)
 	}
 	userController := NewTestUserController(userService)
-	testRouter := NewTestRouter(userController)
+	testRouter := NewTestUserRouter(userController)
 	server, err := NewServer(config, testRouter)
 	if err != nil {
 		t.Fatalf("Failed to create server: %v", err)
@@ -276,7 +276,7 @@ func NewTestUserServer(t *testing.T, userService domain.UserService) *Server {
 	return server
 }
 
-func NewTestRouter(userController *controller.UserController) *gin.Engine {
+func NewTestUserRouter(userController *controller.UserController) *gin.Engine {
 	router := gin.Default()
 
 	router.POST("/users", userController.Create)

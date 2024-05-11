@@ -17,7 +17,6 @@ type CreatePostTxParam struct {
 	PostText     *string
 	PhotoUrl     *string
 	Expense      *int64
-	MealFlag     bool
 	Location     *string
 	PublicTypeNo string
 }
