@@ -6,19 +6,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
-	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/service"
 )
 
 type PostController struct {
-	service domain.PostService
+	service service.PostService
 }
 
-func NewPostController(service domain.PostService) *PostController {
+func NewPostController(service service.PostService) *PostController {
 	return &PostController{service: service}
 }
 
 func (p *PostController) Create(ctx *gin.Context) {
-	var req domain.CreatePostRequest
+	var req service.CreatePostRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// バリデーションエラーの詳細をログに記録
 		//型アサーションを使って、エラーがバリデーションエラーかどうかを判定

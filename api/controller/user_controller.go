@@ -6,21 +6,21 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/service"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
 )
 
 type UserController struct {
-	service domain.UserService
+	service service.UserService
 }
 
-func NewUserController(service domain.UserService) *UserController {
+func NewUserController(service service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
 func (u *UserController) Create(ctx *gin.Context) {
-	var req domain.CreateUserRequest
+	var req service.CreateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		fmt.Print(err)

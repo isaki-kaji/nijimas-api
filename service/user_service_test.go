@@ -8,7 +8,6 @@ import (
 	"github.com/golang/mock/gomock"
 	mockdb "github.com/isaki-kaji/nijimas-api/db/mock"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/domain"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/require"
@@ -19,13 +18,13 @@ func TestCreateUser(t *testing.T) {
 
 	testCases := []struct {
 		name       string
-		body       domain.CreateUserRequest
+		body       CreateUserRequest
 		buildStubs func(repository *mockdb.MockRepository)
 		check      func(t *testing.T, user db.User, err error)
 	}{
 		{
 			name: "OK",
-			body: domain.CreateUserRequest{
+			body: CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
 				CountryCode: util.StringPointerToString(testUser.CountryCode),
@@ -52,7 +51,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name: "User already exists",
-			body: domain.CreateUserRequest{
+			body: CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
 				CountryCode: util.StringPointerToString(testUser.CountryCode),
@@ -72,7 +71,7 @@ func TestCreateUser(t *testing.T) {
 			},
 		}, {
 			name: "Get user error",
-			body: domain.CreateUserRequest{
+			body: CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
 				CountryCode: util.StringPointerToString(testUser.CountryCode),
@@ -92,7 +91,7 @@ func TestCreateUser(t *testing.T) {
 		},
 		{
 			name: "Create user error",
-			body: domain.CreateUserRequest{
+			body: CreateUserRequest{
 				Uid:         testUser.Uid,
 				Username:    testUser.Username,
 				CountryCode: util.StringPointerToString(testUser.CountryCode),

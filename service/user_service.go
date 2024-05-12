@@ -5,20 +5,30 @@ import (
 	"errors"
 
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/domain"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
 )
 
-type UserService struct {
+type UserService interface {
+	CreateUser(ctx context.Context, arg CreateUserRequest) (db.User, error)
+	GetUser(ctx context.Context, uid string) (db.User, error)
+}
+
+func NewUserService(repository db.Repository) UserService {
+	return &UserServiceImpl{repository: repository}
+}
+
+type UserServiceImpl struct {
 	repository db.Repository
 }
 
-func NewUserService(repository db.Repository) domain.UserService {
-	return &UserService{repository: repository}
+type CreateUserRequest struct {
+	Uid         string `json:"uid" binding:"required"`
+	Username    string `json:"username" binding:"required,max=14,min=2"`
+	CountryCode string `json:"country_code" binding:"omitempty,len=2"`
 }
 
-func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserRequest) (db.User, error) {
+func (s *UserServiceImpl) CreateUser(ctx context.Context, arg CreateUserRequest) (db.User, error) {
 	_, err := s.repository.GetUser(ctx, arg.Uid)
 	if err == nil {
 		return db.User{}, errors.New(util.UserAlreadyExists)
@@ -38,7 +48,7 @@ func (s *UserService) CreateUser(ctx context.Context, arg domain.CreateUserReque
 	return newUser, nil
 }
 
-func (s *UserService) GetUser(ctx context.Context, uid string) (db.User, error) {
+func (s *UserServiceImpl) GetUser(ctx context.Context, uid string) (db.User, error) {
 	user, err := s.repository.GetUser(ctx, uid)
 	if err != nil {
 		return db.User{}, err

@@ -12,7 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/isaki-kaji/nijimas-api/api/controller"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/service"
 	mockservice "github.com/isaki-kaji/nijimas-api/service/mock"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
@@ -262,7 +262,7 @@ func randomNewUser() (user db.User) {
 	return
 }
 
-func NewTestUserServer(t *testing.T, userService domain.UserService) *Server {
+func NewTestUserServer(t *testing.T, userService service.UserService) *Server {
 	config, err := util.LoadConfig("..")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
@@ -285,6 +285,6 @@ func NewTestUserRouter(userController *controller.UserController) *gin.Engine {
 	return router
 }
 
-func NewTestUserController(userService domain.UserService) *controller.UserController {
+func NewTestUserController(userService service.UserService) *controller.UserController {
 	return controller.NewUserController(userService)
 }
