@@ -14,7 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/isaki-kaji/nijimas-api/api/controller"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/domain"
+	"github.com/isaki-kaji/nijimas-api/service"
 	mockservice "github.com/isaki-kaji/nijimas-api/service/mock"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/stretchr/testify/require"
@@ -227,7 +227,7 @@ func randomNewPost() (post db.Post) {
 	return
 }
 
-func NewTestPostServer(t *testing.T, postService domain.PostService) *Server {
+func NewTestPostServer(t *testing.T, postService service.PostService) *Server {
 	config, err := util.LoadConfig("..")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
@@ -249,6 +249,6 @@ func NewTestPostRouter(postController *controller.PostController) *gin.Engine {
 	return router
 }
 
-func NewTestPostController(postService domain.PostService) *controller.PostController {
+func NewTestPostController(postService service.PostService) *controller.PostController {
 	return controller.NewPostController(postService)
 }
