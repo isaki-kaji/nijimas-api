@@ -244,7 +244,7 @@ func NewTestPostServer(t *testing.T, postService service.PostService) *Server {
 func NewTestPostRouter(postController *controller.PostController) *gin.Engine {
 	router := gin.Default()
 
-	router.POST("/posts", postController.Create)
+	router.POST("/posts", postController.CreatePost)
 
 	return router
 }
