@@ -10,8 +10,8 @@ import (
 )
 
 // LoadFirebaseApp initializes and returns a Firebase App instance
-func LoadFirebaseApp() (*firebase.App, error) {
-	opt := option.WithCredentialsFile("/Users/masaki_okajima/work-space/nijimas-2832c-firebase-adminsdk-84hen-a695c236b0.json")
+func LoadFirebaseApp(config *Config) (*firebase.App, error) {
+	opt := option.WithCredentialsFile(config.FirebaseCredentialPath)
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
 		log.Fatalf("error initializing firebase app: %v", err)
