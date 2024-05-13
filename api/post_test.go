@@ -211,6 +211,94 @@ func TestCreatePost(t *testing.T) {
 	}
 }
 
+func TestGetPostsByUid(t *testing.T) {
+	testUid := util.RandomUid()
+	testPosts := randomNewFullPosts()
+	testCases := []struct {
+		name       string
+		uid        string
+		buildStubs func(service *mockservice.MockPostService)
+		check      func(recorder *httptest.ResponseRecorder)
+	}{
+		{
+			name: "OK",
+			uid:  testUid,
+			buildStubs: func(service *mockservice.MockPostService) {
+				service.EXPECT().
+					GetPostsByUid(gomock.Any(), testUid).
+					Times(1).
+					Return(testPosts, nil)
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+
+				var posts []db.GetPostsByUidRow
+				err := json.NewDecoder(recorder.Body).Decode(&posts)
+				require.NoError(t, err)
+
+				require.Len(t, posts, len(testPosts))
+				for i, post := range posts {
+					require.Equal(t, testPosts[i].PostID, post.PostID)
+					require.Equal(t, testPosts[i].MainCategory, post.MainCategory)
+					require.Equal(t, testPosts[i].SubCategory, post.SubCategory)
+					require.Equal(t, testPosts[i].SubCategory_2, post.SubCategory_2)
+					require.Equal(t, testPosts[i].PostText, post.PostText)
+					require.Equal(t, testPosts[i].PhotoUrl, post.PhotoUrl)
+					require.Equal(t, testPosts[i].Expense, post.Expense)
+					require.Equal(t, testPosts[i].Location, post.Location)
+					require.Equal(t, testPosts[i].PublicTypeNo, post.PublicTypeNo)
+				}
+			},
+		},
+		{
+			name: "OK: no posts",
+			uid:  testUid,
+			buildStubs: func(service *mockservice.MockPostService) {
+				service.EXPECT().
+					GetPostsByUid(gomock.Any(), testUid).
+					Times(1).
+					Return([]db.GetPostsByUidRow{}, nil)
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusOK, recorder.Code)
+				require.Equal(t, "[]", recorder.Body.String())
+			},
+		},
+		{
+			name: "InternalServerError(other error)",
+			uid:  testUid,
+			buildStubs: func(service *mockservice.MockPostService) {
+				service.EXPECT().
+					GetPostsByUid(gomock.Any(), testUid).
+					Times(1).
+					Return(nil, errors.New("other error"))
+			},
+			check: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		}}
+	for i := range testCases {
+		tc := testCases[i]
+		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			postService := mockservice.NewMockPostService(ctrl)
+			tc.buildStubs(postService)
+
+			server := NewTestPostServer(t, postService)
+			recorder := httptest.NewRecorder()
+
+			url := "/posts?uid=" + testUid
+			req, err := http.NewRequest(http.MethodGet, url, nil)
+			require.NoError(t, err)
+
+			server.router.ServeHTTP(recorder, req)
+			tc.check(recorder)
+		})
+	}
+}
+
 func randomNewPost() (post db.Post) {
 	uuid := uuid.New()
 
@@ -223,6 +311,26 @@ func randomNewPost() (post db.Post) {
 		Expense:      util.ToPointerOrNil(rand.Int63n(100000)),
 		Location:     util.ToPointerOrNil(util.RandomString(20)),
 		PublicTypeNo: util.RandomPublicTypeNo(),
+	}
+	return
+}
+
+func randomNewFullPosts() (posts []db.GetPostsByUidRow) {
+	n := 5
+	for i := 0; i < n; i++ {
+		post := db.GetPostsByUidRow{
+			PostID:        uuid.New(),
+			Username:      util.RandomString(10),
+			MainCategory:  util.RandomMainCategory(),
+			SubCategory:   util.ToPointerOrNil(util.RandomString(10)),
+			SubCategory_2: util.ToPointerOrNil(util.RandomString(10)),
+			PostText:      util.ToPointerOrNil(util.RandomString(50)),
+			PhotoUrl:      util.ToPointerOrNil(util.RandomString(100)),
+			Expense:       util.ToPointerOrNil(rand.Int63n(100000)),
+			Location:      util.ToPointerOrNil(util.RandomString(20)),
+			PublicTypeNo:  util.RandomPublicTypeNo(),
+		}
+		posts = append(posts, post)
 	}
 	return
 }
@@ -245,6 +353,7 @@ func NewTestPostRouter(postController *controller.PostController) *gin.Engine {
 	router := gin.Default()
 
 	router.POST("/posts", postController.CreatePost)
+	router.GET("/posts", postController.GetPostsByUid)
 
 	return router
 }

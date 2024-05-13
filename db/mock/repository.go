@@ -186,6 +186,36 @@ func (mr *MockRepositoryMockRecorder) GetPostById(arg0, arg1 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostById", reflect.TypeOf((*MockRepository)(nil).GetPostById), arg0, arg1)
 }
 
+// GetPostSubCategory1ByPostId mocks base method.
+func (m *MockRepository) GetPostSubCategory1ByPostId(arg0 context.Context, arg1 uuid.UUID) (db.PostSubcategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPostSubCategory1ByPostId", arg0, arg1)
+	ret0, _ := ret[0].(db.PostSubcategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPostSubCategory1ByPostId indicates an expected call of GetPostSubCategory1ByPostId.
+func (mr *MockRepositoryMockRecorder) GetPostSubCategory1ByPostId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostSubCategory1ByPostId", reflect.TypeOf((*MockRepository)(nil).GetPostSubCategory1ByPostId), arg0, arg1)
+}
+
+// GetPostSubCategory2ByPostId mocks base method.
+func (m *MockRepository) GetPostSubCategory2ByPostId(arg0 context.Context, arg1 uuid.UUID) (db.PostSubcategory, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPostSubCategory2ByPostId", arg0, arg1)
+	ret0, _ := ret[0].(db.PostSubcategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPostSubCategory2ByPostId indicates an expected call of GetPostSubCategory2ByPostId.
+func (mr *MockRepositoryMockRecorder) GetPostSubCategory2ByPostId(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostSubCategory2ByPostId", reflect.TypeOf((*MockRepository)(nil).GetPostSubCategory2ByPostId), arg0, arg1)
+}
+
 // GetPostSubCategoryByPostId mocks base method.
 func (m *MockRepository) GetPostSubCategoryByPostId(arg0 context.Context, arg1 uuid.UUID) ([]db.PostSubcategory, error) {
 	m.ctrl.T.Helper()

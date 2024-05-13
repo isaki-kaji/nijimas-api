@@ -20,6 +20,8 @@ type Querier interface {
 	GetMainCategories(ctx context.Context) ([]MainCategory, error)
 	GetMainCategory(ctx context.Context, categoryName string) (MainCategory, error)
 	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
+	GetPostSubCategory1ByPostId(ctx context.Context, postID uuid.UUID) (PostSubcategory, error)
+	GetPostSubCategory2ByPostId(ctx context.Context, postID uuid.UUID) (PostSubcategory, error)
 	GetPostSubCategoryByPostId(ctx context.Context, postID uuid.UUID) ([]PostSubcategory, error)
 	GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error)
 	GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error)

@@ -336,6 +336,8 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 const getPostsByUid = `-- name: GetPostsByUid :many
 SELECT
   p."post_id",
+  u."uid",
+  u."username",
   p."main_category",
   ps1."sub_category",
   ps2."sub_category",
@@ -345,6 +347,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
@@ -356,6 +359,8 @@ LIMIT 50
 
 type GetPostsByUidRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
+	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
 	SubCategory_2 *string   `json:"sub_category_2"`
@@ -377,6 +382,8 @@ func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUi
 		var i GetPostsByUidRow
 		if err := rows.Scan(
 			&i.PostID,
+			&i.Uid,
+			&i.Username,
 			&i.MainCategory,
 			&i.SubCategory,
 			&i.SubCategory_2,

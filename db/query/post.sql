@@ -35,6 +35,8 @@ WHERE p."post_id" = $1;
 -- name: GetPostsByUid :many
 SELECT
   p."post_id",
+  u."uid",
+  u."username",
   p."main_category",
   ps1."sub_category",
   ps2."sub_category",
@@ -44,6 +46,7 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
