@@ -17,7 +17,7 @@ func NewPostController(service service.PostService) *PostController {
 	return &PostController{service: service}
 }
 
-func (p *PostController) Create(ctx *gin.Context) {
+func (p *PostController) CreatePost(ctx *gin.Context) {
 	var req service.CreatePostRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		// バリデーションエラーの詳細をログに記録
@@ -40,4 +40,15 @@ func (p *PostController) Create(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusCreated, post)
+}
+
+func (p *PostController) GetPostsByUid(ctx *gin.Context) {
+	uid := ctx.Query("uid")
+	posts, err := p.service.GetPostsByUid(ctx, uid)
+	if err != nil {
+		slog.Warn("failed to get posts because of internal server error")
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, posts)
 }

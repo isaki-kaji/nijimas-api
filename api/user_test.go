@@ -279,8 +279,8 @@ func NewTestUserServer(t *testing.T, userService service.UserService) *Server {
 func NewTestUserRouter(userController *controller.UserController) *gin.Engine {
 	router := gin.Default()
 
-	router.POST("/users", userController.Create)
-	router.GET("/users/:id", userController.Get)
+	router.POST("/users", userController.CreatePost)
+	router.GET("/users/:id", userController.GetUserById)
 
 	return router
 }

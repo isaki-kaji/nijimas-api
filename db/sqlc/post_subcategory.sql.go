@@ -39,6 +39,40 @@ func (q *Queries) CreatePostSubCategory(ctx context.Context, arg CreatePostSubCa
 	return i, err
 }
 
+const getPostSubCategory1ByPostId = `-- name: GetPostSubCategory1ByPostId :one
+SELECT post_subcategory_id, post_id, subcategory_no, sub_category FROM "post_subcategory"
+WHERE "post_id" = $1 AND "subcategory_no" = '1'
+`
+
+func (q *Queries) GetPostSubCategory1ByPostId(ctx context.Context, postID uuid.UUID) (PostSubcategory, error) {
+	row := q.db.QueryRow(ctx, getPostSubCategory1ByPostId, postID)
+	var i PostSubcategory
+	err := row.Scan(
+		&i.PostSubcategoryID,
+		&i.PostID,
+		&i.SubcategoryNo,
+		&i.SubCategory,
+	)
+	return i, err
+}
+
+const getPostSubCategory2ByPostId = `-- name: GetPostSubCategory2ByPostId :one
+SELECT post_subcategory_id, post_id, subcategory_no, sub_category FROM "post_subcategory"
+WHERE "post_id" = $1 AND "subcategory_no" = '2'
+`
+
+func (q *Queries) GetPostSubCategory2ByPostId(ctx context.Context, postID uuid.UUID) (PostSubcategory, error) {
+	row := q.db.QueryRow(ctx, getPostSubCategory2ByPostId, postID)
+	var i PostSubcategory
+	err := row.Scan(
+		&i.PostSubcategoryID,
+		&i.PostID,
+		&i.SubcategoryNo,
+		&i.SubCategory,
+	)
+	return i, err
+}
+
 const getPostSubCategoryByPostId = `-- name: GetPostSubCategoryByPostId :many
 SELECT post_subcategory_id, post_id, subcategory_no, sub_category FROM "post_subcategory"
 WHERE "post_id" = $1

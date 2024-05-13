@@ -78,9 +78,9 @@ SELECT
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
-ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
-ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 WHERE p."post_id" = $1
 `
 
@@ -130,9 +130,9 @@ SELECT
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
-ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
-ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 WHERE 
   (p."main_category" = $1 OR $1 IS NULL) AND
   (ps1."sub_category" = $2 OR $2 IS NULL) AND
@@ -207,9 +207,9 @@ FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 JOIN "follow_user" AS f ON f."follow_uid" = p."uid"
 LEFT JOIN "post_subcategory" AS ps1
-ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
-ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 WHERE f."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50
@@ -274,9 +274,9 @@ SELECT
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
-ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
-ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 WHERE 
   (ps1."sub_category" = $1 OR $1 IS NULL) AND
   (ps2."sub_category" = $2 OR $2 IS NULL)
@@ -336,6 +336,8 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 const getPostsByUid = `-- name: GetPostsByUid :many
 SELECT
   p."post_id",
+  u."uid",
+  u."username",
   p."main_category",
   ps1."sub_category",
   ps2."sub_category",
@@ -345,10 +347,11 @@ SELECT
   p."location",
   p."public_type_no"
 FROM "post" AS p
+JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
-ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = 1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
-ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = 2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 WHERE p."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50
@@ -356,6 +359,8 @@ LIMIT 50
 
 type GetPostsByUidRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
+	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
 	SubCategory_2 *string   `json:"sub_category_2"`
@@ -377,6 +382,8 @@ func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUi
 		var i GetPostsByUidRow
 		if err := rows.Scan(
 			&i.PostID,
+			&i.Uid,
+			&i.Username,
 			&i.MainCategory,
 			&i.SubCategory,
 			&i.SubCategory_2,

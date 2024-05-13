@@ -19,7 +19,7 @@ func NewUserController(service service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
-func (u *UserController) Create(ctx *gin.Context) {
+func (u *UserController) CreatePost(ctx *gin.Context) {
 	var req service.CreateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -39,7 +39,7 @@ func (u *UserController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, user)
 }
 
-func (u *UserController) Get(ctx *gin.Context) {
+func (u *UserController) GetUserById(ctx *gin.Context) {
 	uid := ctx.Param("id")
 	user, err := u.service.GetUser(ctx, uid)
 	if err != nil {

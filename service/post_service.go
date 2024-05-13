@@ -10,6 +10,7 @@ import (
 
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
+	GetPostsByUid(ctx context.Context, uid string) ([]db.GetPostsByUidRow, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -52,4 +53,8 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		PublicTypeNo: arg.PublicTypeNo}
 
 	return s.repository.CreatePostTx(ctx, param)
+}
+
+func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]db.GetPostsByUidRow, error) {
+	return s.repository.GetPostsByUid(ctx, uid)
 }
