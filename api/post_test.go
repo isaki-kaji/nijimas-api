@@ -239,6 +239,8 @@ func TestGetPostsByUid(t *testing.T) {
 				require.Len(t, posts, len(testPosts))
 				for i, post := range posts {
 					require.Equal(t, testPosts[i].PostID, post.PostID)
+					require.Equal(t, testPosts[i].Uid, post.Uid)
+					require.Equal(t, testPosts[i].Username, post.Username)
 					require.Equal(t, testPosts[i].MainCategory, post.MainCategory)
 					require.Equal(t, testPosts[i].SubCategory, post.SubCategory)
 					require.Equal(t, testPosts[i].SubCategory_2, post.SubCategory_2)
