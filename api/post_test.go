@@ -318,11 +318,14 @@ func randomNewPost() (post db.Post) {
 }
 
 func randomNewFullPosts() (posts []db.GetPostsByUidRow) {
+	uid := util.RandomUid()
+	username := util.RandomString(10)
 	n := 5
 	for i := 0; i < n; i++ {
 		post := db.GetPostsByUidRow{
 			PostID:        uuid.New(),
-			Username:      util.RandomString(10),
+			Uid:           uid,
+			Username:      username,
 			MainCategory:  util.RandomMainCategory(),
 			SubCategory:   util.ToPointerOrNil(util.RandomString(10)),
 			SubCategory_2: util.ToPointerOrNil(util.RandomString(10)),
