@@ -15,6 +15,7 @@ INSERT INTO "post" (
 -- name: GetPostById :one
 SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -56,8 +57,9 @@ ORDER BY p."created_at" DESC
 LIMIT 50;
 
 -- name: GetPostsByCategory :many
-SELECT 
+SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -81,8 +83,9 @@ ORDER BY p."created_at" DESC
 LIMIT 50;
 
 -- name: GetPostsBySubCategory :many
-SELECT 
+SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -107,6 +110,7 @@ LIMIT 50;
 -- name: GetPostsByFollowing :many
 SELECT 
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
