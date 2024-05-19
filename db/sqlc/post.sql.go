@@ -66,6 +66,7 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 const getPostById = `-- name: GetPostById :one
 SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -86,6 +87,7 @@ WHERE p."post_id" = $1
 
 type GetPostByIdRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
 	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
@@ -102,6 +104,7 @@ func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByI
 	var i GetPostByIdRow
 	err := row.Scan(
 		&i.PostID,
+		&i.Uid,
 		&i.Username,
 		&i.MainCategory,
 		&i.SubCategory,
@@ -116,8 +119,9 @@ func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByI
 }
 
 const getPostsByCategory = `-- name: GetPostsByCategory :many
-SELECT 
+SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -149,6 +153,7 @@ type GetPostsByCategoryParams struct {
 
 type GetPostsByCategoryRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
 	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
@@ -171,6 +176,7 @@ func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategory
 		var i GetPostsByCategoryRow
 		if err := rows.Scan(
 			&i.PostID,
+			&i.Uid,
 			&i.Username,
 			&i.MainCategory,
 			&i.SubCategory,
@@ -194,6 +200,7 @@ func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategory
 const getPostsByFollowing = `-- name: GetPostsByFollowing :many
 SELECT 
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -217,6 +224,7 @@ LIMIT 50
 
 type GetPostsByFollowingRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
 	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
@@ -239,6 +247,7 @@ func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPos
 		var i GetPostsByFollowingRow
 		if err := rows.Scan(
 			&i.PostID,
+			&i.Uid,
 			&i.Username,
 			&i.MainCategory,
 			&i.SubCategory,
@@ -260,8 +269,9 @@ func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPos
 }
 
 const getPostsBySubCategory = `-- name: GetPostsBySubCategory :many
-SELECT 
+SELECT
   p."post_id",
+  u."uid",
   u."username",
   p."main_category",
   ps1."sub_category",
@@ -291,6 +301,7 @@ type GetPostsBySubCategoryParams struct {
 
 type GetPostsBySubCategoryRow struct {
 	PostID        uuid.UUID `json:"post_id"`
+	Uid           string    `json:"uid"`
 	Username      string    `json:"username"`
 	MainCategory  string    `json:"main_category"`
 	SubCategory   *string   `json:"sub_category"`
@@ -313,6 +324,7 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 		var i GetPostsBySubCategoryRow
 		if err := rows.Scan(
 			&i.PostID,
+			&i.Uid,
 			&i.Username,
 			&i.MainCategory,
 			&i.SubCategory,

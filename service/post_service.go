@@ -2,15 +2,17 @@ package service
 
 import (
 	"context"
+	"strings"
 
 	"github.com/google/uuid"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/jinzhu/copier"
 )
 
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
-	GetPostsByUid(ctx context.Context, uid string) ([]db.GetPostsByUidRow, error)
+	GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -55,6 +57,41 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 	return s.repository.CreatePostTx(ctx, param)
 }
 
-func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]db.GetPostsByUidRow, error) {
-	return s.repository.GetPostsByUid(ctx, uid)
+type PostResponse struct {
+	PostID       string   `json:"post_id"`
+	Uid          string   `json:"uid"`
+	Username     string   `json:"username"`
+	MainCategory string   `json:"main_category"`
+	SubCategory1 *string  `json:"sub_category1"`
+	SubCategory2 *string  `json:"sub_category2"`
+	PostText     *string  `json:"post_text"`
+	PhotoUrl     []string `json:"photo_url"`
+	Expense      *int64   `json:"expense"`
+	Location     *string  `json:"location"`
+	PublicTypeNo string   `json:"public_type_no"`
+}
+
+func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error) {
+	response := []PostResponse{}
+	posts, err := s.repository.GetPostsByUid(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+	for _, post := range posts {
+		p := PostResponse{}
+		err := copier.Copy(&p, post)
+		if err != nil {
+			return nil, err
+		}
+		p.PhotoUrl = splitPhotoUrl(post.PhotoUrl)
+		response = append(response, p)
+	}
+	return response, nil
+}
+
+func splitPhotoUrl(photoUrl *string) []string {
+	if photoUrl == nil {
+		return []string{}
+	}
+	return strings.Split(*photoUrl, ",")
 }
