@@ -26,7 +26,7 @@ func TestCreatePost(t *testing.T) {
 	testCases := []struct {
 		name       string
 		body       gin.H
-		buildStubs func(service *mockservice.MockPostService)
+		buildStubs func(s *mockservice.MockPostService)
 		check      func(recorder *httptest.ResponseRecorder)
 	}{
 		{
@@ -41,8 +41,8 @@ func TestCreatePost(t *testing.T) {
 				"location":       testPost.Location,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(testPost, nil)
@@ -61,8 +61,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(testPost, nil)
@@ -80,8 +80,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(1).
 					Return(testPost, nil)
@@ -99,8 +99,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
@@ -117,8 +117,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
@@ -135,8 +135,8 @@ func TestCreatePost(t *testing.T) {
 				"post_text":     testPost.PostText,
 				"photo_url":     testPost.PhotoUrl,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
@@ -155,8 +155,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(0)
 			},
@@ -175,8 +175,8 @@ func TestCreatePost(t *testing.T) {
 				"photo_url":      testPost.PhotoUrl,
 				"public_type_no": testPost.PublicTypeNo,
 			},
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					CreatePost(gomock.Any(), gomock.Any()).
 					Times(1).Return(db.Post{}, errors.New("other error"))
 			},
@@ -217,7 +217,7 @@ func TestGetPostsByUid(t *testing.T) {
 	testCases := []struct {
 		name       string
 		uid        string
-		buildStubs func(service *mockservice.MockPostService)
+		buildStubs func(s *mockservice.MockPostService)
 		check      func(recorder *httptest.ResponseRecorder)
 	}{
 		{
@@ -232,7 +232,7 @@ func TestGetPostsByUid(t *testing.T) {
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
 
-				var posts []db.GetPostsByUidRow
+				var posts []service.PostResponse
 				err := json.NewDecoder(recorder.Body).Decode(&posts)
 				require.NoError(t, err)
 
@@ -240,8 +240,8 @@ func TestGetPostsByUid(t *testing.T) {
 				for i, post := range posts {
 					require.Equal(t, testPosts[i].PostID, post.PostID)
 					require.Equal(t, testPosts[i].MainCategory, post.MainCategory)
-					require.Equal(t, testPosts[i].SubCategory, post.SubCategory)
-					require.Equal(t, testPosts[i].SubCategory_2, post.SubCategory_2)
+					require.Equal(t, testPosts[i].SubCategory1, post.SubCategory1)
+					require.Equal(t, testPosts[i].SubCategory2, post.SubCategory2)
 					require.Equal(t, testPosts[i].PostText, post.PostText)
 					require.Equal(t, testPosts[i].PhotoUrl, post.PhotoUrl)
 					require.Equal(t, testPosts[i].Expense, post.Expense)
@@ -253,11 +253,11 @@ func TestGetPostsByUid(t *testing.T) {
 		{
 			name: "OK: no posts",
 			uid:  testUid,
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					GetPostsByUid(gomock.Any(), testUid).
 					Times(1).
-					Return([]db.GetPostsByUidRow{}, nil)
+					Return([]service.PostResponse{}, nil)
 			},
 			check: func(recorder *httptest.ResponseRecorder) {
 				require.Equal(t, http.StatusOK, recorder.Code)
@@ -267,8 +267,8 @@ func TestGetPostsByUid(t *testing.T) {
 		{
 			name: "InternalServerError(other error)",
 			uid:  testUid,
-			buildStubs: func(service *mockservice.MockPostService) {
-				service.EXPECT().
+			buildStubs: func(s *mockservice.MockPostService) {
+				s.EXPECT().
 					GetPostsByUid(gomock.Any(), testUid).
 					Times(1).
 					Return(nil, errors.New("other error"))
@@ -315,20 +315,20 @@ func randomNewPost() (post db.Post) {
 	return
 }
 
-func randomNewFullPosts() (posts []db.GetPostsByUidRow) {
+func randomNewFullPosts() (posts []service.PostResponse) {
 	n := 5
 	for i := 0; i < n; i++ {
-		post := db.GetPostsByUidRow{
-			PostID:        uuid.New(),
-			Username:      util.RandomString(10),
-			MainCategory:  util.RandomMainCategory(),
-			SubCategory:   util.ToPointerOrNil(util.RandomString(10)),
-			SubCategory_2: util.ToPointerOrNil(util.RandomString(10)),
-			PostText:      util.ToPointerOrNil(util.RandomString(50)),
-			PhotoUrl:      util.ToPointerOrNil(util.RandomString(100)),
-			Expense:       util.ToPointerOrNil(rand.Int63n(100000)),
-			Location:      util.ToPointerOrNil(util.RandomString(20)),
-			PublicTypeNo:  util.RandomPublicTypeNo(),
+		post := service.PostResponse{
+			PostID:       uuid.New().String(),
+			Username:     util.RandomString(10),
+			MainCategory: util.RandomMainCategory(),
+			SubCategory1: util.ToPointerOrNil(util.RandomString(10)),
+			SubCategory2: util.ToPointerOrNil(util.RandomString(10)),
+			PostText:     util.ToPointerOrNil(util.RandomString(50)),
+			PhotoUrl:     []string{util.RandomString(100), util.RandomString(100)},
+			Expense:      util.ToPointerOrNil(rand.Int63n(100000)),
+			Location:     util.ToPointerOrNil(util.RandomString(20)),
+			PublicTypeNo: util.RandomPublicTypeNo(),
 		}
 		posts = append(posts, post)
 	}
