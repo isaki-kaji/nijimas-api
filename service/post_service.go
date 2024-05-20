@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
@@ -58,17 +59,18 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 }
 
 type PostResponse struct {
-	PostID       string   `json:"post_id"`
-	Uid          string   `json:"uid"`
-	Username     string   `json:"username"`
-	MainCategory string   `json:"main_category"`
-	SubCategory1 *string  `json:"sub_category1"`
-	SubCategory2 *string  `json:"sub_category2"`
-	PostText     *string  `json:"post_text"`
-	PhotoUrl     []string `json:"photo_url"`
-	Expense      *int64   `json:"expense"`
-	Location     *string  `json:"location"`
-	PublicTypeNo string   `json:"public_type_no"`
+	PostID       string    `json:"post_id"`
+	Uid          string    `json:"uid"`
+	Username     string    `json:"username"`
+	MainCategory string    `json:"main_category"`
+	SubCategory1 *string   `json:"sub_category1"`
+	SubCategory2 *string   `json:"sub_category2"`
+	PostText     *string   `json:"post_text"`
+	PhotoUrl     []string  `json:"photo_url"`
+	Expense      *int64    `json:"expense"`
+	Location     *string   `json:"location"`
+	PublicTypeNo string    `json:"public_type_no"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error) {

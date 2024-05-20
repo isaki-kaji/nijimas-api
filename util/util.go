@@ -3,6 +3,7 @@ package util
 import (
 	"math/rand"
 	"strings"
+	"time"
 )
 
 func ToPointerOrNil[T comparable](value T) *T {
@@ -48,4 +49,12 @@ func RandomMainCategory() string {
 func RandomPublicTypeNo() string {
 	publicTypeNos := []string{"1", "2", "3"}
 	return publicTypeNos[rand.Intn(len(publicTypeNos))]
+}
+
+func RandomTime() time.Time {
+	min := time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC)
+	max := time.Date(2024, time.January, 1, 0, 0, 0, 0, time.UTC)
+	duration := max.Sub(min)
+	randomDuration := time.Duration(rand.Int63n(int64(duration)))
+	return min.Add(randomDuration)
 }

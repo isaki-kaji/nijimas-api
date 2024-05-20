@@ -24,7 +24,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -45,7 +46,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -68,7 +70,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -94,7 +97,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -119,7 +123,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 JOIN "follow_user" AS f ON f."follow_uid" = p."uid"

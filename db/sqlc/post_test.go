@@ -15,32 +15,14 @@ func TestCreatePost(t *testing.T) {
 }
 
 func TestGetPostsByUid(t *testing.T) {
-	user := createRandomUser(t)
-	n := 5
-	var posts []GetPostsByUidRow
-	for i := 0; i < n; i++ {
-		post := createRandomFullPost(t)
-		posts = append(posts, post)
-	}
-
-	resultPosts, err := testRepository.GetPostsByUid(context.Background(), user.Uid)
+	postsUid, numPosts := createRandomPostsByUid(t)
+	t.Logf("postsUid: %s, numPosts: %d\n", postsUid, numPosts)
+	resultPosts, err := testRepository.GetPostsByUid(context.Background(), postsUid)
 	require.NoError(t, err)
-	require.Len(t, posts, n)
+	require.Len(t, resultPosts, numPosts)
 
-	for _, post := range posts {
-		for _, resultPost := range resultPosts {
-			if post.PostID != resultPost.PostID {
-				continue
-			}
-			require.Equal(t, post.MainCategory, resultPost.MainCategory)
-			require.Equal(t, *post.SubCategory, *resultPost.SubCategory)
-			require.Equal(t, *post.SubCategory_2, *resultPost.SubCategory_2)
-			require.Equal(t, post.PostText, resultPost.PostText)
-			require.Equal(t, post.PhotoUrl, resultPost.PhotoUrl)
-			require.Equal(t, post.Expense, resultPost.Expense)
-			require.Equal(t, post.Location, resultPost.Location)
-			require.Equal(t, post.PublicTypeNo, resultPost.PublicTypeNo)
-		}
+	for i := 1; i < len(resultPosts); i++ {
+		require.True(t, resultPosts[i-1].CreatedAt.Before(resultPosts[i].CreatedAt) || resultPosts[i-1].CreatedAt.Equal(resultPosts[i].CreatedAt))
 	}
 }
 
@@ -116,6 +98,7 @@ func createRandomFullPost(t *testing.T) GetPostsByUidRow {
 		Expense:       post.Expense,
 		Location:      post.Location,
 		PublicTypeNo:  post.PublicTypeNo,
+		CreatedAt:     post.CreatedAt,
 	}
 
 	require.NotEmpty(t, post)
@@ -130,6 +113,29 @@ func createRandomFullPost(t *testing.T) GetPostsByUidRow {
 	require.Equal(t, arg.Expense, postByUid.Expense)
 	require.Equal(t, arg.Location, postByUid.Location)
 	require.Equal(t, arg.PublicTypeNo, postByUid.PublicTypeNo)
+	require.NotZero(t, postByUid.CreatedAt)
 
 	return postByUid
+}
+
+func createRandomPostsByUid(t *testing.T) (uid string, numPosts int) {
+	user := createRandomUser(t)
+	numPosts = rand.Intn(6)
+	for i := 0; i < numPosts; i++ {
+		arg := CreatePostTxParam{
+			PostID:       uuid.New(),
+			Uid:          user.Uid,
+			MainCategory: util.RandomMainCategory(),
+			SubCategory1: util.RandomString(5),
+			SubCategory2: util.RandomString(5),
+			PostText:     util.ToPointerOrNil(util.RandomString(100)),
+			PhotoUrl:     util.ToPointerOrNil(util.RandomString(100)),
+			Expense:      util.ToPointerOrNil(rand.Int63n(10000)),
+			Location:     util.ToPointerOrNil(util.RandomString(20)),
+			PublicTypeNo: util.RandomPublicTypeNo(),
+		}
+		_, err := testRepository.CreatePostTx(context.Background(), arg)
+		require.NoError(t, err)
+	}
+	return user.Uid, numPosts
 }
