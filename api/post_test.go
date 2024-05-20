@@ -247,6 +247,7 @@ func TestGetPostsByUid(t *testing.T) {
 					require.Equal(t, testPosts[i].Expense, post.Expense)
 					require.Equal(t, testPosts[i].Location, post.Location)
 					require.Equal(t, testPosts[i].PublicTypeNo, post.PublicTypeNo)
+					require.Equal(t, testPosts[i].CreatedAt, post.CreatedAt)
 				}
 			},
 		},
@@ -311,6 +312,7 @@ func randomNewPost() (post db.Post) {
 		Expense:      util.ToPointerOrNil(rand.Int63n(100000)),
 		Location:     util.ToPointerOrNil(util.RandomString(20)),
 		PublicTypeNo: util.RandomPublicTypeNo(),
+		CreatedAt:    util.RandomTime(),
 	}
 	return
 }
@@ -329,6 +331,7 @@ func randomNewFullPosts() (posts []service.PostResponse) {
 			Expense:      util.ToPointerOrNil(rand.Int63n(100000)),
 			Location:     util.ToPointerOrNil(util.RandomString(20)),
 			PublicTypeNo: util.RandomPublicTypeNo(),
+			CreatedAt:    util.RandomTime(),
 		}
 		posts = append(posts, post)
 	}

@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -75,7 +76,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -97,6 +99,7 @@ type GetPostByIdRow struct {
 	Expense       *int64    `json:"expense"`
 	Location      *string   `json:"location"`
 	PublicTypeNo  string    `json:"public_type_no"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error) {
@@ -114,6 +117,7 @@ func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByI
 		&i.Expense,
 		&i.Location,
 		&i.PublicTypeNo,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -130,7 +134,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -163,6 +168,7 @@ type GetPostsByCategoryRow struct {
 	Expense       *int64    `json:"expense"`
 	Location      *string   `json:"location"`
 	PublicTypeNo  string    `json:"public_type_no"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error) {
@@ -186,6 +192,7 @@ func (q *Queries) GetPostsByCategory(ctx context.Context, arg GetPostsByCategory
 			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -209,7 +216,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 JOIN "follow_user" AS f ON f."follow_uid" = p."uid"
@@ -234,6 +242,7 @@ type GetPostsByFollowingRow struct {
 	Expense       *int64    `json:"expense"`
 	Location      *string   `json:"location"`
 	PublicTypeNo  string    `json:"public_type_no"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error) {
@@ -257,6 +266,7 @@ func (q *Queries) GetPostsByFollowing(ctx context.Context, uid string) ([]GetPos
 			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -280,7 +290,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -311,6 +322,7 @@ type GetPostsBySubCategoryRow struct {
 	Expense       *int64    `json:"expense"`
 	Location      *string   `json:"location"`
 	PublicTypeNo  string    `json:"public_type_no"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error) {
@@ -334,6 +346,7 @@ func (q *Queries) GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCa
 			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -357,7 +370,8 @@ SELECT
   p."photo_url",
   p."expense",
   p."location",
-  p."public_type_no"
+  p."public_type_no",
+  p."created_at"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
@@ -381,6 +395,7 @@ type GetPostsByUidRow struct {
 	Expense       *int64    `json:"expense"`
 	Location      *string   `json:"location"`
 	PublicTypeNo  string    `json:"public_type_no"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUidRow, error) {
@@ -404,6 +419,7 @@ func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUi
 			&i.Expense,
 			&i.Location,
 			&i.PublicTypeNo,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
