@@ -19,7 +19,7 @@ func TestGetPostsByUid(t *testing.T) {
 	t.Logf("postsUid: %s, numPosts: %d\n", postsUid, numPosts)
 	resultPosts, err := testRepository.GetPostsByUid(context.Background(), postsUid)
 	require.NoError(t, err)
-	require.Len(t, resultPosts, numPosts)
+	require.Equal(t, len(resultPosts), numPosts)
 
 	for i := 1; i < len(resultPosts); i++ {
 		require.True(t, resultPosts[i-1].CreatedAt.Before(resultPosts[i].CreatedAt) || resultPosts[i-1].CreatedAt.Equal(resultPosts[i].CreatedAt))

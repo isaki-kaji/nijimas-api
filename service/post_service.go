@@ -86,6 +86,8 @@ func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]Post
 			return nil, err
 		}
 		p.PhotoUrl = splitPhotoUrl(post.PhotoUrl)
+		p.SubCategory1 = post.SubCategory
+		p.SubCategory2 = post.SubCategory_2
 		response = append(response, p)
 	}
 	return response, nil
