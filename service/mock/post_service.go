@@ -52,7 +52,7 @@ func (mr *MockPostServiceMockRecorder) CreatePost(arg0, arg1 interface{}) *gomoc
 }
 
 // GetPostsByUid mocks base method.
-func (m *MockPostService) GetPostsByUid(arg0 context.Context, arg1 string) ([]service.PostResponse, error) {
+func (m *MockPostService) GetPostsByUid(arg0 context.Context, arg1 db.GetPostsByUidParams) ([]service.PostResponse, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPostsByUid", arg0, arg1)
 	ret0, _ := ret[0].([]service.PostResponse)

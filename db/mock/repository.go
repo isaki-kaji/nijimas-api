@@ -36,6 +36,21 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateFavorite mocks base method.
+func (m *MockRepository) CreateFavorite(arg0 context.Context, arg1 db.CreateFavoriteParams) (db.Favorite, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateFavorite", arg0, arg1)
+	ret0, _ := ret[0].(db.Favorite)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateFavorite indicates an expected call of CreateFavorite.
+func (mr *MockRepositoryMockRecorder) CreateFavorite(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFavorite", reflect.TypeOf((*MockRepository)(nil).CreateFavorite), arg0, arg1)
+}
+
 // CreateMainCategory mocks base method.
 func (m *MockRepository) CreateMainCategory(arg0 context.Context, arg1 string) (db.MainCategory, error) {
 	m.ctrl.T.Helper()
@@ -124,6 +139,36 @@ func (m *MockRepository) CreateUser(arg0 context.Context, arg1 db.CreateUserPara
 func (mr *MockRepositoryMockRecorder) CreateUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUser", reflect.TypeOf((*MockRepository)(nil).CreateUser), arg0, arg1)
+}
+
+// DeleteFavorite mocks base method.
+func (m *MockRepository) DeleteFavorite(arg0 context.Context, arg1 db.DeleteFavoriteParams) (db.Favorite, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteFavorite", arg0, arg1)
+	ret0, _ := ret[0].(db.Favorite)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DeleteFavorite indicates an expected call of DeleteFavorite.
+func (mr *MockRepositoryMockRecorder) DeleteFavorite(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFavorite", reflect.TypeOf((*MockRepository)(nil).DeleteFavorite), arg0, arg1)
+}
+
+// GetFavorite mocks base method.
+func (m *MockRepository) GetFavorite(arg0 context.Context, arg1 db.GetFavoriteParams) (db.Favorite, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetFavorite", arg0, arg1)
+	ret0, _ := ret[0].(db.Favorite)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetFavorite indicates an expected call of GetFavorite.
+func (mr *MockRepositoryMockRecorder) GetFavorite(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFavorite", reflect.TypeOf((*MockRepository)(nil).GetFavorite), arg0, arg1)
 }
 
 // GetFollowUsers mocks base method.
@@ -277,7 +322,7 @@ func (mr *MockRepositoryMockRecorder) GetPostsBySubCategory(arg0, arg1 interface
 }
 
 // GetPostsByUid mocks base method.
-func (m *MockRepository) GetPostsByUid(arg0 context.Context, arg1 string) ([]db.GetPostsByUidRow, error) {
+func (m *MockRepository) GetPostsByUid(arg0 context.Context, arg1 db.GetPostsByUidParams) ([]db.GetPostsByUidRow, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetPostsByUid", arg0, arg1)
 	ret0, _ := ret[0].([]db.GetPostsByUidRow)

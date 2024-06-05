@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator"
+	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/service"
 )
 
@@ -44,7 +46,16 @@ func (p *PostController) CreatePost(ctx *gin.Context) {
 
 func (p *PostController) GetPostsByUid(ctx *gin.Context) {
 	uid := ctx.Query("uid")
-	posts, err := p.service.GetPostsByUid(ctx, uid)
+	myUid, exists := ctx.Get("myUid")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid is required")))
+	}
+	param := db.GetPostsByUidParams{
+		Uid:   uid,
+		Uid_2: myUid.(string),
+	}
+
+	posts, err := p.service.GetPostsByUid(ctx, param)
 	if err != nil {
 		slog.Warn("failed to get posts because of internal server error")
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))

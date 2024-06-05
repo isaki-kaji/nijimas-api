@@ -13,7 +13,7 @@ import (
 
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
-	GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error)
+	GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -74,9 +74,10 @@ type PostResponse struct {
 	IsFavorite   bool      `json:"is_favorite"`
 }
 
-func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error) {
+func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error) {
 	response := []PostResponse{}
-	posts, err := s.repository.GetPostsByUid(ctx, uid)
+
+	posts, err := s.repository.GetPostsByUid(ctx, param)
 	if err != nil {
 		return nil, err
 	}

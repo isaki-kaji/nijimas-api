@@ -24,10 +24,12 @@ func AuthMiddleware(authClient *auth.Client) gin.HandlerFunc {
 		}
 
 		idToken := strings.TrimPrefix(authorizationHeader, bearerPrefix)
-		_, err := authClient.VerifyIDToken(context.Background(), idToken)
+		decodedToken, err := authClient.VerifyIDToken(context.Background(), idToken)
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization token"})
 			return
 		}
+
+		ctx.Set("myUid", decodedToken.UID)
 	}
 }

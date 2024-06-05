@@ -15,6 +15,7 @@ var Module = fx.Options(
 func NewRouter(
 	UserController *controller.UserController,
 	PostController *controller.PostController,
+	FavoriteController *controller.FavoriteController,
 	AuthClient *auth.Client,
 ) *gin.Engine {
 	router := gin.Default()
@@ -22,6 +23,7 @@ func NewRouter(
 
 	NewUserRouter(router, authRouter, UserController)
 	NewPostRouter(router, authRouter, PostController)
+	NewFavoriteRouter(router, authRouter, FavoriteController)
 
 	return router
 }
