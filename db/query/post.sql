@@ -47,13 +47,16 @@ SELECT
   p."expense",
   p."location",
   p."public_type_no",
-  p."created_at"
+  p."created_at",
+  f."uid" IS NOT NULL AS "is_favorite"
 FROM "post" AS p
 JOIN "user" AS u ON p."uid" = u."uid"
 LEFT JOIN "post_subcategory" AS ps1
 ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
 LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
+LEFT JOIN "favorite" AS f
+ON p."post_id" = f."post_id" AND f."uid" = $1
 WHERE p."uid" = $1
 ORDER BY p."created_at" DESC
 LIMIT 50;
