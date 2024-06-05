@@ -11,11 +11,14 @@ import (
 )
 
 type Querier interface {
+	CreateFavorite(ctx context.Context, arg CreateFavoriteParams) (Favorite, error)
 	CreateMainCategory(ctx context.Context, categoryName string) (MainCategory, error)
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreatePostSubCategory(ctx context.Context, arg CreatePostSubCategoryParams) (PostSubcategory, error)
 	CreateSubCategory(ctx context.Context, categoryName string) (SubCategory, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteFavorite(ctx context.Context, arg DeleteFavoriteParams) (Favorite, error)
+	GetFavorite(ctx context.Context, arg GetFavoriteParams) (Favorite, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
 	GetMainCategories(ctx context.Context) ([]MainCategory, error)
 	GetMainCategory(ctx context.Context, categoryName string) (MainCategory, error)
@@ -26,7 +29,7 @@ type Querier interface {
 	GetPostsByCategory(ctx context.Context, arg GetPostsByCategoryParams) ([]GetPostsByCategoryRow, error)
 	GetPostsByFollowing(ctx context.Context, uid string) ([]GetPostsByFollowingRow, error)
 	GetPostsBySubCategory(ctx context.Context, arg GetPostsBySubCategoryParams) ([]GetPostsBySubCategoryRow, error)
-	GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUidRow, error)
+	GetPostsByUid(ctx context.Context, arg GetPostsByUidParams) ([]GetPostsByUidRow, error)
 	GetSubCategory(ctx context.Context, categoryName string) (SubCategory, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)

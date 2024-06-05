@@ -8,6 +8,7 @@ import (
 var Module = fx.Options(
 	fx.Provide(NewUserController),
 	fx.Provide(NewPostController),
+	fx.Provide(NewFavoriteController),
 )
 
 func errorResponse(err error) gin.H {

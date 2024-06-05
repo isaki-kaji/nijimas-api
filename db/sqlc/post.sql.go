@@ -381,10 +381,15 @@ LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 LEFT JOIN "favorite" AS f
 ON p."post_id" = f."post_id" AND f."uid" = $1
-WHERE p."uid" = $1
+WHERE p."uid" = $2
 ORDER BY p."created_at" DESC
 LIMIT 50
 `
+
+type GetPostsByUidParams struct {
+	Uid   string `json:"uid"`
+	Uid_2 string `json:"uid_2"`
+}
 
 type GetPostsByUidRow struct {
 	PostID        uuid.UUID   `json:"post_id"`
@@ -402,8 +407,8 @@ type GetPostsByUidRow struct {
 	IsFavorite    interface{} `json:"is_favorite"`
 }
 
-func (q *Queries) GetPostsByUid(ctx context.Context, uid string) ([]GetPostsByUidRow, error) {
-	rows, err := q.db.Query(ctx, getPostsByUid, uid)
+func (q *Queries) GetPostsByUid(ctx context.Context, arg GetPostsByUidParams) ([]GetPostsByUidRow, error) {
+	rows, err := q.db.Query(ctx, getPostsByUid, arg.Uid, arg.Uid_2)
 	if err != nil {
 		return nil, err
 	}

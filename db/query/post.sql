@@ -57,7 +57,7 @@ LEFT JOIN "post_subcategory" AS ps2
 ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
 LEFT JOIN "favorite" AS f
 ON p."post_id" = f."post_id" AND f."uid" = $1
-WHERE p."uid" = $1
+WHERE p."uid" = $2
 ORDER BY p."created_at" DESC
 LIMIT 50;
 
