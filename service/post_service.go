@@ -71,6 +71,7 @@ type PostResponse struct {
 	Location     *string   `json:"location"`
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`
+	IsFavorite   bool      `json:"is_favorite"`
 }
 
 func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, uid string) ([]PostResponse, error) {
