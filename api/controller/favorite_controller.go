@@ -34,5 +34,5 @@ func (f *FavoriteController) ToggleFavorite(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, favorite)
+	ctx.JSON(http.StatusNoContent, favorite)
 }
