@@ -14,6 +14,7 @@ import (
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
 	GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error)
+	GetPostsByMainCategory(ctx context.Context, param db.GetsPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -75,23 +76,41 @@ type PostResponse struct {
 }
 
 func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error) {
-	response := []PostResponse{}
-
 	posts, err := s.repository.GetPostsByUid(ctx, param)
 	if err != nil {
 		return nil, err
 	}
-	for _, post := range posts {
+	return transformPosts(posts)
+}
+
+func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetsPostsByMainCategoryParams) ([]PostResponse, error) {
+	posts, err := s.repository.GetsPostsByMainCategory(ctx, param)
+	if err != nil {
+		return nil, err
+	}
+	return transformPosts(posts)
+}
+
+func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
+	response := []PostResponse{}
+
+	for _, post := range postsRow {
+		var commonRow CommonGetPostsRow
+		if err := copier.Copy(&commonRow, post); err != nil {
+			return nil, err
+		}
+
 		p := PostResponse{}
-		err := copier.Copy(&p, post)
+		err := copier.Copy(&p, commonRow)
 		if err != nil {
 			return nil, err
 		}
-		p.PhotoUrl = splitPhotoUrl(post.PhotoUrl)
-		p.SubCategory1 = post.SubCategory
-		p.SubCategory2 = post.SubCategory_2
+		p.PhotoUrl = splitPhotoUrl(commonRow.PhotoUrl)
+		p.SubCategory1 = commonRow.SubCategory
+		p.SubCategory2 = commonRow.SubCategory_2
 		response = append(response, p)
 	}
+
 	return response, nil
 }
 
@@ -100,4 +119,20 @@ func splitPhotoUrl(photoUrl *string) []string {
 		return []string{}
 	}
 	return strings.Split(*photoUrl, ",")
+}
+
+type CommonGetPostsRow struct {
+	PostID        uuid.UUID   `json:"post_id"`
+	Uid           string      `json:"uid"`
+	Username      string      `json:"username"`
+	MainCategory  string      `json:"main_category"`
+	SubCategory   *string     `json:"sub_category"`
+	SubCategory_2 *string     `json:"sub_category_2"`
+	PostText      *string     `json:"post_text"`
+	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
+	Location      *string     `json:"location"`
+	PublicTypeNo  string      `json:"public_type_no"`
+	CreatedAt     time.Time   `json:"created_at"`
+	IsFavorite    interface{} `json:"is_favorite"`
 }

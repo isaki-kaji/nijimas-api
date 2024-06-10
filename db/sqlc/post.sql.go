@@ -441,6 +441,89 @@ func (q *Queries) GetPostsByUid(ctx context.Context, arg GetPostsByUidParams) ([
 	return items, nil
 }
 
+const getsPostsByMainCategory = `-- name: GetsPostsByMainCategory :many
+SELECT
+  p."post_id",
+  u."uid",
+  u."username",
+  p."main_category",
+  ps1."sub_category",
+  ps2."sub_category",
+  p."post_text",
+  p."photo_url",
+  p."expense",
+  p."location",
+  p."public_type_no",
+  p."created_at",
+  f."uid" IS NOT NULL AS "is_favorite"
+FROM "post" AS p
+JOIN "user" AS u ON p."uid" = u."uid"
+LEFT JOIN "post_subcategory" AS ps1
+ON p."post_id" = ps1."post_id" AND ps1."subcategory_no" = '1'
+LEFT JOIN "post_subcategory" AS ps2
+ON p."post_id" = ps2."post_id" AND ps2."subcategory_no" = '2'
+LEFT JOIN "favorite" AS f
+ON p."post_id" = f."post_id" AND f."uid" = $1
+WHERE p."main_category" = $2
+ORDER BY p."created_at" DESC
+LIMIT 50
+`
+
+type GetsPostsByMainCategoryParams struct {
+	Uid          string `json:"uid"`
+	MainCategory string `json:"main_category"`
+}
+
+type GetsPostsByMainCategoryRow struct {
+	PostID        uuid.UUID   `json:"post_id"`
+	Uid           string      `json:"uid"`
+	Username      string      `json:"username"`
+	MainCategory  string      `json:"main_category"`
+	SubCategory   *string     `json:"sub_category"`
+	SubCategory_2 *string     `json:"sub_category_2"`
+	PostText      *string     `json:"post_text"`
+	PhotoUrl      *string     `json:"photo_url"`
+	Expense       *int64      `json:"expense"`
+	Location      *string     `json:"location"`
+	PublicTypeNo  string      `json:"public_type_no"`
+	CreatedAt     time.Time   `json:"created_at"`
+	IsFavorite    interface{} `json:"is_favorite"`
+}
+
+func (q *Queries) GetsPostsByMainCategory(ctx context.Context, arg GetsPostsByMainCategoryParams) ([]GetsPostsByMainCategoryRow, error) {
+	rows, err := q.db.Query(ctx, getsPostsByMainCategory, arg.Uid, arg.MainCategory)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetsPostsByMainCategoryRow{}
+	for rows.Next() {
+		var i GetsPostsByMainCategoryRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.Uid,
+			&i.Username,
+			&i.MainCategory,
+			&i.SubCategory,
+			&i.SubCategory_2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Expense,
+			&i.Location,
+			&i.PublicTypeNo,
+			&i.CreatedAt,
+			&i.IsFavorite,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updatePost = `-- name: UpdatePost :one
 UPDATE "post" SET
   "main_category" = COALESCE($1, "main_category"),
