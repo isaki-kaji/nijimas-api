@@ -48,14 +48,34 @@ func (p *PostController) GetPostsByUid(ctx *gin.Context) {
 	uid := ctx.Query("uid")
 	myUid, exists := ctx.Get("myUid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid is required")))
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
 	}
 	param := db.GetPostsByUidParams{
-		Uid:   uid,
-		Uid_2: myUid.(string),
+		Uid:   myUid.(string),
+		Uid_2: uid,
 	}
 
 	posts, err := p.service.GetPostsByUid(ctx, param)
+	if err != nil {
+		slog.Warn("failed to get posts because of internal server error")
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, posts)
+}
+
+func (p *PostController) GetPostsByMainCategory(ctx *gin.Context) {
+	mainCategory := ctx.Query("main-category")
+	myUid, exists := ctx.Get("myUid")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
+	}
+	param := db.GetPostsByMainCategoryParams{
+		MainCategory: mainCategory,
+		Uid:          myUid.(string),
+	}
+
+	posts, err := p.service.GetPostsByMainCategory(ctx, param)
 	if err != nil {
 		slog.Warn("failed to get posts because of internal server error")
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))

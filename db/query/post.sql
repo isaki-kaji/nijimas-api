@@ -62,7 +62,7 @@ ORDER BY p."created_at" DESC
 LIMIT 50;
 
 
--- name: GetsPostsByMainCategory :many
+-- name: GetPostsByMainCategory :many
 SELECT
   p."post_id",
   u."uid",

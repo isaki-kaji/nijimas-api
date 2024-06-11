@@ -14,7 +14,7 @@ import (
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
 	GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error)
-	GetPostsByMainCategory(ctx context.Context, param db.GetsPostsByMainCategoryParams) ([]PostResponse, error)
+	GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -83,8 +83,8 @@ func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, param db.GetPostsBy
 	return transformPosts(posts)
 }
 
-func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetsPostsByMainCategoryParams) ([]PostResponse, error) {
-	posts, err := s.repository.GetsPostsByMainCategory(ctx, param)
+func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error) {
+	posts, err := s.repository.GetPostsByMainCategory(ctx, param)
 	if err != nil {
 		return nil, err
 	}
