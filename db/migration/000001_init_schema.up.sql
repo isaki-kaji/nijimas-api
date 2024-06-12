@@ -81,9 +81,9 @@ ALTER TABLE "follow_user" ADD FOREIGN KEY ("follow_user_id") REFERENCES "user" (
 
 INSERT INTO "main_category" ("category_name") VALUES ('food');
 INSERT INTO "main_category" ("category_name") VALUES ('hobbies');
-INSERT INTO "main_category" ("category_name") VALUES ('fasion');
+INSERT INTO "main_category" ("category_name") VALUES ('fashion');
 INSERT INTO "main_category" ("category_name") VALUES ('goods');
-INSERT INTO "main_category" ("category_name") VALUES ('essential');
+INSERT INTO "main_category" ("category_name") VALUES ('essentials');
 INSERT INTO "main_category" ("category_name") VALUES ('travel');
 INSERT INTO "main_category" ("category_name") VALUES ('entertainment');
 INSERT INTO "main_category" ("category_name") VALUES ('transport');
