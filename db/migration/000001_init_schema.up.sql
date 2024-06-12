@@ -79,12 +79,12 @@ ALTER TABLE "follow_user" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
 
 ALTER TABLE "follow_user" ADD FOREIGN KEY ("follow_user_id") REFERENCES "user" ("uid");
 
-INSERT INTO "main_category" ("category_name") VALUES ('食事');
-INSERT INTO "main_category" ("category_name") VALUES ('趣味');
-INSERT INTO "main_category" ("category_name") VALUES ('ファッション');
-INSERT INTO "main_category" ("category_name") VALUES ('雑貨');
-INSERT INTO "main_category" ("category_name") VALUES ('日用品');
-INSERT INTO "main_category" ("category_name") VALUES ('旅行');
-INSERT INTO "main_category" ("category_name") VALUES ('交際費');
-INSERT INTO "main_category" ("category_name") VALUES ('交通費');
-INSERT INTO "main_category" ("category_name") VALUES ('その他');
+INSERT INTO "main_category" ("category_name") VALUES ('food');
+INSERT INTO "main_category" ("category_name") VALUES ('hobbies');
+INSERT INTO "main_category" ("category_name") VALUES ('fashion');
+INSERT INTO "main_category" ("category_name") VALUES ('goods');
+INSERT INTO "main_category" ("category_name") VALUES ('essentials');
+INSERT INTO "main_category" ("category_name") VALUES ('travel');
+INSERT INTO "main_category" ("category_name") VALUES ('entertainment');
+INSERT INTO "main_category" ("category_name") VALUES ('transport');
+INSERT INTO "main_category" ("category_name") VALUES ('other');
