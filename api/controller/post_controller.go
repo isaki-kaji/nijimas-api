@@ -44,42 +44,42 @@ func (p *PostController) CreatePost(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, post)
 }
 
-func (p *PostController) GetPostsByUid(ctx *gin.Context) {
+func (p *PostController) GetPostsByQuery(ctx *gin.Context) {
 	uid := ctx.Query("uid")
-	myUid, exists := ctx.Get("myUid")
-	if !exists {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
-	}
-	param := db.GetPostsByUidParams{
-		Uid:   myUid.(string),
-		Uid_2: uid,
-	}
-
-	posts, err := p.service.GetPostsByUid(ctx, param)
-	if err != nil {
-		slog.Warn("failed to get posts because of internal server error")
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-	ctx.JSON(http.StatusOK, posts)
-}
-
-func (p *PostController) GetPostsByMainCategory(ctx *gin.Context) {
 	mainCategory := ctx.Query("main-category")
 	myUid, exists := ctx.Get("myUid")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
 	}
-	param := db.GetPostsByMainCategoryParams{
-		MainCategory: mainCategory,
-		Uid:          myUid.(string),
-	}
 
-	posts, err := p.service.GetPostsByMainCategory(ctx, param)
-	if err != nil {
-		slog.Warn("failed to get posts because of internal server error")
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	if uid != "" {
+		param := db.GetPostsByUidParams{
+			Uid:   myUid.(string),
+			Uid_2: uid,
+		}
+		posts, err := p.service.GetPostsByUid(ctx, param)
+		if err != nil {
+			slog.Warn("failed to get posts because of internal server error")
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, posts)
 		return
 	}
-	ctx.JSON(http.StatusOK, posts)
+
+	if mainCategory != "" {
+		param := db.GetPostsByMainCategoryParams{
+			MainCategory: mainCategory,
+			Uid:          myUid.(string),
+		}
+
+		posts, err := p.service.GetPostsByMainCategory(ctx, param)
+		if err != nil {
+			slog.Warn("failed to get posts because of internal server error")
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusOK, posts)
+		return
+	}
 }
