@@ -29,7 +29,7 @@ Table post as P {
   photo_url varchar(2000)
   expense bigint
   location varchar(2000)
-  public_type_no char(1) [not null, note: '1:公開、2:フォロワーにのみ公開、3:非公開']
+  public_type_no char(1) [not null, note: '0:公開、1:フォロワーにのみ公開、2:非公開']
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
@@ -72,5 +72,6 @@ Table follow_user as FU {
   follow_user_id varchar(255) [ref: > U.uid, not null]
   created_at timestamptz [not null, default: `now()`]
 }
+
 
 

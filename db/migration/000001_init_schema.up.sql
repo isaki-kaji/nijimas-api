@@ -61,7 +61,7 @@ CREATE INDEX ON "post" ("created_at");
 
 CREATE INDEX ON "post_subcategory" ("post_id", "sub_category");
 
-COMMENT ON COLUMN "post"."public_type_no" IS '1:公開、2:フォロワーにのみ公開、3:非公開';
+COMMENT ON COLUMN "post"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
 
 ALTER TABLE "post" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
 

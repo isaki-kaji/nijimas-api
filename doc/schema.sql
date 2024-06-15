@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-04-26T08:05:04.533Z
+-- Generated at: 2024-06-15T05:41:31.488Z
 
 CREATE TABLE "user" (
   "uid" varchar(255) PRIMARY KEY NOT NULL,
@@ -65,7 +65,7 @@ CREATE INDEX ON "post" ("created_at");
 
 CREATE INDEX ON "post_subcategory" ("post_id", "sub_category");
 
-COMMENT ON COLUMN "post"."public_type_no" IS '1:公開、2:フォロワーにのみ公開、3:非公開';
+COMMENT ON COLUMN "post"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
 
 ALTER TABLE "post" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
 
