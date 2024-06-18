@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +22,19 @@ func (f *FavoriteController) ToggleFavorite(ctx *gin.Context) {
 	var req db.GetFavoriteParams
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	myUid, exists := ctx.Get("myUid")
+	if !exists {
+		slog.Warn("own uid is required")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
+		return
+	}
+
+	if req.Uid != myUid.(string) {
+		slog.Warn("uid in request body must be the same as the uid in the token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid in request body must be the same as the uid in the token")))
 		return
 	}
 

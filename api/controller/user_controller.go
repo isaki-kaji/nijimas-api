@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,13 +20,27 @@ func NewUserController(service service.UserService) *UserController {
 	return &UserController{service: service}
 }
 
-func (u *UserController) CreatePost(ctx *gin.Context) {
+func (u *UserController) CreateUser(ctx *gin.Context) {
 	var req service.CreateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		fmt.Print(err)
 		return
 	}
+
+	myUid, exists := ctx.Get("myUid")
+	if !exists {
+		slog.Warn("own uid is required")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
+		return
+	}
+
+	if req.Uid != myUid.(string) {
+		slog.Warn("uid in request body must be the same as the uid in the token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid in request body must be the same as the uid in the token")))
+		return
+	}
+
 	user, err := u.service.CreateUser(ctx, req)
 	if err != nil {
 		if err.Error() == util.UserAlreadyExists {

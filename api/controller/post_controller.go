@@ -35,6 +35,19 @@ func (p *PostController) CreatePost(ctx *gin.Context) {
 		return
 	}
 
+	myUid, exists := ctx.Get("myUid")
+	if !exists {
+		slog.Warn("own uid is required")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
+		return
+	}
+
+	if req.Uid != myUid.(string) {
+		slog.Warn("uid in request body must be the same as the uid in the token")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid in request body must be the same as the uid in the token")))
+		return
+	}
+
 	post, err := p.service.CreatePost(ctx, req)
 	if err != nil {
 		slog.Warn("failed to create post because of internal server error")
