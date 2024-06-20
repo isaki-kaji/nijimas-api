@@ -8,4 +8,5 @@ import (
 func NewUserRouter(router *gin.Engine, authRouter gin.IRoutes, controller *controller.UserController) {
 	authRouter.POST("/users", controller.CreateUser)
 	authRouter.GET("/users/:id", controller.GetUserById)
+	authRouter.PUT("/users", controller.UpdateUser)
 }
