@@ -37,7 +37,7 @@ type Post struct {
 	PhotoUrl     *string   `json:"photo_url"`
 	Expense      *int64    `json:"expense"`
 	Location     *string   `json:"location"`
-	// 1:公開、2:フォロワーにのみ公開、3:非公開
+	// 0:公開、1:フォロワーにのみ公開、2:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`
 }

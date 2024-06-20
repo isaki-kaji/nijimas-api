@@ -98,14 +98,16 @@ func (q *Queries) GetUser(ctx context.Context, uid string) (User, error) {
 const updateUser = `-- name: UpdateUser :one
 UPDATE "user" SET
   "username" = COALESCE($1, "username"),
-  "profile_image_url" = COALESCE($2, "profile_image_url"),
-  "banner_image_url" = COALESCE($3, "banner_image_url")
-WHERE "uid" = $4
+  "self_intro" = COALESCE($2, "self_intro"),
+  "profile_image_url" = COALESCE($3, "profile_image_url"),
+  "banner_image_url" = COALESCE($4, "banner_image_url")
+WHERE "uid" = $5
 RETURNING uid, username, self_intro, profile_image_url, banner_image_url, country_code, created_at
 `
 
 type UpdateUserParams struct {
 	Username        *string `json:"username"`
+	SelfIntro       *string `json:"self_intro"`
 	ProfileImageUrl *string `json:"profile_image_url"`
 	BannerImageUrl  *string `json:"banner_image_url"`
 	Uid             string  `json:"uid"`
@@ -114,6 +116,7 @@ type UpdateUserParams struct {
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, updateUser,
 		arg.Username,
+		arg.SelfIntro,
 		arg.ProfileImageUrl,
 		arg.BannerImageUrl,
 		arg.Uid,

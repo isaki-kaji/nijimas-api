@@ -12,6 +12,7 @@ import (
 type UserService interface {
 	CreateUser(ctx context.Context, arg CreateUserRequest) (db.User, error)
 	GetUser(ctx context.Context, uid string) (db.User, error)
+	UpdateUser(ctx context.Context, arg db.UpdateUserParams) (db.User, error)
 }
 
 func NewUserService(repository db.Repository) UserService {
@@ -54,4 +55,23 @@ func (s *UserServiceImpl) GetUser(ctx context.Context, uid string) (db.User, err
 		return db.User{}, err
 	}
 	return user, nil
+}
+
+func (s *UserServiceImpl) UpdateUser(ctx context.Context, arg db.UpdateUserParams) (db.User, error) {
+	_, err := s.repository.GetUser(ctx, arg.Uid)
+	if err != nil {
+		return db.User{}, err
+	}
+	param := db.UpdateUserParams{
+		Uid:             arg.Uid,
+		Username:        arg.Username,
+		SelfIntro:       arg.SelfIntro,
+		ProfileImageUrl: arg.ProfileImageUrl,
+		BannerImageUrl:  arg.BannerImageUrl,
+	}
+	updatedUser, err := s.repository.UpdateUser(ctx, param)
+	if err != nil {
+		return db.User{}, err
+	}
+	return updatedUser, nil
 }

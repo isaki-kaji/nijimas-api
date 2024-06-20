@@ -60,19 +60,20 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 }
 
 type PostResponse struct {
-	PostID       string    `json:"post_id"`
-	Uid          string    `json:"uid"`
-	Username     string    `json:"username"`
-	MainCategory string    `json:"main_category"`
-	SubCategory1 *string   `json:"sub_category1"`
-	SubCategory2 *string   `json:"sub_category2"`
-	PostText     *string   `json:"post_text"`
-	PhotoUrl     []string  `json:"photo_url"`
-	Expense      *int64    `json:"expense"`
-	Location     *string   `json:"location"`
-	PublicTypeNo string    `json:"public_type_no"`
-	CreatedAt    time.Time `json:"created_at"`
-	IsFavorite   bool      `json:"is_favorite"`
+	PostID          string    `json:"post_id"`
+	Uid             string    `json:"uid"`
+	Username        string    `json:"username"`
+	ProfileImageUrl *string   `json:"profile_image_url"`
+	MainCategory    string    `json:"main_category"`
+	SubCategory1    *string   `json:"sub_category1"`
+	SubCategory2    *string   `json:"sub_category2"`
+	PostText        *string   `json:"post_text"`
+	PhotoUrl        []string  `json:"photo_url"`
+	Expense         *int64    `json:"expense"`
+	Location        *string   `json:"location"`
+	PublicTypeNo    string    `json:"public_type_no"`
+	CreatedAt       time.Time `json:"created_at"`
+	IsFavorite      bool      `json:"is_favorite"`
 }
 
 func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error) {
@@ -122,17 +123,18 @@ func splitPhotoUrl(photoUrl *string) []string {
 }
 
 type CommonGetPostsRow struct {
-	PostID        uuid.UUID   `json:"post_id"`
-	Uid           string      `json:"uid"`
-	Username      string      `json:"username"`
-	MainCategory  string      `json:"main_category"`
-	SubCategory   *string     `json:"sub_category"`
-	SubCategory_2 *string     `json:"sub_category_2"`
-	PostText      *string     `json:"post_text"`
-	PhotoUrl      *string     `json:"photo_url"`
-	Expense       *int64      `json:"expense"`
-	Location      *string     `json:"location"`
-	PublicTypeNo  string      `json:"public_type_no"`
-	CreatedAt     time.Time   `json:"created_at"`
-	IsFavorite    interface{} `json:"is_favorite"`
+	PostID          uuid.UUID   `json:"post_id"`
+	Uid             string      `json:"uid"`
+	Username        string      `json:"username"`
+	ProfileImageUrl *string     `json:"profile_image_url"`
+	MainCategory    string      `json:"main_category"`
+	SubCategory     *string     `json:"sub_category"`
+	SubCategory_2   *string     `json:"sub_category_2"`
+	PostText        *string     `json:"post_text"`
+	PhotoUrl        *string     `json:"photo_url"`
+	Expense         *int64      `json:"expense"`
+	Location        *string     `json:"location"`
+	PublicTypeNo    string      `json:"public_type_no"`
+	CreatedAt       time.Time   `json:"created_at"`
+	IsFavorite      interface{} `json:"is_favorite"`
 }

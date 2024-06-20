@@ -14,6 +14,7 @@ WHERE "uid" = $1;
 -- name: UpdateUser :one
 UPDATE "user" SET
   "username" = COALESCE(sqlc.narg(username), "username"),
+  "self_intro" = COALESCE(sqlc.narg(self_intro), "self_intro"),
   "profile_image_url" = COALESCE(sqlc.narg(profile_image_url), "profile_image_url"),
   "banner_image_url" = COALESCE(sqlc.narg(banner_image_url), "banner_image_url")
 WHERE "uid" = sqlc.arg(uid)
