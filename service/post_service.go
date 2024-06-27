@@ -2,11 +2,14 @@ package service
 
 import (
 	"context"
+	"log/slog"
 	"strings"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
+	"github.com/isaki-kaji/nijimas-api/function"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jinzhu/copier"
 )
@@ -17,12 +20,13 @@ type PostService interface {
 	GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
-func NewPostService(repository db.Repository) PostService {
-	return &PostServiceImpl{repository: repository}
+func NewPostService(repository db.Repository, store *firestore.Client) PostService {
+	return &PostServiceImpl{repository: repository, store: store}
 }
 
 type PostServiceImpl struct {
 	repository db.Repository
+	store      *firestore.Client
 }
 
 type CreatePostRequest struct {
@@ -56,7 +60,18 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		Expense:      util.ToPointerOrNil(arg.Expense),
 		PublicTypeNo: arg.PublicTypeNo}
 
-	return s.repository.CreatePostTx(ctx, param)
+	post, err := s.repository.CreatePostTx(ctx, param)
+	if err != nil {
+		return db.Post{}, err
+	}
+
+	go func() {
+		err := function.CalcUserPosts(s.store, arg.Uid)
+		if err != nil {
+			slog.Error("failed to calc user posts: %v", err)
+		}
+	}()
+	return post, nil
 }
 
 type PostResponse struct {
