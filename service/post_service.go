@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
@@ -17,7 +18,7 @@ type PostService interface {
 	GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
-func NewPostService(repository db.Repository) PostService {
+func NewPostService(repository db.Repository, store *firestore.Client) PostService {
 	return &PostServiceImpl{repository: repository}
 }
 
@@ -56,7 +57,18 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		Expense:      util.ToPointerOrNil(arg.Expense),
 		PublicTypeNo: arg.PublicTypeNo}
 
-	return s.repository.CreatePostTx(ctx, param)
+	post, err := s.repository.CreatePostTx(ctx, param)
+	if err != nil {
+		return db.Post{}, err
+	}
+
+	// go func() {
+	// 	err := function.CalcUserPosts(arg.Uid)
+	// 	if err != nil {
+	// 		slog.Error("failed to calc user posts: %v", err)
+	// 	}
+	// }()
+	return post, nil
 }
 
 type PostResponse struct {
@@ -93,7 +105,7 @@ func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.G
 }
 
 func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
-	response := []PostResponse{}
+	response := make([]PostResponse, 0, len(postsRow))
 
 	for _, post := range postsRow {
 		var commonRow CommonGetPostsRow
@@ -115,6 +127,11 @@ func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 	return response, nil
 }
 
+// transformPostsでも型アサーションを使うべき
+// func test(postRow any) CommonGetPostsRow {
+// 	post := postRow.(CommonGetPostsRow)
+// }
+
 func splitPhotoUrl(photoUrl *string) []string {
 	if photoUrl == nil {
 		return []string{}
@@ -123,18 +140,18 @@ func splitPhotoUrl(photoUrl *string) []string {
 }
 
 type CommonGetPostsRow struct {
-	PostID          uuid.UUID   `json:"post_id"`
-	Uid             string      `json:"uid"`
-	Username        string      `json:"username"`
-	ProfileImageUrl *string     `json:"profile_image_url"`
-	MainCategory    string      `json:"main_category"`
-	SubCategory     *string     `json:"sub_category"`
-	SubCategory_2   *string     `json:"sub_category_2"`
-	PostText        *string     `json:"post_text"`
-	PhotoUrl        *string     `json:"photo_url"`
-	Expense         *int64      `json:"expense"`
-	Location        *string     `json:"location"`
-	PublicTypeNo    string      `json:"public_type_no"`
-	CreatedAt       time.Time   `json:"created_at"`
-	IsFavorite      interface{} `json:"is_favorite"`
+	PostID          uuid.UUID `json:"post_id"`
+	Uid             string    `json:"uid"`
+	Username        string    `json:"username"`
+	ProfileImageUrl *string   `json:"profile_image_url"`
+	MainCategory    string    `json:"main_category"`
+	SubCategory     *string   `json:"sub_category"`
+	SubCategory_2   *string   `json:"sub_category_2"`
+	PostText        *string   `json:"post_text"`
+	PhotoUrl        *string   `json:"photo_url"`
+	Expense         *int64    `json:"expense"`
+	Location        *string   `json:"location"`
+	PublicTypeNo    string    `json:"public_type_no"`
+	CreatedAt       time.Time `json:"created_at"`
+	IsFavorite      any       `json:"is_favorite"`
 }

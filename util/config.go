@@ -15,6 +15,7 @@ type Config struct {
 var Module = fx.Options(
 	fx.Provide(LoadFirebaseApp),
 	fx.Provide(ProvideFirebaseAuth),
+	fx.Provide(ProviderFirestore),
 )
 
 func LoadConfig(path string) (*Config, error) {
