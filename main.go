@@ -16,7 +16,7 @@ import (
 )
 
 func NewConfig() (*util.Config, error) {
-	return util.LoadConfig(".")
+	return util.LoadConfig("environment/development")
 }
 
 func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
@@ -38,8 +38,8 @@ func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
 
 func main() {
 	app := fx.New(
-		util.Module,
 		fx.Provide(NewConfig),
+		util.Module,
 		db.Module,
 		service.Module,
 		api.Module,

@@ -16,12 +16,10 @@ type Server struct {
 }
 
 func NewServer(config *util.Config, router *gin.Engine) (*Server, error) {
-
 	server := &Server{
 		config: *config,
 		router: router,
 	}
-
 	return server, nil
 }
 
