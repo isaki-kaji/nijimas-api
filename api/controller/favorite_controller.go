@@ -1,12 +1,10 @@
 package controller
 
 import (
-	"errors"
-	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
+	"github.com/isaki-kaji/nijimas-api/apperror"
 	"github.com/isaki-kaji/nijimas-api/service"
 )
 
@@ -19,32 +17,20 @@ func NewFavoriteController(service service.FavoriteService) *FavoriteController 
 }
 
 func (f *FavoriteController) ToggleFavorite(ctx *gin.Context) {
-	var req db.GetFavoriteParams
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	var req service.ToggleFavoriteParams
+	ownUid, err := checkPostReq(ctx, &req)
+	if err != nil {
 		return
 	}
-
-	myUid, exists := ctx.Get("myUid")
-	if !exists {
-		slog.Warn("own uid is required")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
-		return
-	}
-
-	if req.Uid != myUid.(string) {
-		slog.Warn("uid in request body must be the same as the uid in the token")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid in request body must be the same as the uid in the token")))
-		return
-	}
+	req.Uid = ownUid
 
 	favorite, flag, err := f.service.ToggleFavorite(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
 		return
 	}
 
-	if flag == "created" {
+	if flag == service.FlagCreated {
 		ctx.JSON(http.StatusCreated, favorite)
 		return
 	}

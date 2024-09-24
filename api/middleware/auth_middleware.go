@@ -30,6 +30,6 @@ func AuthMiddleware(authClient *auth.Client) gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set("myUid", decodedToken.UID)
+		ctx.Set("ownUid", decodedToken.UID)
 	}
 }

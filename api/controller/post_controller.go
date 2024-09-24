@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
+	"github.com/isaki-kaji/nijimas-api/apperror"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/service"
 )
@@ -21,37 +21,16 @@ func NewPostController(service service.PostService) *PostController {
 
 func (p *PostController) CreatePost(ctx *gin.Context) {
 	var req service.CreatePostRequest
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		// バリデーションエラーの詳細をログに記録
-		//型アサーションを使って、エラーがバリデーションエラーかどうかを判定
-		if validationErrs, ok := err.(validator.ValidationErrors); ok {
-			for _, vErr := range validationErrs {
-				// 各フィールドのエラーをログに出力
-				slog.Warn("Validation error on field '%s': %s", vErr.Field(), vErr.ActualTag())
-			}
-		}
-		// バリデーションエラーの詳細をクライアントに送信
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+	ownUid, err := checkPostReq(ctx, &req)
+	if err != nil {
 		return
 	}
-
-	myUid, exists := ctx.Get("myUid")
-	if !exists {
-		slog.Warn("own uid is required")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
-		return
-	}
-
-	if req.Uid != myUid.(string) {
-		slog.Warn("uid in request body must be the same as the uid in the token")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("uid in request body must be the same as the uid in the token")))
-		return
-	}
+	req.Uid = ownUid
 
 	post, err := p.service.CreatePost(ctx, req)
 	if err != nil {
 		slog.Warn("failed to create post because of internal server error")
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, post)
@@ -62,7 +41,7 @@ func (p *PostController) GetPostsByQuery(ctx *gin.Context) {
 	mainCategory := ctx.Query("main-category")
 	myUid, exists := ctx.Get("myUid")
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, errorResponse(errors.New("own uid is required")))
+		ctx.JSON(http.StatusUnauthorized, apperror.ErrorResponse(errors.New("own uid is required")))
 	}
 
 	if uid != "" {
@@ -73,7 +52,7 @@ func (p *PostController) GetPostsByQuery(ctx *gin.Context) {
 		posts, err := p.service.GetPostsByUid(ctx, param)
 		if err != nil {
 			slog.Warn("failed to get posts because of internal server error")
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
 			return
 		}
 		ctx.JSON(http.StatusOK, posts)
@@ -89,7 +68,7 @@ func (p *PostController) GetPostsByQuery(ctx *gin.Context) {
 		posts, err := p.service.GetPostsByMainCategory(ctx, param)
 		if err != nil {
 			slog.Warn("failed to get posts because of internal server error")
-			ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
 			return
 		}
 		ctx.JSON(http.StatusOK, posts)
