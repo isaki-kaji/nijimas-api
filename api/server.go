@@ -23,6 +23,6 @@ func NewServer(config *util.Config, router *gin.Engine) (*Server, error) {
 	return server, nil
 }
 
-func (server *Server) Start(address string) error {
-	return server.router.Run(address)
+func (server *Server) Start() error {
+	return server.router.Run(server.config.ServerAddress)
 }

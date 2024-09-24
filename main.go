@@ -23,7 +23,7 @@ func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			log.Printf("Starting server at %s", config.ServerAddress)
-			if err := server.Start(config.ServerAddress); err != nil {
+			if err := server.Start(); err != nil {
 				log.Printf("Failed to start server: %v", err)
 				return err
 			}
