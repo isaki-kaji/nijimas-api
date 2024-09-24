@@ -1,7 +1,10 @@
-DROP TABLE IF EXISTS favorite;
-DROP TABLE IF EXISTS post_subcategory;
-DROP TABLE IF EXISTS follow_user;
-DROP TABLE IF EXISTS post;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS main_category;
-DROP TABLE IF EXISTS sub_category;
+DROP TABLE IF EXISTS "post_subcategories";
+DROP TABLE IF EXISTS "favorites";
+DROP TABLE IF EXISTS "subcategory_summaries";
+DROP TABLE IF EXISTS "expense_summaries";
+DROP TABLE IF EXISTS "daily_activity_summaries";
+DROP TABLE IF EXISTS "follows";
+DROP TABLE IF EXISTS "posts";
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "sub_categories";
+DROP TABLE IF EXISTS "main_categories";

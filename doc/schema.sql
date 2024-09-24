@@ -1,84 +1,120 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-06-15T05:41:31.488Z
+-- Generated at: 2024-09-24T11:03:34.537Z
 
-CREATE TABLE "user" (
-  "uid" varchar(255) PRIMARY KEY NOT NULL,
+CREATE TABLE "users" (
+  "uid" char(28) PRIMARY KEY,
   "username" varchar(255) NOT NULL,
   "self_intro" text,
   "profile_image_url" varchar(2000),
-  "banner_image_url" varchar(2000),
   "country_code" char(2),
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "post" (
+CREATE TABLE "posts" (
   "post_id" uuid PRIMARY KEY,
-  "uid" varchar(255) NOT NULL,
-  "main_category" varchar(255) NOT NULL,
+  "uid" char(28) NOT NULL,
+  "main_category" varchar(20) NOT NULL,
   "post_text" text,
   "photo_url" varchar(2000),
-  "expense" bigint,
+  "expense" numeric(15,2) NOT NULL DEFAULT 0,
   "location" varchar(2000),
   "public_type_no" char(1) NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "post_subcategories" (
+  "post_id" uuid,
+  "category_no" char(1),
+  "category_id" uuid NOT NULL,
+  PRIMARY KEY ("post_id", "category_no")
+);
+
+CREATE TABLE "favorites" (
+  "post_id" uuid,
+  "uid" varchar(255),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  PRIMARY KEY ("post_id", "uid")
+);
+
+CREATE TABLE "main_categories" (
+  "category_name" varchar(20) PRIMARY KEY,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "post_subcategory" (
-  "post_subcategory_id" bigserial PRIMARY KEY,
-  "post_id" uuid NOT NULL,
-  "subcategory_no" char(1) NOT NULL,
-  "sub_category" varchar(255) NOT NULL
-);
-
-CREATE TABLE "favorite" (
-  "favorite_id" bigserial PRIMARY KEY,
-  "post_id" uuid NOT NULL,
-  "uid" varchar(255) NOT NULL,
+CREATE TABLE "sub_categories" (
+  "category_id" uuid PRIMARY KEY,
+  "category_name" varchar(50) UNIQUE NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "main_category" (
-  "category_name" varchar(255) PRIMARY KEY,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+CREATE TABLE "follows" (
+  "uid" char(28),
+  "follow_uid" char(28),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  PRIMARY KEY ("uid", "follow_uid")
 );
 
-CREATE TABLE "sub_category" (
-  "category_name" varchar(255) PRIMARY KEY,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+CREATE TABLE "expense_summaries" (
+  "uid" char(28),
+  "year" integer NOT NULL,
+  "month" integer NOT NULL,
+  "main_category" varchar(20) NOT NULL,
+  "amount" numeric(15,2) NOT NULL DEFAULT 0,
+  PRIMARY KEY ("uid", "year", "month")
 );
 
-CREATE TABLE "follow_user" (
-  "follow_id" bigserial PRIMARY KEY,
-  "uid" varchar(255) NOT NULL,
-  "follow_user_id" varchar(255) NOT NULL,
-  "created_at" timestamptz NOT NULL DEFAULT (now())
+CREATE TABLE "subcategory_summaries" (
+  "uid" char(28),
+  "year" integer NOT NULL,
+  "month" integer NOT NULL,
+  "category_id" uuid NOT NULL,
+  "amount" numeric(15,2) NOT NULL DEFAULT 0,
+  PRIMARY KEY ("uid", "year", "month")
 );
 
-CREATE INDEX ON "user" ("uid");
+CREATE TABLE "daily_activity_summaries" (
+  "uid" char(28),
+  "year" integer NOT NULL,
+  "month" integer NOT NULL,
+  "day" integer NOT NULL,
+  "number" integer NOT NULL DEFAULT 0,
+  "amount" numeric(15,2) NOT NULL DEFAULT 0,
+  PRIMARY KEY ("uid", "year", "month", "day")
+);
 
-CREATE INDEX ON "user" ("username");
+CREATE INDEX ON "users" ("username");
 
-CREATE INDEX ON "post" ("uid");
+CREATE INDEX ON "posts" ("uid");
 
-CREATE INDEX ON "post" ("created_at");
+CREATE INDEX ON "follows" ("follow_uid");
 
-CREATE INDEX ON "post_subcategory" ("post_id", "sub_category");
+COMMENT ON COLUMN "posts"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
 
-COMMENT ON COLUMN "post"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
+ALTER TABLE "posts" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "post" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
+ALTER TABLE "posts" ADD FOREIGN KEY ("main_category") REFERENCES "main_categories" ("category_name");
 
-ALTER TABLE "post" ADD FOREIGN KEY ("main_category") REFERENCES "main_category" ("category_name");
+ALTER TABLE "post_subcategories" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("post_id");
 
-ALTER TABLE "post_subcategory" ADD FOREIGN KEY ("post_id") REFERENCES "post" ("post_id");
+ALTER TABLE "post_subcategories" ADD FOREIGN KEY ("category_id") REFERENCES "sub_categories" ("category_id");
 
-ALTER TABLE "post_subcategory" ADD FOREIGN KEY ("sub_category") REFERENCES "sub_category" ("category_name");
+ALTER TABLE "favorites" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("post_id");
 
-ALTER TABLE "favorite" ADD FOREIGN KEY ("post_id") REFERENCES "post" ("post_id");
+ALTER TABLE "favorites" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "favorite" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
+ALTER TABLE "follows" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "follow_user" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
+ALTER TABLE "follows" ADD FOREIGN KEY ("follow_uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "follow_user" ADD FOREIGN KEY ("follow_user_id") REFERENCES "user" ("uid");
+ALTER TABLE "expense_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "expense_summaries" ADD FOREIGN KEY ("main_category") REFERENCES "main_categories" ("category_name");
+
+ALTER TABLE "subcategory_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "subcategory_summaries" ADD FOREIGN KEY ("category_id") REFERENCES "sub_categories" ("category_id");
+
+ALTER TABLE "daily_activity_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
