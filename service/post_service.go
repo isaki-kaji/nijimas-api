@@ -55,7 +55,8 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		SubCategory2: arg.SubCategory2,
 		Location:     util.ToPointerOrNil(arg.Location),
 		Expense:      util.ToPointerOrNil(arg.Expense),
-		PublicTypeNo: arg.PublicTypeNo}
+		PublicTypeNo: arg.PublicTypeNo,
+	}
 
 	post, err := s.repository.CreatePostTx(ctx, param)
 	if err != nil {
@@ -104,6 +105,7 @@ func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.G
 	return transformPosts(posts)
 }
 
+// IDで一つだけ取得する可能性があるから、PostResponseを返すようにするべきかも
 func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 	response := make([]PostResponse, 0, len(postsRow))
 
@@ -126,11 +128,6 @@ func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 
 	return response, nil
 }
-
-// transformPostsでも型アサーションを使うべき
-// func test(postRow any) CommonGetPostsRow {
-// 	post := postRow.(CommonGetPostsRow)
-// }
 
 func splitPhotoUrl(photoUrl *string) []string {
 	if photoUrl == nil {
