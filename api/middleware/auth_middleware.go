@@ -7,26 +7,30 @@ import (
 
 	"firebase.google.com/go/v4/auth"
 	"github.com/gin-gonic/gin"
+	"github.com/isaki-kaji/nijimas-api/apperror"
 )
 
 func AuthMiddleware(authClient *auth.Client) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authorizationHeader := ctx.GetHeader("Authorization")
 		if authorizationHeader == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header is required"})
+			err := apperror.Unauthorized.Wrap(ErrAuthorizationHeaderRequired, "Authorization header is required")
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, apperror.ErrorResponse(err))
 			return
 		}
 
 		const bearerPrefix = "Bearer "
 		if !strings.HasPrefix(authorizationHeader, bearerPrefix) {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization header must be a bearer token"})
+			err := apperror.Unauthorized.Wrap(ErrBearerTokenRequired, "Authorization header must be a bearer token")
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, apperror.ErrorResponse(err))
 			return
 		}
 
 		idToken := strings.TrimPrefix(authorizationHeader, bearerPrefix)
 		decodedToken, err := authClient.VerifyIDToken(context.Background(), idToken)
 		if err != nil {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization token"})
+			err = apperror.Unauthorized.Wrap(err, "failed to verify ID token")
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, apperror.ErrorResponse(err))
 			return
 		}
 
