@@ -38,9 +38,9 @@ func (u *UserController) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, user)
 }
 
-func (u *UserController) GetUserById(ctx *gin.Context) {
+func (u *UserController) GetUserByUid(ctx *gin.Context) {
 	uid := ctx.Param("id")
-	user, err := u.service.GetUser(ctx, uid)
+	user, err := u.service.GetUserByUid(ctx, uid)
 	if err != nil {
 		if apperror.DataNotFound.Equal(err) {
 			ctx.JSON(http.StatusNotFound, apperror.ErrorResponse(err))

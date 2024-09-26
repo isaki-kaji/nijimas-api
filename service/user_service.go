@@ -12,7 +12,7 @@ import (
 
 type UserService interface {
 	CreateUser(ctx context.Context, arg CreateUserRequest) (db.User, error)
-	GetUser(ctx context.Context, uid string) (db.User, error)
+	GetUserByUid(ctx context.Context, uid string) (db.User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (db.User, error)
 }
 
@@ -53,7 +53,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, arg CreateUserRequest)
 	return newUser, nil
 }
 
-func (s *UserServiceImpl) GetUser(ctx context.Context, uid string) (db.User, error) {
+func (s *UserServiceImpl) GetUserByUid(ctx context.Context, uid string) (db.User, error) {
 	user, err := s.repository.GetUser(ctx, uid)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

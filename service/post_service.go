@@ -14,8 +14,8 @@ import (
 
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
-	GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error)
-	GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
+	GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error)
+	// GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository, store *firestore.Client) PostService {
@@ -89,21 +89,21 @@ type PostResponse struct {
 	IsFavorite      bool      `json:"is_favorite"`
 }
 
-func (s *PostServiceImpl) GetPostsByUid(ctx context.Context, param db.GetPostsByUidParams) ([]PostResponse, error) {
-	posts, err := s.repository.GetPostsByUid(ctx, param)
+func (s *PostServiceImpl) GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error) {
+	posts, err := s.repository.GetOwnPosts(ctx, uid)
 	if err != nil {
 		return nil, err
 	}
 	return transformPosts(posts)
 }
 
-func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error) {
-	posts, err := s.repository.GetPostsByMainCategory(ctx, param)
-	if err != nil {
-		return nil, err
-	}
-	return transformPosts(posts)
-}
+// func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error) {
+// 	posts, err := s.repository.GetPostsByMainCategory(ctx, param)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return transformPosts(posts)
+// }
 
 // IDで一つだけ取得する可能性があるから、PostResponseを返すようにするべきかも
 func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
