@@ -8,20 +8,36 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Favorite struct {
-	FavoriteID int64     `json:"favorite_id"`
-	PostID     uuid.UUID `json:"post_id"`
-	Uid        string    `json:"uid"`
-	CreatedAt  time.Time `json:"created_at"`
+type DailyActivitySummary struct {
+	Uid    string         `json:"uid"`
+	Year   int32          `json:"year"`
+	Month  int32          `json:"month"`
+	Day    int32          `json:"day"`
+	Number int32          `json:"number"`
+	Amount pgtype.Numeric `json:"amount"`
 }
 
-type FollowUser struct {
-	FollowID     int64     `json:"follow_id"`
-	Uid          string    `json:"uid"`
-	FollowUserID string    `json:"follow_user_id"`
-	CreatedAt    time.Time `json:"created_at"`
+type ExpenseSummary struct {
+	Uid          string         `json:"uid"`
+	Year         int32          `json:"year"`
+	Month        int32          `json:"month"`
+	MainCategory string         `json:"main_category"`
+	Amount       pgtype.Numeric `json:"amount"`
+}
+
+type Favorite struct {
+	PostID    uuid.UUID `json:"post_id"`
+	Uid       string    `json:"uid"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type Follow struct {
+	Uid       string    `json:"uid"`
+	FollowUid string    `json:"follow_uid"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type MainCategory struct {
@@ -30,28 +46,37 @@ type MainCategory struct {
 }
 
 type Post struct {
-	PostID       uuid.UUID `json:"post_id"`
-	Uid          string    `json:"uid"`
-	MainCategory string    `json:"main_category"`
-	PostText     *string   `json:"post_text"`
-	PhotoUrl     *string   `json:"photo_url"`
-	Expense      *int64    `json:"expense"`
-	Location     *string   `json:"location"`
+	PostID       uuid.UUID      `json:"post_id"`
+	Uid          string         `json:"uid"`
+	MainCategory string         `json:"main_category"`
+	PostText     *string        `json:"post_text"`
+	PhotoUrl     *string        `json:"photo_url"`
+	Expense      pgtype.Numeric `json:"expense"`
+	Location     *string        `json:"location"`
 	// 0:公開、1:フォロワーにのみ公開、2:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type PostSubcategory struct {
-	PostSubcategoryID int64     `json:"post_subcategory_id"`
-	PostID            uuid.UUID `json:"post_id"`
-	SubcategoryNo     string    `json:"subcategory_no"`
-	SubCategory       string    `json:"sub_category"`
+	PostID     uuid.UUID `json:"post_id"`
+	CategoryNo string    `json:"category_no"`
+	CategoryID uuid.UUID `json:"category_id"`
 }
 
 type SubCategory struct {
+	CategoryID   uuid.UUID `json:"category_id"`
 	CategoryName string    `json:"category_name"`
 	CreatedAt    time.Time `json:"created_at"`
+}
+
+type SubcategorySummary struct {
+	Uid        string         `json:"uid"`
+	Year       int32          `json:"year"`
+	Month      int32          `json:"month"`
+	CategoryID uuid.UUID      `json:"category_id"`
+	Amount     pgtype.Numeric `json:"amount"`
 }
 
 type User struct {
@@ -59,7 +84,7 @@ type User struct {
 	Username        string    `json:"username"`
 	SelfIntro       *string   `json:"self_intro"`
 	ProfileImageUrl *string   `json:"profile_image_url"`
-	BannerImageUrl  *string   `json:"banner_image_url"`
 	CountryCode     *string   `json:"country_code"`
 	CreatedAt       time.Time `json:"created_at"`
+	UpdatedAt       time.Time `json:"updated_at"`
 }
