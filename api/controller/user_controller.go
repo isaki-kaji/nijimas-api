@@ -29,10 +29,10 @@ func (u *UserController) CreateUser(ctx *gin.Context) {
 	user, err := u.service.CreateUser(ctx, req)
 	if err != nil {
 		if errors.Is(err, service.ErrUserAlreadyExists) {
-			ctx.JSON(http.StatusConflict, apperror.ErrorResponse(err))
+			ctx.JSON(http.StatusConflict, apperror.ErrorResponse(ctx, err))
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, user)
@@ -44,11 +44,11 @@ func (u *UserController) GetUserByUid(ctx *gin.Context) {
 	user, err := u.service.GetUserByUid(ctx, uid)
 	if err != nil {
 		if apperror.DataNotFound.Equal(err) {
-			ctx.JSON(http.StatusNotFound, apperror.ErrorResponse(err))
+			ctx.JSON(http.StatusNotFound, apperror.ErrorResponse(ctx, err))
 			fmt.Print(err)
 			return
 		}
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		fmt.Print(err)
 		return
 	}
@@ -65,7 +65,7 @@ func (u *UserController) UpdateUser(ctx *gin.Context) {
 
 	user, err := u.service.UpdateUser(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		fmt.Print(err)
 		return
 	}

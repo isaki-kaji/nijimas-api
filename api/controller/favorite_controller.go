@@ -26,7 +26,7 @@ func (f *FavoriteController) ToggleFavorite(ctx *gin.Context) {
 
 	favorite, flag, err := f.service.ToggleFavorite(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		return
 	}
 

@@ -19,7 +19,7 @@ func NewRouter(
 	AuthClient *auth.Client,
 ) *gin.Engine {
 	router := gin.Default()
-	authRouter := router.Group("/").Use(middleware.AuthMiddleware(AuthClient))
+	authRouter := router.Group("/").Use(middleware.LoggingMiddleware(), middleware.AuthMiddleware(AuthClient))
 
 	NewUserRouter(router, authRouter, UserController)
 	NewPostRouter(router, authRouter, PostController)

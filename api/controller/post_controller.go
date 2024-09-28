@@ -26,7 +26,7 @@ func (p *PostController) CreatePost(ctx *gin.Context) {
 
 	post, err := p.service.CreatePost(ctx, req)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		return
 	}
 	ctx.JSON(http.StatusCreated, post)
@@ -40,7 +40,7 @@ func (p *PostController) GetOwnPosts(ctx *gin.Context) {
 
 	posts, err := p.service.GetOwnPosts(ctx, ownUid)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		return
 	}
 	ctx.JSON(http.StatusOK, posts)
