@@ -27,11 +27,11 @@ INSERT INTO posts (
   $1,
   $2,
   $3,
-  CASE WHEN $4 = '' THEN NULL ELSE $4 END,
-  CASE WHEN $5 = '' THEN NULL ELSE $5 END,
-  $6,
-  $7,
-  $8
+  CASE WHEN $6::text = '' THEN NULL ELSE $6::text END,
+  CASE WHEN $7::text = '' THEN NULL ELSE $7::text END,
+  $4,
+  CASE WHEN $8::text = '' THEN NULL ELSE $8::text END,
+  $5
 ) RETURNING post_id, uid, main_category, post_text, photo_url, expense, location, public_type_no, created_at, updated_at
 `
 
@@ -39,11 +39,11 @@ type CreatePostParams struct {
 	PostID       uuid.UUID      `json:"post_id"`
 	Uid          string         `json:"uid"`
 	MainCategory string         `json:"main_category"`
-	Column4      interface{}    `json:"column_4"`
-	Column5      interface{}    `json:"column_5"`
 	Expense      pgtype.Numeric `json:"expense"`
-	Location     *string        `json:"location"`
 	PublicTypeNo string         `json:"public_type_no"`
+	PostText     *string        `json:"post_text"`
+	PhotoUrl     *string        `json:"photo_url"`
+	Location     *string        `json:"location"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -51,11 +51,11 @@ func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, e
 		arg.PostID,
 		arg.Uid,
 		arg.MainCategory,
-		arg.Column4,
-		arg.Column5,
 		arg.Expense,
-		arg.Location,
 		arg.PublicTypeNo,
+		arg.PostText,
+		arg.PhotoUrl,
+		arg.Location,
 	)
 	var i Post
 	err := row.Scan(

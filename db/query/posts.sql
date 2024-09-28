@@ -12,11 +12,11 @@ INSERT INTO posts (
   $1,
   $2,
   $3,
-  CASE WHEN $4 = '' THEN NULL ELSE $4 END,
-  CASE WHEN $5 = '' THEN NULL ELSE $5 END,
-  $6,
-  $7,
-  $8
+  CASE WHEN sqlc.narg(post_text)::text = '' THEN NULL ELSE sqlc.narg(post_text)::text END,
+  CASE WHEN sqlc.narg(photo_url)::text = '' THEN NULL ELSE sqlc.narg(photo_url)::text END,
+  $4,
+  CASE WHEN sqlc.narg(location)::text = '' THEN NULL ELSE sqlc.narg(location)::text END,
+  $5
 ) RETURNING *;
 
 -- name: GetOwnPosts :many

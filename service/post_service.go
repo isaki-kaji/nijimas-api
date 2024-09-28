@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
+	"github.com/isaki-kaji/nijimas-api/apperror"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jinzhu/copier"
@@ -27,21 +28,21 @@ type PostServiceImpl struct {
 }
 
 type CreatePostRequest struct {
-	PostID       string `json:"post_id" binding:"required,uuid"`
 	Uid          string `json:"uid" binding:"required"`
 	MainCategory string `json:"main_category" binding:"required,max=255"`
 	SubCategory1 string `json:"sub_category1" binding:"max=255"`
 	SubCategory2 string `json:"sub_category2" binding:"max=255"`
 	PostText     string `json:"post_text"`
 	PhotoUrl     string `json:"photo_url" binding:"max=2000"`
-	Expense      int64  `json:"expense" binding:"lt=100000000"`
+	Expense      string `json:"expense" binding:"lt=100000000"`
 	Location     string `json:"location"`
 	PublicTypeNo string `json:"public_type_no" binding:"required,oneof=1 2 3"`
 }
 
 func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error) {
-	uuid, err := uuid.Parse(arg.PostID)
+	uuid, err := util.GenerateUUID()
 	if err != nil {
+		err = apperror.OtherInternalErr.Wrap(err, "failed to generate uuid")
 		return db.Post{}, err
 	}
 
@@ -54,21 +55,15 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		SubCategory1: arg.SubCategory1,
 		SubCategory2: arg.SubCategory2,
 		Location:     util.ToPointerOrNil(arg.Location),
-		Expense:      util.ToPointerOrNil(arg.Expense),
+		Expense:      arg.Expense,
 		PublicTypeNo: arg.PublicTypeNo,
 	}
 
 	post, err := s.repository.CreatePostTx(ctx, param)
 	if err != nil {
+		err = apperror.InsertDataFailed.Wrap(err, "failed to create post")
 		return db.Post{}, err
 	}
-
-	// go func() {
-	// 	err := function.CalcUserPosts(arg.Uid)
-	// 	if err != nil {
-	// 		slog.Error("failed to calc user posts: %v", err)
-	// 	}
-	// }()
 	return post, nil
 }
 
@@ -92,9 +87,15 @@ type PostResponse struct {
 func (s *PostServiceImpl) GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error) {
 	posts, err := s.repository.GetOwnPosts(ctx, uid)
 	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
 		return nil, err
 	}
-	return transformPosts(posts)
+	postsResponse, err := transformPosts(posts)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to transform posts")
+		return nil, err
+	}
+	return postsResponse, nil
 }
 
 // func (s *PostServiceImpl) GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error) {
@@ -105,28 +106,36 @@ func (s *PostServiceImpl) GetOwnPosts(ctx context.Context, uid string) ([]PostRe
 // 	return transformPosts(posts)
 // }
 
-// IDで一つだけ取得する可能性があるから、PostResponseを返すようにするべきかも
 func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 	response := make([]PostResponse, 0, len(postsRow))
 
 	for _, post := range postsRow {
-		var commonRow CommonGetPostsRow
-		if err := copier.Copy(&commonRow, post); err != nil {
-			return nil, err
-		}
-
-		p := PostResponse{}
-		err := copier.Copy(&p, commonRow)
+		p, err := transformPost(post)
 		if err != nil {
 			return nil, err
 		}
-		p.PhotoUrl = splitPhotoUrl(commonRow.PhotoUrl)
-		p.SubCategory1 = commonRow.SubCategory
-		p.SubCategory2 = commonRow.SubCategory_2
 		response = append(response, p)
 	}
-
 	return response, nil
+}
+
+func transformPost[T any](post T) (PostResponse, error) {
+	var commonRow CommonGetPostsRow
+	if err := copier.Copy(&commonRow, post); err != nil {
+		return PostResponse{}, err
+	}
+
+	p := PostResponse{}
+	err := copier.Copy(&p, commonRow)
+	if err != nil {
+		return PostResponse{}, err
+	}
+
+	p.PhotoUrl = splitPhotoUrl(commonRow.PhotoUrl)
+	p.SubCategory1 = commonRow.SubCategory1
+	p.SubCategory2 = commonRow.SubCategory2
+
+	return p, nil
 }
 
 func splitPhotoUrl(photoUrl *string) []string {
@@ -142,8 +151,8 @@ type CommonGetPostsRow struct {
 	Username        string    `json:"username"`
 	ProfileImageUrl *string   `json:"profile_image_url"`
 	MainCategory    string    `json:"main_category"`
-	SubCategory     *string   `json:"sub_category"`
-	SubCategory_2   *string   `json:"sub_category_2"`
+	SubCategory1    *string   `json:"sub_category1"`
+	SubCategory2    *string   `json:"sub_category2"`
 	PostText        *string   `json:"post_text"`
 	PhotoUrl        *string   `json:"photo_url"`
 	Expense         *int64    `json:"expense"`

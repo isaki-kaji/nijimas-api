@@ -6,5 +6,5 @@ import (
 )
 
 func NewFavoriteRouter(router *gin.Engine, authRouter gin.IRoutes, controller *controller.FavoriteController) {
-	authRouter.POST("/favorite", controller.ToggleFavorite)
+	authRouter.POST("/favorites", controller.ToggleFavorite)
 }

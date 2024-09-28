@@ -6,6 +6,7 @@ INSERT INTO sub_categories (
   $1, $2
 ) RETURNING *;
 
--- name: GetSubCategoryById :one
+-- name: GetSubCategoryByName :one
 SELECT * FROM sub_categories
 WHERE category_name = $1;
+

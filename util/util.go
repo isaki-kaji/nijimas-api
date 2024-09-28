@@ -4,6 +4,9 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func ToPointerOrNil[T comparable](value T) *T {
@@ -14,11 +17,27 @@ func ToPointerOrNil[T comparable](value T) *T {
 	return &value
 }
 
+func ToNumeric(expense string) (pgtype.Numeric, error) {
+	var num pgtype.Numeric
+	if err := num.Scan(expense); err != nil {
+		return pgtype.Numeric{}, err
+	}
+	return num, nil
+}
+
 func StringPointerToString(p *string) string {
 	if p == nil {
 		return ""
 	}
 	return *p
+}
+
+func GenerateUUID() (uuid.UUID, error) {
+	uuid, err := uuid.NewV7()
+	if err != nil {
+		return uuid, err
+	}
+	return uuid, nil
 }
 
 func RandomString(n int) string {

@@ -18,7 +18,9 @@ const (
 	DataConflict        ErrCode = "S006"
 	ValidationFailed    ErrCode = "R001"
 	ReqBodyDecodeFailed ErrCode = "R002"
+	BadPathParam        ErrCode = "R003"
 	Unauthorized        ErrCode = "A001"
+	OtherInternalErr    ErrCode = "A002"
 )
 
 func (code ErrCode) Wrap(err error, message string) error {

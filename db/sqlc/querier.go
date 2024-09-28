@@ -21,7 +21,7 @@ type Querier interface {
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
 	GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error)
 	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
-	GetSubCategoryById(ctx context.Context, categoryName string) (SubCategory, error)
+	GetSubCategoryByName(ctx context.Context, categoryName string) (SubCategory, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)

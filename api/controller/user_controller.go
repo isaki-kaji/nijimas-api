@@ -39,7 +39,8 @@ func (u *UserController) CreateUser(ctx *gin.Context) {
 }
 
 func (u *UserController) GetUserByUid(ctx *gin.Context) {
-	uid := ctx.Param("id")
+	uid := ctx.Param("uid")
+
 	user, err := u.service.GetUserByUid(ctx, uid)
 	if err != nil {
 		if apperror.DataNotFound.Equal(err) {

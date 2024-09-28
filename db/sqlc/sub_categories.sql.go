@@ -32,13 +32,13 @@ func (q *Queries) CreateSubCategory(ctx context.Context, arg CreateSubCategoryPa
 	return i, err
 }
 
-const getSubCategoryById = `-- name: GetSubCategoryById :one
+const getSubCategoryByName = `-- name: GetSubCategoryByName :one
 SELECT category_id, category_name, created_at FROM sub_categories
 WHERE category_name = $1
 `
 
-func (q *Queries) GetSubCategoryById(ctx context.Context, categoryName string) (SubCategory, error) {
-	row := q.db.QueryRow(ctx, getSubCategoryById, categoryName)
+func (q *Queries) GetSubCategoryByName(ctx context.Context, categoryName string) (SubCategory, error) {
+	row := q.db.QueryRow(ctx, getSubCategoryByName, categoryName)
 	var i SubCategory
 	err := row.Scan(&i.CategoryID, &i.CategoryName, &i.CreatedAt)
 	return i, err
