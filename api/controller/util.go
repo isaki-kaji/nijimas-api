@@ -15,13 +15,13 @@ func checkPostReq(ctx *gin.Context, req any) (string, error) {
 		} else {
 			err = apperror.ReqBodyDecodeFailed.Wrap(err, "failed to decode request body")
 		}
-		ctx.JSON(http.StatusBadRequest, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusBadRequest, apperror.ErrorResponse(ctx, err))
 		return "", err
 	}
 
 	uidStr, err := checkUid(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, apperror.ErrorResponse(err))
+		ctx.JSON(http.StatusUnauthorized, apperror.ErrorResponse(ctx, err))
 		return "", err
 	}
 

@@ -58,6 +58,7 @@ require (
 
 require (
 	firebase.google.com/go/v4 v4.14.0
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

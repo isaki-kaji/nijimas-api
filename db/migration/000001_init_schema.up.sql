@@ -85,7 +85,9 @@ CREATE INDEX ON "users" ("username");
 
 CREATE INDEX ON "posts" ("uid");
 
-CREATE INDEX ON "follows" ("follow_uid");
+CREATE INDEX ON "favorites" ("post_id", "uid");
+
+CREATE INDEX ON "follows" ("uid", "follow_uid");
 
 COMMENT ON COLUMN "posts"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
 

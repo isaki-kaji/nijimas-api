@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-09-24T11:03:34.537Z
+-- Generated at: 2024-09-26T08:02:47.511Z
 
 CREATE TABLE "users" (
   "uid" char(28) PRIMARY KEY,
@@ -89,7 +89,9 @@ CREATE INDEX ON "users" ("username");
 
 CREATE INDEX ON "posts" ("uid");
 
-CREATE INDEX ON "follows" ("follow_uid");
+CREATE INDEX ON "favorites" ("post_id", "uid");
+
+CREATE INDEX ON "follows" ("uid", "follow_uid");
 
 COMMENT ON COLUMN "posts"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
 
