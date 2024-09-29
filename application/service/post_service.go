@@ -119,8 +119,8 @@ func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 	return response, nil
 }
 
-func transformPost[T any](post T) (PostResponse, error) {
-	var commonRow CommonGetPostsRow
+func transformPost(post any) (PostResponse, error) {
+	var commonRow CommonGetPostRow
 	if err := copier.Copy(&commonRow, post); err != nil {
 		return PostResponse{}, err
 	}
@@ -145,7 +145,7 @@ func splitPhotoUrl(photoUrl *string) []string {
 	return strings.Split(*photoUrl, ",")
 }
 
-type CommonGetPostsRow struct {
+type CommonGetPostRow struct {
 	PostID          uuid.UUID `json:"post_id"`
 	Uid             string    `json:"uid"`
 	Username        string    `json:"username"`
