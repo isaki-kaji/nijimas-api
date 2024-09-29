@@ -8,11 +8,12 @@ type AppError struct {
 }
 
 type ErrDetail struct {
-	source  string
-	message string
+	Source  string `json:"source"`
+	Message string `json:"message"`
 }
 
 func (e *AppError) Error() string {
+
 	return e.Err.Error()
 }
 

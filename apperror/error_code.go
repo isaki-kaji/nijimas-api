@@ -3,7 +3,7 @@ package apperror
 import (
 	"errors"
 
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 )
 
 type ErrCode string
@@ -35,8 +35,8 @@ func WrapValidationErr(validationErrs validator.ValidationErrors) error {
 	var errs []ErrDetail
 	for _, vErr := range validationErrs {
 		errs = append(errs, ErrDetail{
-			source:  vErr.Field(),
-			message: vErr.ActualTag(),
+			Source:  vErr.Field(),
+			Message: vErr.ActualTag(),
 		})
 	}
 
@@ -44,6 +44,7 @@ func WrapValidationErr(validationErrs validator.ValidationErrors) error {
 		ErrCode: ValidationFailed,
 		Message: "validation failed",
 		Errors:  errs,
+		Err:     validationErrs,
 	}
 }
 

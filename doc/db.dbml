@@ -86,7 +86,7 @@ Table subcategory_summaries {
   uid char(28) [ref: > U.uid, pk]
   year integer [not null, pk]
   month integer [not null, pk]
-  category_id uuid [ref: > SC.category_id, not null]
+  category_id uuid [ref: > SC.category_id, pk]
   amount numeric(15, 2) [not null, default: 0]
 }
 

@@ -59,7 +59,7 @@ CREATE TABLE "expense_summaries" (
   "month" integer NOT NULL,
   "main_category" varchar(20) NOT NULL,
   "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month")
+  PRIMARY KEY ("uid", "year", "month", "main_category")
 );
 
 CREATE TABLE "subcategory_summaries" (
@@ -68,7 +68,7 @@ CREATE TABLE "subcategory_summaries" (
   "month" integer NOT NULL,
   "category_id" uuid NOT NULL,
   "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month")
+  PRIMARY KEY ("uid", "year", "month", "category_id")
 );
 
 CREATE TABLE "daily_activity_summaries" (

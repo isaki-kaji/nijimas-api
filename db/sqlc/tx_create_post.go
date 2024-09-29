@@ -194,6 +194,7 @@ func calcExpenseSummary(ctx context.Context, param CalcSummaryParam, qtx *Querie
 			if err != nil {
 				return err
 			}
+			return nil
 		}
 		return err
 	}
@@ -243,6 +244,7 @@ func calcSubcategorySummary(ctx context.Context, param CalcSummaryParam, categor
 			if err != nil {
 				return err
 			}
+			return nil
 		}
 		return err
 	}
@@ -293,6 +295,7 @@ func calcDailyActivitySummary(ctx context.Context, param CalcSummaryParam, qtx *
 			if err != nil {
 				return err
 			}
+			return nil
 		}
 		return err
 	}

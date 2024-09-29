@@ -13,9 +13,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	"github.com/isaki-kaji/nijimas-api/api/controller"
+	"github.com/isaki-kaji/nijimas-api/application/service"
+	mockservice "github.com/isaki-kaji/nijimas-api/application/service/mock"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/service"
-	mockservice "github.com/isaki-kaji/nijimas-api/service/mock"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/stretchr/testify/require"
 )
