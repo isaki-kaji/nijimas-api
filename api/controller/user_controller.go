@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/isaki-kaji/nijimas-api/apperror"
-	"github.com/isaki-kaji/nijimas-api/service"
+	"github.com/isaki-kaji/nijimas-api/application/service"
 )
 
 type UserController struct {
