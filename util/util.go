@@ -3,7 +3,7 @@ package util
 import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 func ToPointerOrNil[T comparable](value T) *T {
@@ -14,12 +14,13 @@ func ToPointerOrNil[T comparable](value T) *T {
 	return &value
 }
 
-func ToNumeric(expense string) (pgtype.Numeric, error) {
-	var num pgtype.Numeric
-	if err := num.Scan(expense); err != nil {
-		return pgtype.Numeric{}, err
+func ToDecimal(expense string) (decimal.Decimal, error) {
+	// decimal.Decimal型の変数を作成
+	dec, err := decimal.NewFromString(expense)
+	if err != nil {
+		return decimal.Decimal{}, err
 	}
-	return num, nil
+	return dec, nil
 }
 
 func StringPointerToString(p *string) string {

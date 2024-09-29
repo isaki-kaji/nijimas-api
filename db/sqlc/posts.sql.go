@@ -11,6 +11,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 const createPost = `-- name: CreatePost :one
@@ -36,14 +37,14 @@ INSERT INTO posts (
 `
 
 type CreatePostParams struct {
-	PostID       uuid.UUID      `json:"post_id"`
-	Uid          string         `json:"uid"`
-	MainCategory string         `json:"main_category"`
-	Expense      pgtype.Numeric `json:"expense"`
-	PublicTypeNo string         `json:"public_type_no"`
-	PostText     *string        `json:"post_text"`
-	PhotoUrl     *string        `json:"photo_url"`
-	Location     *string        `json:"location"`
+	PostID       uuid.UUID       `json:"post_id"`
+	Uid          string          `json:"uid"`
+	MainCategory string          `json:"main_category"`
+	Expense      decimal.Decimal `json:"expense"`
+	PublicTypeNo string          `json:"public_type_no"`
+	PostText     *string         `json:"post_text"`
+	PhotoUrl     *string         `json:"photo_url"`
+	Location     *string         `json:"location"`
 }
 
 func (q *Queries) CreatePost(ctx context.Context, arg CreatePostParams) (Post, error) {
@@ -108,20 +109,20 @@ LIMIT 50
 `
 
 type GetOwnPostsRow struct {
-	PostID          uuid.UUID      `json:"post_id"`
-	Uid             string         `json:"uid"`
-	Username        string         `json:"username"`
-	ProfileImageUrl *string        `json:"profile_image_url"`
-	MainCategory    string         `json:"main_category"`
-	Subcategory1    interface{}    `json:"subcategory1"`
-	Subcategory2    interface{}    `json:"subcategory2"`
-	PostText        *string        `json:"post_text"`
-	PhotoUrl        *string        `json:"photo_url"`
-	Expense         pgtype.Numeric `json:"expense"`
-	Location        *string        `json:"location"`
-	PublicTypeNo    string         `json:"public_type_no"`
-	CreatedAt       time.Time      `json:"created_at"`
-	IsFavorite      bool           `json:"is_favorite"`
+	PostID          uuid.UUID       `json:"post_id"`
+	Uid             string          `json:"uid"`
+	Username        string          `json:"username"`
+	ProfileImageUrl *string         `json:"profile_image_url"`
+	MainCategory    string          `json:"main_category"`
+	Subcategory1    interface{}     `json:"subcategory1"`
+	Subcategory2    interface{}     `json:"subcategory2"`
+	PostText        *string         `json:"post_text"`
+	PhotoUrl        *string         `json:"photo_url"`
+	Expense         decimal.Decimal `json:"expense"`
+	Location        *string         `json:"location"`
+	PublicTypeNo    string          `json:"public_type_no"`
+	CreatedAt       time.Time       `json:"created_at"`
+	IsFavorite      bool            `json:"is_favorite"`
 }
 
 func (q *Queries) GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error) {
@@ -189,19 +190,19 @@ WHERE p.post_id = $1
 `
 
 type GetPostByIdRow struct {
-	PostID          uuid.UUID      `json:"post_id"`
-	Uid             string         `json:"uid"`
-	Username        string         `json:"username"`
-	ProfileImageUrl *string        `json:"profile_image_url"`
-	MainCategory    string         `json:"main_category"`
-	Subcategory1    interface{}    `json:"subcategory1"`
-	Subcategory2    interface{}    `json:"subcategory2"`
-	PostText        *string        `json:"post_text"`
-	PhotoUrl        *string        `json:"photo_url"`
-	Expense         pgtype.Numeric `json:"expense"`
-	Location        *string        `json:"location"`
-	PublicTypeNo    string         `json:"public_type_no"`
-	CreatedAt       time.Time      `json:"created_at"`
+	PostID          uuid.UUID       `json:"post_id"`
+	Uid             string          `json:"uid"`
+	Username        string          `json:"username"`
+	ProfileImageUrl *string         `json:"profile_image_url"`
+	MainCategory    string          `json:"main_category"`
+	Subcategory1    interface{}     `json:"subcategory1"`
+	Subcategory2    interface{}     `json:"subcategory2"`
+	PostText        *string         `json:"post_text"`
+	PhotoUrl        *string         `json:"photo_url"`
+	Expense         decimal.Decimal `json:"expense"`
+	Location        *string         `json:"location"`
+	PublicTypeNo    string          `json:"public_type_no"`
+	CreatedAt       time.Time       `json:"created_at"`
 }
 
 func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error) {

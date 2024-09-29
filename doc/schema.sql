@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-09-26T08:02:47.511Z
+-- Generated at: 2024-09-29T07:29:48.092Z
 
 CREATE TABLE "users" (
   "uid" char(28) PRIMARY KEY,
@@ -70,9 +70,9 @@ CREATE TABLE "subcategory_summaries" (
   "uid" char(28),
   "year" integer NOT NULL,
   "month" integer NOT NULL,
-  "category_id" uuid NOT NULL,
+  "category_id" uuid,
   "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month")
+  PRIMARY KEY ("uid", "year", "month", "category_id")
 );
 
 CREATE TABLE "daily_activity_summaries" (

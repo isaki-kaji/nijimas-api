@@ -36,6 +36,36 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 	return m.recorder
 }
 
+// CreateDailyActivitySummary mocks base method.
+func (m *MockRepository) CreateDailyActivitySummary(arg0 context.Context, arg1 db.CreateDailyActivitySummaryParams) (db.DailyActivitySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateDailyActivitySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.DailyActivitySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateDailyActivitySummary indicates an expected call of CreateDailyActivitySummary.
+func (mr *MockRepositoryMockRecorder) CreateDailyActivitySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateDailyActivitySummary", reflect.TypeOf((*MockRepository)(nil).CreateDailyActivitySummary), arg0, arg1)
+}
+
+// CreateExpenseSummary mocks base method.
+func (m *MockRepository) CreateExpenseSummary(arg0 context.Context, arg1 db.CreateExpenseSummaryParams) (db.ExpenseSummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateExpenseSummary", arg0, arg1)
+	ret0, _ := ret[0].(db.ExpenseSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateExpenseSummary indicates an expected call of CreateExpenseSummary.
+func (mr *MockRepositoryMockRecorder) CreateExpenseSummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateExpenseSummary", reflect.TypeOf((*MockRepository)(nil).CreateExpenseSummary), arg0, arg1)
+}
+
 // CreateFavorite mocks base method.
 func (m *MockRepository) CreateFavorite(arg0 context.Context, arg1 db.CreateFavoriteParams) (db.Favorite, error) {
 	m.ctrl.T.Helper()
@@ -49,21 +79,6 @@ func (m *MockRepository) CreateFavorite(arg0 context.Context, arg1 db.CreateFavo
 func (mr *MockRepositoryMockRecorder) CreateFavorite(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateFavorite", reflect.TypeOf((*MockRepository)(nil).CreateFavorite), arg0, arg1)
-}
-
-// CreateMainCategory mocks base method.
-func (m *MockRepository) CreateMainCategory(arg0 context.Context, arg1 string) (db.MainCategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateMainCategory", arg0, arg1)
-	ret0, _ := ret[0].(db.MainCategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateMainCategory indicates an expected call of CreateMainCategory.
-func (mr *MockRepositoryMockRecorder) CreateMainCategory(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateMainCategory", reflect.TypeOf((*MockRepository)(nil).CreateMainCategory), arg0, arg1)
 }
 
 // CreatePost mocks base method.
@@ -112,7 +127,7 @@ func (mr *MockRepositoryMockRecorder) CreatePostTx(arg0, arg1 interface{}) *gomo
 }
 
 // CreateSubCategory mocks base method.
-func (m *MockRepository) CreateSubCategory(arg0 context.Context, arg1 string) (db.SubCategory, error) {
+func (m *MockRepository) CreateSubCategory(arg0 context.Context, arg1 db.CreateSubCategoryParams) (db.SubCategory, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateSubCategory", arg0, arg1)
 	ret0, _ := ret[0].(db.SubCategory)
@@ -124,6 +139,21 @@ func (m *MockRepository) CreateSubCategory(arg0 context.Context, arg1 string) (d
 func (mr *MockRepositoryMockRecorder) CreateSubCategory(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubCategory", reflect.TypeOf((*MockRepository)(nil).CreateSubCategory), arg0, arg1)
+}
+
+// CreateSubCategorySummary mocks base method.
+func (m *MockRepository) CreateSubCategorySummary(arg0 context.Context, arg1 db.CreateSubCategorySummaryParams) (db.SubcategorySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateSubCategorySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.SubcategorySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateSubCategorySummary indicates an expected call of CreateSubCategorySummary.
+func (mr *MockRepositoryMockRecorder) CreateSubCategorySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateSubCategorySummary", reflect.TypeOf((*MockRepository)(nil).CreateSubCategorySummary), arg0, arg1)
 }
 
 // CreateUser mocks base method.
@@ -156,6 +186,66 @@ func (mr *MockRepositoryMockRecorder) DeleteFavorite(arg0, arg1 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteFavorite", reflect.TypeOf((*MockRepository)(nil).DeleteFavorite), arg0, arg1)
 }
 
+// GetDailyActivitySummariesByMonth mocks base method.
+func (m *MockRepository) GetDailyActivitySummariesByMonth(arg0 context.Context, arg1 db.GetDailyActivitySummariesByMonthParams) ([]db.GetDailyActivitySummariesByMonthRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDailyActivitySummariesByMonth", arg0, arg1)
+	ret0, _ := ret[0].([]db.GetDailyActivitySummariesByMonthRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDailyActivitySummariesByMonth indicates an expected call of GetDailyActivitySummariesByMonth.
+func (mr *MockRepositoryMockRecorder) GetDailyActivitySummariesByMonth(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDailyActivitySummariesByMonth", reflect.TypeOf((*MockRepository)(nil).GetDailyActivitySummariesByMonth), arg0, arg1)
+}
+
+// GetDailyActivitySummary mocks base method.
+func (m *MockRepository) GetDailyActivitySummary(arg0 context.Context, arg1 db.GetDailyActivitySummaryParams) (db.DailyActivitySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDailyActivitySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.DailyActivitySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDailyActivitySummary indicates an expected call of GetDailyActivitySummary.
+func (mr *MockRepositoryMockRecorder) GetDailyActivitySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDailyActivitySummary", reflect.TypeOf((*MockRepository)(nil).GetDailyActivitySummary), arg0, arg1)
+}
+
+// GetExpenseSummariesByMonth mocks base method.
+func (m *MockRepository) GetExpenseSummariesByMonth(arg0 context.Context, arg1 db.GetExpenseSummariesByMonthParams) ([]db.GetExpenseSummariesByMonthRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetExpenseSummariesByMonth", arg0, arg1)
+	ret0, _ := ret[0].([]db.GetExpenseSummariesByMonthRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetExpenseSummariesByMonth indicates an expected call of GetExpenseSummariesByMonth.
+func (mr *MockRepositoryMockRecorder) GetExpenseSummariesByMonth(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetExpenseSummariesByMonth", reflect.TypeOf((*MockRepository)(nil).GetExpenseSummariesByMonth), arg0, arg1)
+}
+
+// GetExpenseSummary mocks base method.
+func (m *MockRepository) GetExpenseSummary(arg0 context.Context, arg1 db.GetExpenseSummaryParams) (db.ExpenseSummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetExpenseSummary", arg0, arg1)
+	ret0, _ := ret[0].(db.ExpenseSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetExpenseSummary indicates an expected call of GetExpenseSummary.
+func (mr *MockRepositoryMockRecorder) GetExpenseSummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetExpenseSummary", reflect.TypeOf((*MockRepository)(nil).GetExpenseSummary), arg0, arg1)
+}
+
 // GetFavorite mocks base method.
 func (m *MockRepository) GetFavorite(arg0 context.Context, arg1 db.GetFavoriteParams) (db.Favorite, error) {
 	m.ctrl.T.Helper()
@@ -186,34 +276,19 @@ func (mr *MockRepositoryMockRecorder) GetFollowUsers(arg0, arg1 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetFollowUsers", reflect.TypeOf((*MockRepository)(nil).GetFollowUsers), arg0, arg1)
 }
 
-// GetMainCategories mocks base method.
-func (m *MockRepository) GetMainCategories(arg0 context.Context) ([]db.MainCategory, error) {
+// GetOwnPosts mocks base method.
+func (m *MockRepository) GetOwnPosts(arg0 context.Context, arg1 string) ([]db.GetOwnPostsRow, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMainCategories", arg0)
-	ret0, _ := ret[0].([]db.MainCategory)
+	ret := m.ctrl.Call(m, "GetOwnPosts", arg0, arg1)
+	ret0, _ := ret[0].([]db.GetOwnPostsRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetMainCategories indicates an expected call of GetMainCategories.
-func (mr *MockRepositoryMockRecorder) GetMainCategories(arg0 interface{}) *gomock.Call {
+// GetOwnPosts indicates an expected call of GetOwnPosts.
+func (mr *MockRepositoryMockRecorder) GetOwnPosts(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMainCategories", reflect.TypeOf((*MockRepository)(nil).GetMainCategories), arg0)
-}
-
-// GetMainCategory mocks base method.
-func (m *MockRepository) GetMainCategory(arg0 context.Context, arg1 string) (db.MainCategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMainCategory", arg0, arg1)
-	ret0, _ := ret[0].(db.MainCategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetMainCategory indicates an expected call of GetMainCategory.
-func (mr *MockRepositoryMockRecorder) GetMainCategory(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMainCategory", reflect.TypeOf((*MockRepository)(nil).GetMainCategory), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOwnPosts", reflect.TypeOf((*MockRepository)(nil).GetOwnPosts), arg0, arg1)
 }
 
 // GetPostById mocks base method.
@@ -231,124 +306,49 @@ func (mr *MockRepositoryMockRecorder) GetPostById(arg0, arg1 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostById", reflect.TypeOf((*MockRepository)(nil).GetPostById), arg0, arg1)
 }
 
-// GetPostSubCategory1ByPostId mocks base method.
-func (m *MockRepository) GetPostSubCategory1ByPostId(arg0 context.Context, arg1 uuid.UUID) (db.PostSubcategory, error) {
+// GetSubCategoryByName mocks base method.
+func (m *MockRepository) GetSubCategoryByName(arg0 context.Context, arg1 string) (db.SubCategory, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostSubCategory1ByPostId", arg0, arg1)
-	ret0, _ := ret[0].(db.PostSubcategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostSubCategory1ByPostId indicates an expected call of GetPostSubCategory1ByPostId.
-func (mr *MockRepositoryMockRecorder) GetPostSubCategory1ByPostId(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostSubCategory1ByPostId", reflect.TypeOf((*MockRepository)(nil).GetPostSubCategory1ByPostId), arg0, arg1)
-}
-
-// GetPostSubCategory2ByPostId mocks base method.
-func (m *MockRepository) GetPostSubCategory2ByPostId(arg0 context.Context, arg1 uuid.UUID) (db.PostSubcategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostSubCategory2ByPostId", arg0, arg1)
-	ret0, _ := ret[0].(db.PostSubcategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostSubCategory2ByPostId indicates an expected call of GetPostSubCategory2ByPostId.
-func (mr *MockRepositoryMockRecorder) GetPostSubCategory2ByPostId(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostSubCategory2ByPostId", reflect.TypeOf((*MockRepository)(nil).GetPostSubCategory2ByPostId), arg0, arg1)
-}
-
-// GetPostSubCategoryByPostId mocks base method.
-func (m *MockRepository) GetPostSubCategoryByPostId(arg0 context.Context, arg1 uuid.UUID) ([]db.PostSubcategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostSubCategoryByPostId", arg0, arg1)
-	ret0, _ := ret[0].([]db.PostSubcategory)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostSubCategoryByPostId indicates an expected call of GetPostSubCategoryByPostId.
-func (mr *MockRepositoryMockRecorder) GetPostSubCategoryByPostId(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostSubCategoryByPostId", reflect.TypeOf((*MockRepository)(nil).GetPostSubCategoryByPostId), arg0, arg1)
-}
-
-// GetPostsByCategory mocks base method.
-func (m *MockRepository) GetPostsByCategory(arg0 context.Context, arg1 db.GetPostsByCategoryParams) ([]db.GetPostsByCategoryRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostsByCategory", arg0, arg1)
-	ret0, _ := ret[0].([]db.GetPostsByCategoryRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostsByCategory indicates an expected call of GetPostsByCategory.
-func (mr *MockRepositoryMockRecorder) GetPostsByCategory(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostsByCategory", reflect.TypeOf((*MockRepository)(nil).GetPostsByCategory), arg0, arg1)
-}
-
-// GetPostsByFollowing mocks base method.
-func (m *MockRepository) GetPostsByFollowing(arg0 context.Context, arg1 string) ([]db.GetPostsByFollowingRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostsByFollowing", arg0, arg1)
-	ret0, _ := ret[0].([]db.GetPostsByFollowingRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostsByFollowing indicates an expected call of GetPostsByFollowing.
-func (mr *MockRepositoryMockRecorder) GetPostsByFollowing(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostsByFollowing", reflect.TypeOf((*MockRepository)(nil).GetPostsByFollowing), arg0, arg1)
-}
-
-// GetPostsBySubCategory mocks base method.
-func (m *MockRepository) GetPostsBySubCategory(arg0 context.Context, arg1 db.GetPostsBySubCategoryParams) ([]db.GetPostsBySubCategoryRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostsBySubCategory", arg0, arg1)
-	ret0, _ := ret[0].([]db.GetPostsBySubCategoryRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostsBySubCategory indicates an expected call of GetPostsBySubCategory.
-func (mr *MockRepositoryMockRecorder) GetPostsBySubCategory(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostsBySubCategory", reflect.TypeOf((*MockRepository)(nil).GetPostsBySubCategory), arg0, arg1)
-}
-
-// GetPostsByUid mocks base method.
-func (m *MockRepository) GetPostsByUid(arg0 context.Context, arg1 db.GetPostsByUidParams) ([]db.GetPostsByUidRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetPostsByUid", arg0, arg1)
-	ret0, _ := ret[0].([]db.GetPostsByUidRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetPostsByUid indicates an expected call of GetPostsByUid.
-func (mr *MockRepositoryMockRecorder) GetPostsByUid(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPostsByUid", reflect.TypeOf((*MockRepository)(nil).GetPostsByUid), arg0, arg1)
-}
-
-// GetSubCategory mocks base method.
-func (m *MockRepository) GetSubCategory(arg0 context.Context, arg1 string) (db.SubCategory, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetSubCategory", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetSubCategoryByName", arg0, arg1)
 	ret0, _ := ret[0].(db.SubCategory)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetSubCategory indicates an expected call of GetSubCategory.
-func (mr *MockRepositoryMockRecorder) GetSubCategory(arg0, arg1 interface{}) *gomock.Call {
+// GetSubCategoryByName indicates an expected call of GetSubCategoryByName.
+func (mr *MockRepositoryMockRecorder) GetSubCategoryByName(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubCategory", reflect.TypeOf((*MockRepository)(nil).GetSubCategory), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubCategoryByName", reflect.TypeOf((*MockRepository)(nil).GetSubCategoryByName), arg0, arg1)
+}
+
+// GetSubCategorySummariesByMonth mocks base method.
+func (m *MockRepository) GetSubCategorySummariesByMonth(arg0 context.Context, arg1 db.GetSubCategorySummariesByMonthParams) ([]db.GetSubCategorySummariesByMonthRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubCategorySummariesByMonth", arg0, arg1)
+	ret0, _ := ret[0].([]db.GetSubCategorySummariesByMonthRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubCategorySummariesByMonth indicates an expected call of GetSubCategorySummariesByMonth.
+func (mr *MockRepositoryMockRecorder) GetSubCategorySummariesByMonth(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubCategorySummariesByMonth", reflect.TypeOf((*MockRepository)(nil).GetSubCategorySummariesByMonth), arg0, arg1)
+}
+
+// GetSubCategorySummary mocks base method.
+func (m *MockRepository) GetSubCategorySummary(arg0 context.Context, arg1 db.GetSubCategorySummaryParams) (db.SubcategorySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetSubCategorySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.SubcategorySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSubCategorySummary indicates an expected call of GetSubCategorySummary.
+func (mr *MockRepositoryMockRecorder) GetSubCategorySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSubCategorySummary", reflect.TypeOf((*MockRepository)(nil).GetSubCategorySummary), arg0, arg1)
 }
 
 // GetUser mocks base method.
@@ -366,6 +366,36 @@ func (mr *MockRepositoryMockRecorder) GetUser(arg0, arg1 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUser", reflect.TypeOf((*MockRepository)(nil).GetUser), arg0, arg1)
 }
 
+// UpdateDailyActivitySummary mocks base method.
+func (m *MockRepository) UpdateDailyActivitySummary(arg0 context.Context, arg1 db.UpdateDailyActivitySummaryParams) (db.DailyActivitySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDailyActivitySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.DailyActivitySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateDailyActivitySummary indicates an expected call of UpdateDailyActivitySummary.
+func (mr *MockRepositoryMockRecorder) UpdateDailyActivitySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDailyActivitySummary", reflect.TypeOf((*MockRepository)(nil).UpdateDailyActivitySummary), arg0, arg1)
+}
+
+// UpdateExpenseSummary mocks base method.
+func (m *MockRepository) UpdateExpenseSummary(arg0 context.Context, arg1 db.UpdateExpenseSummaryParams) (db.ExpenseSummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateExpenseSummary", arg0, arg1)
+	ret0, _ := ret[0].(db.ExpenseSummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateExpenseSummary indicates an expected call of UpdateExpenseSummary.
+func (mr *MockRepositoryMockRecorder) UpdateExpenseSummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateExpenseSummary", reflect.TypeOf((*MockRepository)(nil).UpdateExpenseSummary), arg0, arg1)
+}
+
 // UpdatePost mocks base method.
 func (m *MockRepository) UpdatePost(arg0 context.Context, arg1 db.UpdatePostParams) (db.Post, error) {
 	m.ctrl.T.Helper()
@@ -379,6 +409,21 @@ func (m *MockRepository) UpdatePost(arg0 context.Context, arg1 db.UpdatePostPara
 func (mr *MockRepositoryMockRecorder) UpdatePost(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePost", reflect.TypeOf((*MockRepository)(nil).UpdatePost), arg0, arg1)
+}
+
+// UpdateSubCategorySummary mocks base method.
+func (m *MockRepository) UpdateSubCategorySummary(arg0 context.Context, arg1 db.UpdateSubCategorySummaryParams) (db.SubcategorySummary, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateSubCategorySummary", arg0, arg1)
+	ret0, _ := ret[0].(db.SubcategorySummary)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateSubCategorySummary indicates an expected call of UpdateSubCategorySummary.
+func (mr *MockRepositoryMockRecorder) UpdateSubCategorySummary(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateSubCategorySummary", reflect.TypeOf((*MockRepository)(nil).UpdateSubCategorySummary), arg0, arg1)
 }
 
 // UpdateUser mocks base method.

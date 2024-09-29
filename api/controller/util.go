@@ -1,16 +1,18 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/isaki-kaji/nijimas-api/apperror"
 )
 
 func checkPostReq(ctx *gin.Context, req any) (string, error) {
-	if err := ctx.ShouldBindJSON(req); err != nil {
-		if validationErrs, ok := err.(validator.ValidationErrors); ok {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		var validationErrs validator.ValidationErrors
+		if errors.As(err, &validationErrs) {
 			err = apperror.WrapValidationErr(validationErrs)
 		} else {
 			err = apperror.ReqBodyDecodeFailed.Wrap(err, "failed to decode request body")

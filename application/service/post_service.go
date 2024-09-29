@@ -11,6 +11,7 @@ import (
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jinzhu/copier"
+	"github.com/shopspring/decimal"
 )
 
 type PostService interface {
@@ -36,7 +37,7 @@ type CreatePostRequest struct {
 	PhotoUrl     string `json:"photo_url" binding:"max=2000"`
 	Expense      string `json:"expense" binding:"lt=100000000"`
 	Location     string `json:"location"`
-	PublicTypeNo string `json:"public_type_no" binding:"required,oneof=1 2 3"`
+	PublicTypeNo string `json:"public_type_no" binding:"required,oneof=0 1 2"`
 }
 
 func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error) {
@@ -57,6 +58,7 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		Location:     util.ToPointerOrNil(arg.Location),
 		Expense:      arg.Expense,
 		PublicTypeNo: arg.PublicTypeNo,
+		CreatedAt:    time.Now(),
 	}
 
 	post, err := s.repository.CreatePostTx(ctx, param)
@@ -68,20 +70,20 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 }
 
 type PostResponse struct {
-	PostID          string    `json:"post_id"`
-	Uid             string    `json:"uid"`
-	Username        string    `json:"username"`
-	ProfileImageUrl *string   `json:"profile_image_url"`
-	MainCategory    string    `json:"main_category"`
-	SubCategory1    *string   `json:"sub_category1"`
-	SubCategory2    *string   `json:"sub_category2"`
-	PostText        *string   `json:"post_text"`
-	PhotoUrl        []string  `json:"photo_url"`
-	Expense         *int64    `json:"expense"`
-	Location        *string   `json:"location"`
-	PublicTypeNo    string    `json:"public_type_no"`
-	CreatedAt       time.Time `json:"created_at"`
-	IsFavorite      bool      `json:"is_favorite"`
+	PostID          string          `json:"post_id"`
+	Uid             string          `json:"uid"`
+	Username        string          `json:"username"`
+	ProfileImageUrl *string         `json:"profile_image_url"`
+	MainCategory    string          `json:"main_category"`
+	SubCategory1    *string         `json:"sub_category1"`
+	SubCategory2    *string         `json:"sub_category2"`
+	PostText        *string         `json:"post_text"`
+	PhotoUrl        []string        `json:"photo_url"`
+	Expense         decimal.Decimal `json:"expense"`
+	Location        *string         `json:"location"`
+	PublicTypeNo    string          `json:"public_type_no"`
+	CreatedAt       time.Time       `json:"created_at"`
+	IsFavorite      bool            `json:"is_favorite"`
 }
 
 func (s *PostServiceImpl) GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error) {
@@ -119,8 +121,8 @@ func transformPosts[T any](postsRow []T) ([]PostResponse, error) {
 	return response, nil
 }
 
-func transformPost[T any](post T) (PostResponse, error) {
-	var commonRow CommonGetPostsRow
+func transformPost(post any) (PostResponse, error) {
+	var commonRow CommonGetPostRow
 	if err := copier.Copy(&commonRow, post); err != nil {
 		return PostResponse{}, err
 	}
@@ -145,7 +147,7 @@ func splitPhotoUrl(photoUrl *string) []string {
 	return strings.Split(*photoUrl, ",")
 }
 
-type CommonGetPostsRow struct {
+type CommonGetPostRow struct {
 	PostID          uuid.UUID `json:"post_id"`
 	Uid             string    `json:"uid"`
 	Username        string    `json:"username"`
