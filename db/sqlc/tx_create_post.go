@@ -3,11 +3,16 @@ package db
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
+	"github.com/shopspring/decimal"
 )
+
+var MaxAmount = decimal.NewFromInt(99999999)
+var MinAmount = decimal.NewFromInt(0)
 
 type CreatePostTxParam struct {
 	PostID       uuid.UUID
@@ -20,6 +25,7 @@ type CreatePostTxParam struct {
 	Expense      string
 	Location     *string
 	PublicTypeNo string
+	CreatedAt    time.Time
 }
 
 func (r *SQLRepository) CreatePostTx(ctx context.Context, param CreatePostTxParam) (Post, error) {
@@ -30,7 +36,7 @@ func (r *SQLRepository) CreatePostTx(ctx context.Context, param CreatePostTxPara
 	defer tx.Rollback(ctx)
 	qtx := r.WithTx(tx)
 
-	numericExpense, err := util.ToNumeric(param.Expense)
+	decimalExpense, err := util.ToDecimal(param.Expense)
 	if err != nil {
 		return Post{}, err
 	}
@@ -41,7 +47,7 @@ func (r *SQLRepository) CreatePostTx(ctx context.Context, param CreatePostTxPara
 		MainCategory: param.MainCategory,
 		PostText:     param.PostText,
 		PhotoUrl:     param.PhotoUrl,
-		Expense:      numericExpense,
+		Expense:      decimalExpense,
 		Location:     param.Location,
 		PublicTypeNo: param.PublicTypeNo,
 	}
@@ -59,6 +65,21 @@ func (r *SQLRepository) CreatePostTx(ctx context.Context, param CreatePostTxPara
 	if err != nil {
 		return Post{}, err
 	}
+
+	CalcSummaryParam := CalcSummaryParam{
+		Uid:          param.Uid,
+		MainCategory: param.MainCategory,
+		Expense:      decimalExpense,
+		year:         int32(param.CreatedAt.Year()),
+		month:        int32(param.CreatedAt.Month()),
+		day:          int32(param.CreatedAt.Day()),
+	}
+
+	err = calcExpenseSummary(ctx, CalcSummaryParam, qtx)
+	if err != nil {
+		return Post{}, err
+	}
+
 	err = tx.Commit(ctx)
 	if err != nil {
 		return Post{}, err
@@ -116,6 +137,64 @@ func registerPostSubCategory(ctx context.Context, postId uuid.UUID, categoryId u
 		CategoryNo: categoryNo,
 	}
 	_, err := qtx.CreatePostSubCategory(ctx, createPostSubCategoryParam)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type CalcSummaryParam struct {
+	Uid          string
+	MainCategory string
+	Expense      decimal.Decimal
+	year         int32
+	month        int32
+	day          int32
+}
+
+func calcExpenseSummary(ctx context.Context, param CalcSummaryParam, qtx *Queries) error {
+	getExpenseSummaryParam := GetExpenseSummaryParams{
+		Uid:          param.Uid,
+		Year:         param.year,
+		Month:        param.month,
+		MainCategory: param.MainCategory,
+	}
+	expenseSummary, err := qtx.GetExpenseSummary(ctx, getExpenseSummaryParam)
+	if err != nil {
+		if !errors.Is(err, pgx.ErrNoRows) {
+			createExpenseSummaryParam := CreateExpenseSummaryParams{
+				Uid:          param.Uid,
+				Year:         param.year,
+				Month:        param.month,
+				MainCategory: param.MainCategory,
+				Amount:       param.Expense,
+			}
+			_, err := qtx.CreateExpenseSummary(ctx, createExpenseSummaryParam)
+			if err != nil {
+				return err
+			}
+		}
+		return err
+	}
+
+	if expenseSummary.Amount.GreaterThan(MaxAmount) {
+		return nil
+	}
+
+	updatedAmount := expenseSummary.Amount.Add(param.Expense)
+	if updatedAmount.GreaterThan(MaxAmount) {
+		updatedAmount = MaxAmount
+	}
+
+	updateExpenseSummaryParam := UpdateExpenseSummaryParams{
+		Amount:       updatedAmount,
+		Uid:          param.Uid,
+		Year:         param.year,
+		Month:        param.month,
+		MainCategory: param.MainCategory,
+	}
+
+	_, err = qtx.UpdateExpenseSummary(ctx, updateExpenseSummaryParam)
 	if err != nil {
 		return err
 	}

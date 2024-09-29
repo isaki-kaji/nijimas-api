@@ -8,24 +8,24 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 type DailyActivitySummary struct {
-	Uid    string         `json:"uid"`
-	Year   int32          `json:"year"`
-	Month  int32          `json:"month"`
-	Day    int32          `json:"day"`
-	Number int32          `json:"number"`
-	Amount pgtype.Numeric `json:"amount"`
+	Uid    string          `json:"uid"`
+	Year   int32           `json:"year"`
+	Month  int32           `json:"month"`
+	Day    int32           `json:"day"`
+	Number int32           `json:"number"`
+	Amount decimal.Decimal `json:"amount"`
 }
 
 type ExpenseSummary struct {
-	Uid          string         `json:"uid"`
-	Year         int32          `json:"year"`
-	Month        int32          `json:"month"`
-	MainCategory string         `json:"main_category"`
-	Amount       pgtype.Numeric `json:"amount"`
+	Uid          string          `json:"uid"`
+	Year         int32           `json:"year"`
+	Month        int32           `json:"month"`
+	MainCategory string          `json:"main_category"`
+	Amount       decimal.Decimal `json:"amount"`
 }
 
 type Favorite struct {
@@ -46,13 +46,13 @@ type MainCategory struct {
 }
 
 type Post struct {
-	PostID       uuid.UUID      `json:"post_id"`
-	Uid          string         `json:"uid"`
-	MainCategory string         `json:"main_category"`
-	PostText     *string        `json:"post_text"`
-	PhotoUrl     *string        `json:"photo_url"`
-	Expense      pgtype.Numeric `json:"expense"`
-	Location     *string        `json:"location"`
+	PostID       uuid.UUID       `json:"post_id"`
+	Uid          string          `json:"uid"`
+	MainCategory string          `json:"main_category"`
+	PostText     *string         `json:"post_text"`
+	PhotoUrl     *string         `json:"photo_url"`
+	Expense      decimal.Decimal `json:"expense"`
+	Location     *string         `json:"location"`
 	// 0:公開、1:フォロワーにのみ公開、2:非公開
 	PublicTypeNo string    `json:"public_type_no"`
 	CreatedAt    time.Time `json:"created_at"`
@@ -72,11 +72,11 @@ type SubCategory struct {
 }
 
 type SubcategorySummary struct {
-	Uid        string         `json:"uid"`
-	Year       int32          `json:"year"`
-	Month      int32          `json:"month"`
-	CategoryID uuid.UUID      `json:"category_id"`
-	Amount     pgtype.Numeric `json:"amount"`
+	Uid        string          `json:"uid"`
+	Year       int32           `json:"year"`
+	Month      int32           `json:"month"`
+	CategoryID uuid.UUID       `json:"category_id"`
+	Amount     decimal.Decimal `json:"amount"`
 }
 
 type User struct {

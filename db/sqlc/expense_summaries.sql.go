@@ -8,7 +8,7 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 const createExpenseSummary = `-- name: CreateExpenseSummary :one
@@ -18,11 +18,11 @@ RETURNING uid, year, month, main_category, amount
 `
 
 type CreateExpenseSummaryParams struct {
-	Uid          string         `json:"uid"`
-	Year         int32          `json:"year"`
-	Month        int32          `json:"month"`
-	MainCategory string         `json:"main_category"`
-	Amount       pgtype.Numeric `json:"amount"`
+	Uid          string          `json:"uid"`
+	Year         int32           `json:"year"`
+	Month        int32           `json:"month"`
+	MainCategory string          `json:"main_category"`
+	Amount       decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) CreateExpenseSummary(ctx context.Context, arg CreateExpenseSummaryParams) (ExpenseSummary, error) {
@@ -57,8 +57,8 @@ type GetExpenseSummariesByMonthParams struct {
 }
 
 type GetExpenseSummariesByMonthRow struct {
-	MainCategory string         `json:"main_category"`
-	Amount       pgtype.Numeric `json:"amount"`
+	MainCategory string          `json:"main_category"`
+	Amount       decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) GetExpenseSummariesByMonth(ctx context.Context, arg GetExpenseSummariesByMonthParams) ([]GetExpenseSummariesByMonthRow, error) {
@@ -119,11 +119,11 @@ RETURNING uid, year, month, main_category, amount
 `
 
 type UpdateExpenseSummaryParams struct {
-	Amount       pgtype.Numeric `json:"amount"`
-	Uid          string         `json:"uid"`
-	Year         int32          `json:"year"`
-	Month        int32          `json:"month"`
-	MainCategory string         `json:"main_category"`
+	Amount       decimal.Decimal `json:"amount"`
+	Uid          string          `json:"uid"`
+	Year         int32           `json:"year"`
+	Month        int32           `json:"month"`
+	MainCategory string          `json:"main_category"`
 }
 
 func (q *Queries) UpdateExpenseSummary(ctx context.Context, arg UpdateExpenseSummaryParams) (ExpenseSummary, error) {

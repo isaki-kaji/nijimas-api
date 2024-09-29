@@ -57,6 +57,7 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 		Location:     util.ToPointerOrNil(arg.Location),
 		Expense:      arg.Expense,
 		PublicTypeNo: arg.PublicTypeNo,
+		CreatedAt:    time.Now(),
 	}
 
 	post, err := s.repository.CreatePostTx(ctx, param)

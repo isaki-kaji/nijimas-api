@@ -8,7 +8,7 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 const createDailyActivitySummary = `-- name: CreateDailyActivitySummary :one
@@ -18,12 +18,12 @@ RETURNING uid, year, month, day, number, amount
 `
 
 type CreateDailyActivitySummaryParams struct {
-	Uid    string         `json:"uid"`
-	Year   int32          `json:"year"`
-	Month  int32          `json:"month"`
-	Day    int32          `json:"day"`
-	Number int32          `json:"number"`
-	Amount pgtype.Numeric `json:"amount"`
+	Uid    string          `json:"uid"`
+	Year   int32           `json:"year"`
+	Month  int32           `json:"month"`
+	Day    int32           `json:"day"`
+	Number int32           `json:"number"`
+	Amount decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) CreateDailyActivitySummary(ctx context.Context, arg CreateDailyActivitySummaryParams) (DailyActivitySummary, error) {
@@ -61,9 +61,9 @@ type GetDailyActivitySummariesByMonthParams struct {
 }
 
 type GetDailyActivitySummariesByMonthRow struct {
-	Day    int32          `json:"day"`
-	Number int32          `json:"number"`
-	Amount pgtype.Numeric `json:"amount"`
+	Day    int32           `json:"day"`
+	Number int32           `json:"number"`
+	Amount decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) GetDailyActivitySummariesByMonth(ctx context.Context, arg GetDailyActivitySummariesByMonthParams) ([]GetDailyActivitySummariesByMonthRow, error) {
@@ -125,12 +125,12 @@ RETURNING uid, year, month, day, number, amount
 `
 
 type UpdateDailyActivitySummaryParams struct {
-	Number int32          `json:"number"`
-	Amount pgtype.Numeric `json:"amount"`
-	Uid    string         `json:"uid"`
-	Year   int32          `json:"year"`
-	Month  int32          `json:"month"`
-	Day    int32          `json:"day"`
+	Number int32           `json:"number"`
+	Amount decimal.Decimal `json:"amount"`
+	Uid    string          `json:"uid"`
+	Year   int32           `json:"year"`
+	Month  int32           `json:"month"`
+	Day    int32           `json:"day"`
 }
 
 func (q *Queries) UpdateDailyActivitySummary(ctx context.Context, arg UpdateDailyActivitySummaryParams) (DailyActivitySummary, error) {

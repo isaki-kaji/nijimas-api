@@ -10,8 +10,8 @@ import (
 	"github.com/isaki-kaji/nijimas-api/api"
 	"github.com/isaki-kaji/nijimas-api/api/controller"
 	"github.com/isaki-kaji/nijimas-api/api/route"
+	"github.com/isaki-kaji/nijimas-api/application/service"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/service"
 	"github.com/isaki-kaji/nijimas-api/util"
 )
 

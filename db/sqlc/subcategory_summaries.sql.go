@@ -9,7 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 const createSubCategorySummary = `-- name: CreateSubCategorySummary :one
@@ -19,11 +19,11 @@ RETURNING uid, year, month, category_id, amount
 `
 
 type CreateSubCategorySummaryParams struct {
-	Uid        string         `json:"uid"`
-	Year       int32          `json:"year"`
-	Month      int32          `json:"month"`
-	CategoryID uuid.UUID      `json:"category_id"`
-	Amount     pgtype.Numeric `json:"amount"`
+	Uid        string          `json:"uid"`
+	Year       int32           `json:"year"`
+	Month      int32           `json:"month"`
+	CategoryID uuid.UUID       `json:"category_id"`
+	Amount     decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) CreateSubCategorySummary(ctx context.Context, arg CreateSubCategorySummaryParams) (SubcategorySummary, error) {
@@ -58,8 +58,8 @@ type GetSubCategorySummariesByMonthParams struct {
 }
 
 type GetSubCategorySummariesByMonthRow struct {
-	CategoryID uuid.UUID      `json:"category_id"`
-	Amount     pgtype.Numeric `json:"amount"`
+	CategoryID uuid.UUID       `json:"category_id"`
+	Amount     decimal.Decimal `json:"amount"`
 }
 
 func (q *Queries) GetSubCategorySummariesByMonth(ctx context.Context, arg GetSubCategorySummariesByMonthParams) ([]GetSubCategorySummariesByMonthRow, error) {
@@ -120,11 +120,11 @@ RETURNING uid, year, month, category_id, amount
 `
 
 type UpdateSubCategorySummaryParams struct {
-	Amount     pgtype.Numeric `json:"amount"`
-	Uid        string         `json:"uid"`
-	Year       int32          `json:"year"`
-	Month      int32          `json:"month"`
-	CategoryID uuid.UUID      `json:"category_id"`
+	Amount     decimal.Decimal `json:"amount"`
+	Uid        string          `json:"uid"`
+	Year       int32           `json:"year"`
+	Month      int32           `json:"month"`
+	CategoryID uuid.UUID       `json:"category_id"`
 }
 
 func (q *Queries) UpdateSubCategorySummary(ctx context.Context, arg UpdateSubCategorySummaryParams) (SubcategorySummary, error) {
