@@ -18,3 +18,7 @@ SELECT day, number, amount
 FROM daily_activity_summaries
 WHERE uid = $1 AND year = $2 AND month = $3
 ORDER BY day ASC;
+
+-- name: DeleteDailyActivitySummary :exec
+DELETE FROM daily_activity_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND day = $4;

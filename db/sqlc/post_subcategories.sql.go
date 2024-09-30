@@ -33,3 +33,18 @@ func (q *Queries) CreatePostSubCategory(ctx context.Context, arg CreatePostSubCa
 	err := row.Scan(&i.PostID, &i.CategoryNo, &i.CategoryID)
 	return i, err
 }
+
+const deletePostSubCategory = `-- name: DeletePostSubCategory :exec
+DELETE FROM post_subcategories
+WHERE post_id = $1 AND category_no = $2
+`
+
+type DeletePostSubCategoryParams struct {
+	PostID     uuid.UUID `json:"post_id"`
+	CategoryNo string    `json:"category_no"`
+}
+
+func (q *Queries) DeletePostSubCategory(ctx context.Context, arg DeletePostSubCategoryParams) error {
+	_, err := q.db.Exec(ctx, deletePostSubCategory, arg.PostID, arg.CategoryNo)
+	return err
+}

@@ -89,3 +89,7 @@ UPDATE posts SET
   public_type_no = COALESCE(sqlc.narg(public_type_no), public_type_no)
 WHERE post_id = sqlc.arg(post_id)
 RETURNING *;
+
+-- name: DeletePost :exec
+DELETE FROM posts
+WHERE post_id = $1;

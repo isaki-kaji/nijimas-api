@@ -1,4 +1,4 @@
-package db
+package db_test
 
 import (
 	"context"
@@ -6,15 +6,16 @@ import (
 	"os"
 	"testing"
 
+	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
 	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var testRepository Repository
+var testRepository db.Repository
 
 func TestMain(m *testing.M) {
-	config, err := util.LoadConfig("../..")
+	config, err := util.LoadConfig("../../environment/development/")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
@@ -30,6 +31,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Failed to create connection pool: %v", err)
 	}
-	testRepository = NewRepository(connPool)
+	testRepository = db.NewRepository(connPool)
 	os.Exit(m.Run())
 }

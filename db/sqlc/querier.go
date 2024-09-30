@@ -19,7 +19,13 @@ type Querier interface {
 	CreateSubCategory(ctx context.Context, arg CreateSubCategoryParams) (SubCategory, error)
 	CreateSubCategorySummary(ctx context.Context, arg CreateSubCategorySummaryParams) (SubcategorySummary, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteDailyActivitySummary(ctx context.Context, arg DeleteDailyActivitySummaryParams) error
+	DeleteExpenseSummary(ctx context.Context, arg DeleteExpenseSummaryParams) error
 	DeleteFavorite(ctx context.Context, arg DeleteFavoriteParams) (Favorite, error)
+	DeletePost(ctx context.Context, postID uuid.UUID) error
+	DeletePostSubCategory(ctx context.Context, arg DeletePostSubCategoryParams) error
+	DeleteSubCategory(ctx context.Context, categoryID uuid.UUID) error
+	DeleteSubCategorySummary(ctx context.Context, arg DeleteSubCategorySummaryParams) error
 	GetDailyActivitySummariesByMonth(ctx context.Context, arg GetDailyActivitySummariesByMonthParams) ([]GetDailyActivitySummariesByMonthRow, error)
 	GetDailyActivitySummary(ctx context.Context, arg GetDailyActivitySummaryParams) (DailyActivitySummary, error)
 	GetExpenseSummariesByMonth(ctx context.Context, arg GetExpenseSummariesByMonthParams) ([]GetExpenseSummariesByMonthRow, error)

@@ -44,6 +44,28 @@ func (q *Queries) CreateExpenseSummary(ctx context.Context, arg CreateExpenseSum
 	return i, err
 }
 
+const deleteExpenseSummary = `-- name: DeleteExpenseSummary :exec
+DELETE FROM expense_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND main_category = $4
+`
+
+type DeleteExpenseSummaryParams struct {
+	Uid          string `json:"uid"`
+	Year         int32  `json:"year"`
+	Month        int32  `json:"month"`
+	MainCategory string `json:"main_category"`
+}
+
+func (q *Queries) DeleteExpenseSummary(ctx context.Context, arg DeleteExpenseSummaryParams) error {
+	_, err := q.db.Exec(ctx, deleteExpenseSummary,
+		arg.Uid,
+		arg.Year,
+		arg.Month,
+		arg.MainCategory,
+	)
+	return err
+}
+
 const getExpenseSummariesByMonth = `-- name: GetExpenseSummariesByMonth :many
 SELECT main_category, amount
 FROM expense_summaries
