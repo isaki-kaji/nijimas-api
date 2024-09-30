@@ -45,6 +45,28 @@ func (q *Queries) CreateSubCategorySummary(ctx context.Context, arg CreateSubCat
 	return i, err
 }
 
+const deleteSubCategorySummary = `-- name: DeleteSubCategorySummary :exec
+DELETE FROM subcategory_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND category_id = $4
+`
+
+type DeleteSubCategorySummaryParams struct {
+	Uid        string    `json:"uid"`
+	Year       int32     `json:"year"`
+	Month      int32     `json:"month"`
+	CategoryID uuid.UUID `json:"category_id"`
+}
+
+func (q *Queries) DeleteSubCategorySummary(ctx context.Context, arg DeleteSubCategorySummaryParams) error {
+	_, err := q.db.Exec(ctx, deleteSubCategorySummary,
+		arg.Uid,
+		arg.Year,
+		arg.Month,
+		arg.CategoryID,
+	)
+	return err
+}
+
 const getSubCategorySummariesByMonth = `-- name: GetSubCategorySummariesByMonth :many
 SELECT category_id, amount
 FROM subcategory_summaries

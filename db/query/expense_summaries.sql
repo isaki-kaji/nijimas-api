@@ -17,3 +17,7 @@ WHERE uid = $1 AND year = $2 AND month = $3 AND main_category = $4;
 SELECT main_category, amount
 FROM expense_summaries
 WHERE uid = $1 AND year = $2 AND month = $3;
+
+-- name: DeleteExpenseSummary :exec
+DELETE FROM expense_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND main_category = $4;

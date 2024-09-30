@@ -17,3 +17,7 @@ WHERE uid = $1 AND year = $2 AND month = $3 AND category_id = $4;
 SELECT category_id, amount
 FROM subcategory_summaries
 WHERE uid = $1 AND year = $2 AND month = $3;
+
+-- name: DeleteSubCategorySummary :exec
+DELETE FROM subcategory_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND category_id = $4;

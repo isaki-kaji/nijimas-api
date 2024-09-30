@@ -47,6 +47,28 @@ func (q *Queries) CreateDailyActivitySummary(ctx context.Context, arg CreateDail
 	return i, err
 }
 
+const deleteDailyActivitySummary = `-- name: DeleteDailyActivitySummary :exec
+DELETE FROM daily_activity_summaries
+WHERE uid = $1 AND year = $2 AND month = $3 AND day = $4
+`
+
+type DeleteDailyActivitySummaryParams struct {
+	Uid   string `json:"uid"`
+	Year  int32  `json:"year"`
+	Month int32  `json:"month"`
+	Day   int32  `json:"day"`
+}
+
+func (q *Queries) DeleteDailyActivitySummary(ctx context.Context, arg DeleteDailyActivitySummaryParams) error {
+	_, err := q.db.Exec(ctx, deleteDailyActivitySummary,
+		arg.Uid,
+		arg.Year,
+		arg.Month,
+		arg.Day,
+	)
+	return err
+}
+
 const getDailyActivitySummariesByMonth = `-- name: GetDailyActivitySummariesByMonth :many
 SELECT day, number, amount
 FROM daily_activity_summaries
