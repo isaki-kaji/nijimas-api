@@ -11,37 +11,25 @@ import (
 )
 
 type Querier interface {
-	CreateDailyActivitySummary(ctx context.Context, arg CreateDailyActivitySummaryParams) (DailyActivitySummary, error)
-	CreateExpenseSummary(ctx context.Context, arg CreateExpenseSummaryParams) (ExpenseSummary, error)
 	CreateFavorite(ctx context.Context, arg CreateFavoriteParams) (Favorite, error)
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreatePostSubCategory(ctx context.Context, arg CreatePostSubCategoryParams) (PostSubcategory, error)
 	CreateSubCategory(ctx context.Context, arg CreateSubCategoryParams) (SubCategory, error)
-	CreateSubCategorySummary(ctx context.Context, arg CreateSubCategorySummaryParams) (SubcategorySummary, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	DeleteDailyActivitySummary(ctx context.Context, arg DeleteDailyActivitySummaryParams) error
-	DeleteExpenseSummary(ctx context.Context, arg DeleteExpenseSummaryParams) error
 	DeleteFavorite(ctx context.Context, arg DeleteFavoriteParams) (Favorite, error)
 	DeletePost(ctx context.Context, postID uuid.UUID) error
 	DeletePostSubCategory(ctx context.Context, arg DeletePostSubCategoryParams) error
 	DeleteSubCategory(ctx context.Context, categoryID uuid.UUID) error
-	DeleteSubCategorySummary(ctx context.Context, arg DeleteSubCategorySummaryParams) error
-	GetDailyActivitySummariesByMonth(ctx context.Context, arg GetDailyActivitySummariesByMonthParams) ([]GetDailyActivitySummariesByMonthRow, error)
-	GetDailyActivitySummary(ctx context.Context, arg GetDailyActivitySummaryParams) (DailyActivitySummary, error)
-	GetExpenseSummariesByMonth(ctx context.Context, arg GetExpenseSummariesByMonthParams) ([]GetExpenseSummariesByMonthRow, error)
-	GetExpenseSummary(ctx context.Context, arg GetExpenseSummaryParams) (ExpenseSummary, error)
+	GetDailyActivitySummaryByMonth(ctx context.Context, arg GetDailyActivitySummaryByMonthParams) ([]GetDailyActivitySummaryByMonthRow, error)
+	GetExpenseSummaryByMonth(ctx context.Context, arg GetExpenseSummaryByMonthParams) ([]GetExpenseSummaryByMonthRow, error)
 	GetFavorite(ctx context.Context, arg GetFavoriteParams) (Favorite, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
 	GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error)
 	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
 	GetSubCategoryByName(ctx context.Context, categoryName string) (SubCategory, error)
-	GetSubCategorySummariesByMonth(ctx context.Context, arg GetSubCategorySummariesByMonthParams) ([]GetSubCategorySummariesByMonthRow, error)
-	GetSubCategorySummary(ctx context.Context, arg GetSubCategorySummaryParams) (SubcategorySummary, error)
+	GetSubCategorySummaryByMonth(ctx context.Context, arg GetSubCategorySummaryByMonthParams) ([]GetSubCategorySummaryByMonthRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
-	UpdateDailyActivitySummary(ctx context.Context, arg UpdateDailyActivitySummaryParams) (DailyActivitySummary, error)
-	UpdateExpenseSummary(ctx context.Context, arg UpdateExpenseSummaryParams) (ExpenseSummary, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
-	UpdateSubCategorySummary(ctx context.Context, arg UpdateSubCategorySummaryParams) (SubcategorySummary, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
