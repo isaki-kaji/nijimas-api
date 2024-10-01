@@ -50,27 +50,27 @@ func BenchmarkTxCreatePost(b *testing.B) {
 func resetDB(param db.CreatePostTxParam) {
 	ctx := context.Background()
 
-	deleteDailyActivitySummaryParams := db.DeleteDailyActivitySummaryParams{
-		Uid:   param.Uid,
-		Year:  2023,
-		Month: 9,
-		Day:   30,
-	}
-	err := testRepository.DeleteDailyActivitySummary(ctx, deleteDailyActivitySummaryParams)
-	if err != nil {
-		panic(err)
-	}
+	// deleteDailyActivitySummaryParams := db.DeleteDailyActivitySummaryParams{
+	// 	Uid:   param.Uid,
+	// 	Year:  2023,
+	// 	Month: 9,
+	// 	Day:   30,
+	// }
+	// err := testRepository.DeleteDailyActivitySummary(ctx, deleteDailyActivitySummaryParams)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	deleteExpenseSummaryParams := db.DeleteExpenseSummaryParams{
-		Uid:          param.Uid,
-		Year:         2023,
-		Month:        9,
-		MainCategory: param.MainCategory,
-	}
-	err = testRepository.DeleteExpenseSummary(ctx, deleteExpenseSummaryParams)
-	if err != nil {
-		panic(err)
-	}
+	// deleteExpenseSummaryParams := db.DeleteExpenseSummaryParams{
+	// 	Uid:          param.Uid,
+	// 	Year:         2023,
+	// 	Month:        9,
+	// 	MainCategory: param.MainCategory,
+	// }
+	// err = testRepository.DeleteExpenseSummary(ctx, deleteExpenseSummaryParams)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	subCategory1, err := testRepository.GetSubCategoryByName(ctx, param.SubCategory1)
 	if err != nil {
@@ -81,27 +81,27 @@ func resetDB(param db.CreatePostTxParam) {
 		panic(err)
 	}
 
-	deleteSubCategorySummaryParams1 := db.DeleteSubCategorySummaryParams{
-		Uid:        param.Uid,
-		Year:       2023,
-		Month:      9,
-		CategoryID: subCategory1.CategoryID,
-	}
-	err = testRepository.DeleteSubCategorySummary(ctx, deleteSubCategorySummaryParams1)
-	if err != nil {
-		panic(err)
-	}
+	// deleteSubCategorySummaryParams1 := db.DeleteSubCategorySummaryParams{
+	// 	Uid:        param.Uid,
+	// 	Year:       2023,
+	// 	Month:      9,
+	// 	CategoryID: subCategory1.CategoryID,
+	// }
+	// err = testRepository.DeleteSubCategorySummary(ctx, deleteSubCategorySummaryParams1)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	deleteSubCategorySummaryParams2 := db.DeleteSubCategorySummaryParams{
-		Uid:        param.Uid,
-		Year:       2023,
-		Month:      9,
-		CategoryID: subCategory2.CategoryID,
-	}
-	err = testRepository.DeleteSubCategorySummary(ctx, deleteSubCategorySummaryParams2)
-	if err != nil {
-		panic(err)
-	}
+	// deleteSubCategorySummaryParams2 := db.DeleteSubCategorySummaryParams{
+	// 	Uid:        param.Uid,
+	// 	Year:       2023,
+	// 	Month:      9,
+	// 	CategoryID: subCategory2.CategoryID,
+	// }
+	// err = testRepository.DeleteSubCategorySummary(ctx, deleteSubCategorySummaryParams2)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	deletePostSubCategoryParams1 := db.DeletePostSubCategoryParams{
 		PostID:     param.PostID,
@@ -135,3 +135,9 @@ func resetDB(param db.CreatePostTxParam) {
 		panic(err)
 	}
 }
+
+// 条件 VSCode以外のプロセスが動いていないこと
+
+// 2024-09-30
+// 直列処理
+// BenchmarkTxCreatePost-8   	     788	   1336789 ns/op	   10135 B/op	     284 allocs/op
