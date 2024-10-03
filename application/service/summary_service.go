@@ -44,48 +44,98 @@ func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, 
 	lastDayOfMonth := endDate.AddDate(0, 0, -1)
 	daysInMonth := lastDayOfMonth.Day()
 
-	getExpenseSummaryParam := db.GetExpenseSummaryByMonthParams{
-		Uid:         uid,
-		CreatedAt:   startDate,
-		CreatedAt_2: endDate,
-	}
-	expenseSummary, err := s.repository.GetExpenseSummaryByMonth(ctx, getExpenseSummaryParam)
-	if err != nil {
-		err = apperror.GetDataFailed.Wrap(err, "failed to get expense summary")
-		return MonthlySummaryResponse{}, err
-	}
-	calculatedExpenseSummary := processExpenseSummary(expenseSummary)
+	var expenseSummary []CalculatedSummary
+	var subCategorySummary []CalculatedSummary
+	var dailyCount []int
+	var dailyAmount []int
 
-	getSubCategorySummaryParam := db.GetSubCategorySummaryByMonthParams{
-		Uid:         uid,
-		CreatedAt:   startDate,
-		CreatedAt_2: endDate,
+	type calculatedSummaryResult struct {
+		summary []CalculatedSummary
+		err     error
 	}
-	subCategorySummary, err := s.repository.GetSubCategorySummaryByMonth(ctx, getSubCategorySummaryParam)
-	if err != nil {
-		err = apperror.GetDataFailed.Wrap(err, "failed to get subcategory summary")
-		return MonthlySummaryResponse{}, err
-	}
-	calculatedSubCategorySummary := processSubCategorySummary(subCategorySummary)
 
-	getDailyActivitySummaryParam := db.GetDailyActivitySummaryByMonthParams{
-		Uid:         uid,
-		CreatedAt:   startDate,
-		CreatedAt_2: endDate,
+	type dailyActivityResult struct {
+		dailyCount  []int
+		dailyAmount []int
+		err         error
 	}
-	dailyActivitySummary, err := s.repository.GetDailyActivitySummaryByMonth(ctx, getDailyActivitySummaryParam)
-	if err != nil {
-		err = apperror.GetDataFailed.Wrap(err, "failed to get daily activity summary")
-		return MonthlySummaryResponse{}, err
+	expenseSummaryChan := make(chan calculatedSummaryResult)
+	subCategorySummaryChan := make(chan calculatedSummaryResult)
+	dailyActivitySummaryChan := make(chan dailyActivityResult)
+
+	defer close(expenseSummaryChan)
+	defer close(subCategorySummaryChan)
+	defer close(dailyActivitySummaryChan)
+
+	go func() {
+		getExpenseSummaryParam := db.GetExpenseSummaryByMonthParams{
+			Uid:         uid,
+			CreatedAt:   startDate,
+			CreatedAt_2: endDate,
+		}
+		expenseSummary, err := s.repository.GetExpenseSummaryByMonth(ctx, getExpenseSummaryParam)
+		if err != nil {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get expense summary")
+		}
+		calculatedExpenseSummary := processExpenseSummary(expenseSummary)
+		expenseSummaryChan <- calculatedSummaryResult{summary: calculatedExpenseSummary, err: err}
+	}()
+
+	go func() {
+		getSubCategorySummaryParam := db.GetSubCategorySummaryByMonthParams{
+			Uid:         uid,
+			CreatedAt:   startDate,
+			CreatedAt_2: endDate,
+		}
+		subCategorySummary, err := s.repository.GetSubCategorySummaryByMonth(ctx, getSubCategorySummaryParam)
+		if err != nil {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get subcategory summary")
+		}
+		calculatedSubCategorySummary := processSubCategorySummary(subCategorySummary)
+		subCategorySummaryChan <- calculatedSummaryResult{summary: calculatedSubCategorySummary, err: err}
+	}()
+
+	go func() {
+		getDailyActivitySummaryParam := db.GetDailyActivitySummaryByMonthParams{
+			Uid:         uid,
+			CreatedAt:   startDate,
+			CreatedAt_2: endDate,
+		}
+		dailyActivitySummary, err := s.repository.GetDailyActivitySummaryByMonth(ctx, getDailyActivitySummaryParam)
+		if err != nil {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get daily activity summary")
+		}
+		dailyCount, dailyAmount := generateDailyActivities(daysInMonth, dailyActivitySummary)
+		dailyActivitySummaryChan <- dailyActivityResult{dailyCount: dailyCount, dailyAmount: dailyAmount, err: err}
+	}()
+
+	for i := 0; i < 3; i++ {
+		select {
+		case er := <-expenseSummaryChan:
+			if er.err != nil {
+				return MonthlySummaryResponse{}, er.err
+			}
+			expenseSummary = er.summary
+		case sr := <-subCategorySummaryChan:
+			if sr.err != nil {
+				return MonthlySummaryResponse{}, sr.err
+			}
+			subCategorySummary = sr.summary
+		case dr := <-dailyActivitySummaryChan:
+			if dr.err != nil {
+				return MonthlySummaryResponse{}, dr.err
+			}
+			dailyCount = dr.dailyCount
+			dailyAmount = dr.dailyAmount
+		}
 	}
-	dailyCount, dailyAmount := generateDailyActivities(daysInMonth, dailyActivitySummary)
 
 	monthlySummaryResponse := MonthlySummaryResponse{
 		Uid:                uid,
 		Year:               year,
 		Month:              month,
-		ExpenseSummary:     calculatedExpenseSummary,
-		SubCategorySummary: calculatedSubCategorySummary,
+		ExpenseSummary:     expenseSummary,
+		SubCategorySummary: subCategorySummary,
 		DailyCount:         dailyCount,
 		DailyAmount:        dailyAmount,
 	}

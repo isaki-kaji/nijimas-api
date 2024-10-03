@@ -33,3 +33,7 @@ func BenchmarkGetMonthlySummary(b *testing.B) {
 // 2024-10-03
 // 直列処理
 // BenchmarkGetMonthlySummary-8   	    1454	    700784 ns/op	   25290 B/op	     741 allocs/op
+
+// 2024-10-03
+// 並行処理
+// BenchmarkGetMonthlySummary-8   	    3151	    349857 ns/op	   26022 B/op	     750 allocs/op
