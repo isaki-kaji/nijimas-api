@@ -8,4 +8,5 @@ var Module = fx.Options(
 	fx.Provide(NewUserController),
 	fx.Provide(NewPostController),
 	fx.Provide(NewFavoriteController),
+	fx.Provide(NewSummaryController),
 )

@@ -22,11 +22,11 @@ GROUP BY s.category_name;
 
 -- name: GetDailyActivitySummaryByMonth :many
 SELECT
-  TO_CHAR(DATE_TRUNC('day', created_at), 'YYYYMMDD')::int AS date,
+  DATE_PART('day', created_at)::int AS date,
   COUNT(*) AS count,
   SUM(expense) AS amount
 FROM posts
 WHERE uid = $1
   AND created_at >= $2
   AND created_at < $3
-GROUP BY TO_CHAR(DATE_TRUNC('day', created_at), 'YYYYMMDD')::int;
+GROUP BY DATE_PART('day', created_at)::int;

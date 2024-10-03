@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"cloud.google.com/go/firestore"
 	"github.com/google/uuid"
 	"github.com/isaki-kaji/nijimas-api/apperror"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
@@ -20,7 +19,7 @@ type PostService interface {
 	// GetPostsByMainCategory(ctx context.Context, param db.GetPostsByMainCategoryParams) ([]PostResponse, error)
 }
 
-func NewPostService(repository db.Repository, store *firestore.Client) PostService {
+func NewPostService(repository db.Repository) PostService {
 	return &PostServiceImpl{repository: repository}
 }
 
@@ -29,7 +28,7 @@ type PostServiceImpl struct {
 }
 
 type CreatePostRequest struct {
-	Uid          string `json:"uid" binding:"required"`
+	Uid          string `json:"-"`
 	MainCategory string `json:"main_category" binding:"required,max=255"`
 	SubCategory1 string `json:"sub_category1" binding:"max=255"`
 	SubCategory2 string `json:"sub_category2" binding:"max=255"`
