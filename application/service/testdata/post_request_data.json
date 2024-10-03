@@ -1,0 +1,446 @@
+[
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "寿司",
+    "expense": "1200",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "ギター",
+    "expense": "5000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "スニーカー",
+    "sub_category2": "バッグ",
+    "expense": "8000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "文房具",
+    "expense": "300",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "トイレットペーパー",
+    "sub_category2": "洗剤",
+    "expense": "1200",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "沖縄旅行",
+    "expense": "45000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "映画鑑賞",
+    "expense": "1500",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "電車",
+    "expense": "300",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "寄付",
+    "expense": "2000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "タピオカミルクティー",
+    "sub_category2": "立川",
+    "expense": "650",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "登山",
+    "expense": "10000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "ジャケット",
+    "expense": "12000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "掃除機",
+    "expense": "20000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "シャンプー",
+    "expense": "800",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "新幹線",
+    "expense": "15000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "ライブ",
+    "expense": "7000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "タクシー",
+    "expense": "2300",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "習い事",
+    "expense": "5000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "ラーメン",
+    "expense": "900",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "釣り",
+    "expense": "3000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "帽子",
+    "expense": "2500",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "時計",
+    "sub_category2": "アクセサリー",
+    "expense": "15000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "ティッシュペーパー",
+    "expense": "500",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "京都旅行",
+    "expense": "30000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "カラオケ",
+    "expense": "2500",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "バス",
+    "expense": "220",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "勉強道具",
+    "expense": "3200",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "ピザ",
+    "expense": "2000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "写真撮影",
+    "sub_category2": "カメラレンズ",
+    "expense": "15000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "スカーフ",
+    "expense": "3500",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "マウス",
+    "expense": "1200",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "歯ブラシ",
+    "sub_category2": "歯磨き粉",
+    "expense": "400",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "温泉",
+    "expense": "12000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "ボウリング",
+    "expense": "1500",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "自転車",
+    "expense": "15000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "イベント参加",
+    "expense": "5000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "焼肉",
+    "expense": "7000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "キャンプ",
+    "sub_category2": "テント",
+    "expense": "45000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "ネックレス",
+    "expense": "12000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "カバン",
+    "expense": "10000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "消耗品",
+    "expense": "800",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "海外旅行",
+    "expense": "150000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "演劇観賞",
+    "expense": "3500",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "レンタカー",
+    "expense": "10000",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "タピオカミルクティー",
+    "expense": "650",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "ギター",
+    "expense": "5000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "スニーカー",
+    "expense": "8000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "シャンプー",
+    "expense": "800",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "映画鑑賞",
+    "expense": "1500",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "transport",
+    "sub_category1": "バス",
+    "expense": "220",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "寄付",
+    "expense": "2000",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "スニーカー",
+    "sub_category2": "帽子",
+    "expense": "9500",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "goods",
+    "sub_category1": "掃除機",
+    "expense": "20000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "ラーメン",
+    "expense": "900",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "寿司",
+    "sub_category2": "焼肉",
+    "expense": "3500",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "hobbies",
+    "sub_category1": "キャンプ",
+    "expense": "45000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "essentials",
+    "sub_category1": "トイレットペーパー",
+    "sub_category2": "歯磨き粉",
+    "expense": "500",
+    "public_type_no": "0"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "entertainment",
+    "sub_category1": "カラオケ",
+    "expense": "2500",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "fashion",
+    "sub_category1": "帽子",
+    "expense": "2500",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "travel",
+    "sub_category1": "沖縄旅行",
+    "expense": "45000",
+    "public_type_no": "2"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "other",
+    "sub_category1": "勉強道具",
+    "expense": "3200",
+    "public_type_no": "1"
+  },
+  {
+    "uid": "2TRw03nXoEg6CoecHZFsIoNLFjs2",
+    "main_category": "food",
+    "sub_category1": "ピザ",
+    "expense": "2000",
+    "public_type_no": "2"
+  }
+]
