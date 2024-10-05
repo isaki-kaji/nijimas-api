@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/isaki-kaji/nijimas-api/configs"
 	"go.uber.org/fx"
 )
 
@@ -11,11 +11,11 @@ var Module = fx.Options(
 )
 
 type Server struct {
-	config util.Config
+	config configs.Config
 	router *gin.Engine
 }
 
-func NewServer(config *util.Config, router *gin.Engine) (*Server, error) {
+func NewServer(config *configs.Config, router *gin.Engine) (*Server, error) {
 	server := &Server{
 		config: *config,
 		router: router,

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/isaki-kaji/nijimas-api/configs"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/util"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -51,7 +51,7 @@ func RandomTime() time.Time {
 }
 
 func SetupDB() db.Repository {
-	config, err := util.LoadConfig("../../environment/development/")
+	config, err := configs.LoadConfig("../../environment/development/")
 	if err != nil {
 		panic(err)
 	}

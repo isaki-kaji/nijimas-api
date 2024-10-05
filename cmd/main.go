@@ -11,15 +11,15 @@ import (
 	"github.com/isaki-kaji/nijimas-api/api/controller"
 	"github.com/isaki-kaji/nijimas-api/api/route"
 	"github.com/isaki-kaji/nijimas-api/application/service"
+	"github.com/isaki-kaji/nijimas-api/configs"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
-	"github.com/isaki-kaji/nijimas-api/util"
 )
 
-func NewConfig() (*util.Config, error) {
-	return util.LoadConfig("environment/development")
+func NewConfig() (*configs.Config, error) {
+	return configs.LoadConfig("environment/development")
 }
 
-func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
+func StartServer(lc fx.Lifecycle, config *configs.Config, server *api.Server) {
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			log.Printf("Starting server at %s", config.ServerAddress)
@@ -39,7 +39,7 @@ func StartServer(lc fx.Lifecycle, config *util.Config, server *api.Server) {
 func main() {
 	app := fx.New(
 		fx.Provide(NewConfig),
-		util.Module,
+		configs.Module,
 		db.Module,
 		service.Module,
 		api.Module,

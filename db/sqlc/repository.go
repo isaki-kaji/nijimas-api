@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"github.com/isaki-kaji/nijimas-api/util"
+	"github.com/isaki-kaji/nijimas-api/configs"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/fx"
@@ -26,7 +26,7 @@ func NewRepository(connPool *pgxpool.Pool) Repository {
 	}
 }
 
-func NewPool(config *util.Config) (*pgxpool.Pool, error) {
+func NewPool(config *configs.Config) (*pgxpool.Pool, error) {
 	dbConfig, err := pgxpool.ParseConfig(config.DBSource)
 	if err != nil {
 		return nil, err
