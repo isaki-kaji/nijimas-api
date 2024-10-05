@@ -2,12 +2,14 @@ package service
 
 import (
 	"context"
+	"errors"
 	"math"
 	"sort"
 	"time"
 
 	"github.com/isaki-kaji/nijimas-api/apperror"
 	db "github.com/isaki-kaji/nijimas-api/db/sqlc"
+	"github.com/jackc/pgx/v5"
 )
 
 type SummaryService interface {
@@ -75,6 +77,10 @@ func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, 
 		}
 		expenseSummary, err := s.repository.GetExpenseSummaryByMonth(ctx, getExpenseSummaryParam)
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				expenseSummaryChan <- calculatedSummaryResult{summary: []CalculatedSummary{}, err: nil}
+				return
+			}
 			err = apperror.GetDataFailed.Wrap(err, "failed to get expense summary")
 		}
 		calculatedExpenseSummary := processExpenseSummary(expenseSummary)
@@ -89,6 +95,10 @@ func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, 
 		}
 		subCategorySummary, err := s.repository.GetSubCategorySummaryByMonth(ctx, getSubCategorySummaryParam)
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				subCategorySummaryChan <- calculatedSummaryResult{summary: []CalculatedSummary{}, err: nil}
+				return
+			}
 			err = apperror.GetDataFailed.Wrap(err, "failed to get subcategory summary")
 		}
 		calculatedSubCategorySummary := processSubCategorySummary(subCategorySummary)
@@ -103,6 +113,10 @@ func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, 
 		}
 		dailyActivitySummary, err := s.repository.GetDailyActivitySummaryByMonth(ctx, getDailyActivitySummaryParam)
 		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				dailyActivitySummaryChan <- dailyActivityResult{dailyCount: []int{}, dailyAmount: []int{}, err: nil}
+				return
+			}
 			err = apperror.GetDataFailed.Wrap(err, "failed to get daily activity summary")
 		}
 		dailyCount, dailyAmount := generateDailyActivities(daysInMonth, dailyActivitySummary)
@@ -154,6 +168,9 @@ func calcTotalAmount[T any](summary []T, getAmount func(T) int) int {
 
 // 共通のロジック: パーセンテージを計算し、スライスに格納する
 func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmount func(T) int) []CalculatedSummary {
+	if len(summary) == 0 {
+		return []CalculatedSummary{}
+	}
 	totalAmount := calcTotalAmount(summary, getAmount)
 	calculatedSummaries := make([]CalculatedSummary, 0, len(summary))
 
