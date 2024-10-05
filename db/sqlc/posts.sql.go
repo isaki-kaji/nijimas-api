@@ -91,15 +91,15 @@ SELECT
   u.username,
   u.profile_image_url,
   p.main_category,
-  sc.sub_category1 AS subcategory1,
-  sc.sub_category2 AS subcategory2,
+  COALESCE(sc.sub_category1, '')::text AS subCategory1,
+  COALESCE(sc.sub_category2, '')::text AS subCategory2,
   p.post_text,
   p.photo_url,
   p.expense,
   p.location,
+  CASE WHEN f.uid IS NOT NULL THEN TRUE ELSE FALSE END AS is_favorite,
   p.public_type_no,
-  p.created_at,
-  CASE WHEN f.uid IS NOT NULL THEN TRUE ELSE FALSE END AS is_favorite
+  p.created_at
 FROM posts p
 JOIN users u ON p.uid = u.uid
 LEFT JOIN (
@@ -124,15 +124,15 @@ type GetOwnPostsRow struct {
 	Username        string          `json:"username"`
 	ProfileImageUrl *string         `json:"profile_image_url"`
 	MainCategory    string          `json:"main_category"`
-	Subcategory1    interface{}     `json:"subcategory1"`
-	Subcategory2    interface{}     `json:"subcategory2"`
+	Subcategory1    string          `json:"subcategory1"`
+	Subcategory2    string          `json:"subcategory2"`
 	PostText        *string         `json:"post_text"`
 	PhotoUrl        *string         `json:"photo_url"`
 	Expense         decimal.Decimal `json:"expense"`
 	Location        *string         `json:"location"`
+	IsFavorite      bool            `json:"is_favorite"`
 	PublicTypeNo    string          `json:"public_type_no"`
 	CreatedAt       time.Time       `json:"created_at"`
-	IsFavorite      bool            `json:"is_favorite"`
 }
 
 func (q *Queries) GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error) {
@@ -156,9 +156,9 @@ func (q *Queries) GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow
 			&i.PhotoUrl,
 			&i.Expense,
 			&i.Location,
+			&i.IsFavorite,
 			&i.PublicTypeNo,
 			&i.CreatedAt,
-			&i.IsFavorite,
 		); err != nil {
 			return nil, err
 		}
@@ -190,8 +190,8 @@ JOIN users u ON p.uid = u.uid
 LEFT JOIN (
   SELECT
     ps.post_id,
-    MAX(CASE WHEN ps.category_no = '1' THEN s.category_name ELSE NULL END) AS sub_category1,
-    MAX(CASE WHEN ps.category_no = '2' THEN s.category_name ELSE NULL END) AS sub_category2
+    MAX(CASE WHEN ps.category_no = '1' THEN s.category_name ELSE NULL END)::string AS sub_category1,
+    MAX(CASE WHEN ps.category_no = '2' THEN s.category_name ELSE NULL END)::string AS sub_category2
   FROM post_subcategories ps
   JOIN sub_categories s ON ps.category_id = s.category_id
   GROUP BY ps.post_id
@@ -205,8 +205,8 @@ type GetPostByIdRow struct {
 	Username        string          `json:"username"`
 	ProfileImageUrl *string         `json:"profile_image_url"`
 	MainCategory    string          `json:"main_category"`
-	Subcategory1    interface{}     `json:"subcategory1"`
-	Subcategory2    interface{}     `json:"subcategory2"`
+	Subcategory1    string          `json:"subcategory1"`
+	Subcategory2    string          `json:"subcategory2"`
 	PostText        *string         `json:"post_text"`
 	PhotoUrl        *string         `json:"photo_url"`
 	Expense         decimal.Decimal `json:"expense"`
