@@ -28,26 +28,28 @@ type PostServiceImpl struct {
 }
 
 type CreatePostRequest struct {
+	PostId       string `json:"post_id" binding:"required"`
 	Uid          string `json:"-"`
 	MainCategory string `json:"main_category" binding:"required,max=255"`
 	SubCategory1 string `json:"sub_category1" binding:"max=255"`
 	SubCategory2 string `json:"sub_category2" binding:"max=255"`
 	PostText     string `json:"post_text"`
 	PhotoUrl     string `json:"photo_url" binding:"max=2000"`
-	Expense      string `json:"expense" binding:"lt=100000000"`
+	Expense      string `json:"expense" binding:"required"`
 	Location     string `json:"location"`
 	PublicTypeNo string `json:"public_type_no" binding:"required,oneof=0 1 2"`
 }
 
 func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error) {
-	uuid, err := util.GenerateUUID()
+
+	postId, err := uuid.Parse(arg.PostId)
 	if err != nil {
-		err = apperror.OtherInternalErr.Wrap(err, "failed to generate uuid")
+		err = apperror.ValidationFailed.Wrap(err, "invalid post_id")
 		return db.Post{}, err
 	}
 
 	param := db.CreatePostTxParam{
-		PostID:       uuid,
+		PostID:       postId,
 		Uid:          arg.Uid,
 		MainCategory: arg.MainCategory,
 		PostText:     util.ToPointerOrNil(arg.PostText),
