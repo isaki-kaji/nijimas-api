@@ -99,6 +99,7 @@ func (q *Queries) GetExpenseSummaryByMonth(ctx context.Context, arg GetExpenseSu
 const getSubCategorySummaryByMonth = `-- name: GetSubCategorySummaryByMonth :many
 SELECT
   s.category_name,
+  COUNT(*) AS count,
   SUM(p.expense) AS amount
 FROM posts p
 JOIN post_subcategories ps ON p.post_id = ps.post_id
@@ -117,6 +118,7 @@ type GetSubCategorySummaryByMonthParams struct {
 
 type GetSubCategorySummaryByMonthRow struct {
 	CategoryName string `json:"category_name"`
+	Count        int64  `json:"count"`
 	Amount       int64  `json:"amount"`
 }
 
@@ -129,7 +131,7 @@ func (q *Queries) GetSubCategorySummaryByMonth(ctx context.Context, arg GetSubCa
 	items := []GetSubCategorySummaryByMonthRow{}
 	for rows.Next() {
 		var i GetSubCategorySummaryByMonthRow
-		if err := rows.Scan(&i.CategoryName, &i.Amount); err != nil {
+		if err := rows.Scan(&i.CategoryName, &i.Count, &i.Amount); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

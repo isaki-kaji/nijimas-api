@@ -34,6 +34,7 @@ type MonthlySummaryResponse struct {
 
 type CalculatedSummary struct {
 	CategoryName string  `json:"categoryName"`
+	Count        int     `json:"count"`
 	Amount       int     `json:"amount"`
 	Percentage   float64 `json:"percentage"`
 }
@@ -170,7 +171,7 @@ func calcTotalAmount[T any](summary []T, getAmount func(T) int) int {
 }
 
 // 共通のロジック: パーセンテージを計算し、スライスに格納する
-func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmount func(T) int) []CalculatedSummary {
+func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmount func(T) int, getCount func(T) int) []CalculatedSummary {
 	totalAmount := calcTotalAmount(summary, getAmount)
 	calculatedSummaries := make([]CalculatedSummary, 0, len(summary))
 
@@ -186,6 +187,7 @@ func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmoun
 			CategoryName: getCategoryName(row),
 			Amount:       amount,
 			Percentage:   percentage,
+			Count:        getCount(row),
 		})
 	}
 
@@ -248,8 +250,12 @@ func processExpenseSummary(expenseSummary []db.GetExpenseSummaryByMonthRow) []Ca
 		return int(row.Amount)
 	}
 
+	getCount := func(ow db.GetExpenseSummaryByMonthRow) int {
+		return 0
+	}
+
 	// Percentageを計算し、ソートされたスライスを返す
-	return calcPercentage(expenseSummary, getCategoryName, getAmount)
+	return calcPercentage(expenseSummary, getCategoryName, getAmount, getCount)
 }
 
 // SubCategorySummaryの処理
@@ -262,8 +268,12 @@ func processSubCategorySummary(subCategorySummary []db.GetSubCategorySummaryByMo
 		return int(row.Amount)
 	}
 
+	getCount := func(row db.GetSubCategorySummaryByMonthRow) int {
+		return int(row.Count)
+	}
+
 	// Percentageを計算し、ソートされたスライスを返す
-	return calcPercentage(subCategorySummary, getCategoryName, getAmount)
+	return calcPercentage(subCategorySummary, getCategoryName, getAmount, getCount)
 }
 
 // 日別のアクティビティデータを生成する

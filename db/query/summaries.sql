@@ -11,6 +11,7 @@ GROUP BY main_category;
 -- name: GetSubCategorySummaryByMonth :many
 SELECT
   s.category_name,
+  COUNT(*) AS count,
   SUM(p.expense) AS amount
 FROM posts p
 JOIN post_subcategories ps ON p.post_id = ps.post_id
