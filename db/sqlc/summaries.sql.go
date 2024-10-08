@@ -12,14 +12,14 @@ import (
 
 const getDailyActivitySummaryByMonth = `-- name: GetDailyActivitySummaryByMonth :many
 SELECT
-  DATE_PART('day', created_at)::int AS date,
+  DATE_PART('day', (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo'))::int AS date,
   COUNT(*) AS count,
   SUM(expense) AS amount
 FROM posts
 WHERE uid = $1
-  AND created_at >= $2
-  AND created_at < $3
-GROUP BY DATE_PART('day', created_at)::int
+  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
+  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
+GROUP BY DATE_PART('day', (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo'))::int
 `
 
 type GetDailyActivitySummaryByMonthParams struct {
@@ -60,8 +60,8 @@ SELECT
   SUM(expense) AS amount
 FROM posts
 WHERE uid = $1
-  AND created_at >= $2
-  AND created_at < $3
+  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
+  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
 GROUP BY main_category
 `
 
@@ -105,8 +105,8 @@ FROM posts p
 JOIN post_subcategories ps ON p.post_id = ps.post_id
 JOIN sub_categories s ON ps.category_id = s.category_id
 WHERE p.uid = $1
-  AND p.created_at >= $2
-  AND p.created_at < $3
+  AND (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
+  AND (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
 GROUP BY s.category_name
 `
 
