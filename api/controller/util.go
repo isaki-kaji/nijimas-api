@@ -44,3 +44,11 @@ func checkUid(ctx *gin.Context) (string, error) {
 	}
 	return uidStr, nil
 }
+
+func getTimezone(ctx *gin.Context) string {
+	timezone := ctx.GetHeader("Time-zone")
+	if timezone == "" {
+		timezone = "Asia/Tokyo"
+	}
+	return timezone
+}

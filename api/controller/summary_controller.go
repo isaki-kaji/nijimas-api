@@ -50,7 +50,9 @@ func (s *SummaryController) GetMonthlySummary(ctx *gin.Context) {
 		return
 	}
 
-	summary, err := s.service.GetMonthlySummary(ctx, uid, year, month)
+	timezone := getTimezone(ctx)
+
+	summary, err := s.service.GetMonthlySummary(ctx, uid, year, month, timezone)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
 		return

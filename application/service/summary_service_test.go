@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 
 func BenchmarkGetMonthlySummary(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, err := sSer.GetMonthlySummary(context.Background(), "2TRw03nXoEg6CoecHZFsIoNLFjs2", 2024, 10)
+		_, err := sSer.GetMonthlySummary(context.Background(), "2TRw03nXoEg6CoecHZFsIoNLFjs2", 2024, 10, "Asia/Tokyo")
 		if err != nil {
 			b.Log("Error:", err)
 			b.Error(err)

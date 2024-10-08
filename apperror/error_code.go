@@ -19,6 +19,7 @@ const (
 	ValidationFailed    ErrCode = "R001"
 	ReqBodyDecodeFailed ErrCode = "R002"
 	BadPathParam        ErrCode = "R003"
+	InvalidHeader       ErrCode = "R004"
 	Unauthorized        ErrCode = "A001"
 	OtherInternalErr    ErrCode = "A002"
 )

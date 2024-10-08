@@ -11,7 +11,7 @@ import (
 )
 
 type SummaryService interface {
-	GetMonthlySummary(ctx context.Context, uid string, year int, month int) (MonthlySummaryResponse, error)
+	GetMonthlySummary(ctx context.Context, uid string, year int, month int, timezone string) (MonthlySummaryResponse, error)
 }
 
 func NewSummaryService(repository db.Repository) SummaryService {
@@ -39,8 +39,12 @@ type CalculatedSummary struct {
 	Percentage   float64 `json:"percentage"`
 }
 
-func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, year int, month int) (MonthlySummaryResponse, error) {
-	startDate := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+func (s *SummaryServiceImpl) GetMonthlySummary(ctx context.Context, uid string, year int, month int, timezone string) (MonthlySummaryResponse, error) {
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return MonthlySummaryResponse{}, apperror.InvalidHeader.Wrap(err, "failed to load location")
+	}
+	startDate := time.Date(year, time.Month(month), 1, 0, 0, 0, 0, loc)
 	endDate := startDate.AddDate(0, 1, 0)
 	lastDayOfMonth := endDate.AddDate(0, 0, -1)
 	daysInMonth := lastDayOfMonth.Day()
