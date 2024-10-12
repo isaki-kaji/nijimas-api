@@ -9,4 +9,5 @@ var Module = fx.Options(
 	fx.Provide(NewPostService),
 	fx.Provide(NewFavoriteService),
 	fx.Provide(NewSummaryService),
+	fx.Provide(NewPostSearchService),
 )
