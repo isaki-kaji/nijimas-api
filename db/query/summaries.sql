@@ -4,10 +4,9 @@ SELECT
   SUM(expense) AS amount
 FROM posts
 WHERE uid = $1
-  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
-  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
+  AND timezone('Asia/Tokyo', created_at) >= $2
+  AND timezone('Asia/Tokyo', created_at) < $3
 GROUP BY main_category;
-
 
 -- name: GetSubCategorySummaryByMonth :many
 SELECT
@@ -18,17 +17,19 @@ FROM posts p
 JOIN post_subcategories ps ON p.post_id = ps.post_id
 JOIN sub_categories s ON ps.category_id = s.category_id
 WHERE p.uid = $1
-  AND (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
-  AND (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
+  AND timezone('Asia/Tokyo', p.created_at) >= $2
+  AND timezone('Asia/Tokyo', p.created_at) < $3
 GROUP BY s.category_name;
 
 -- name: GetDailyActivitySummaryByMonth :many
 SELECT
-  DATE_PART('day', (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo'))::int AS date,
+  DATE_PART('day', timezone('Asia/Tokyo', created_at))::int AS date,
   COUNT(*) AS count,
   SUM(expense) AS amount
 FROM posts
 WHERE uid = $1
-  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') >= $2
-  AND (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo') < $3
-GROUP BY DATE_PART('day', (created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Tokyo'))::int;
+  AND timezone('Asia/Tokyo', created_at) >= $2
+  AND timezone('Asia/Tokyo', created_at) < $3
+GROUP BY DATE_PART('day', timezone('Asia/Tokyo', created_at))
+ORDER BY date;
+
