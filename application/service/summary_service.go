@@ -184,7 +184,7 @@ func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmoun
 	// パーセンテージを計算し、小数点第1位で四捨五入
 	for _, row := range summary {
 		amount := getAmount(row)
-		percentage := math.Floor(float64(amount)/float64(totalAmount)*1000) / 10 // 小数点第1位で切り捨て
+		percentage := math.Round(float64(amount)/float64(totalAmount)*1000) / 10 // 小数点第1位で四捨五入
 		totalPercentage += percentage
 
 		calculatedSummaries = append(calculatedSummaries, CalculatedSummary{
@@ -195,7 +195,7 @@ func calcPercentage[T any](summary []T, getCategoryName func(T) string, getAmoun
 		})
 	}
 
-	// 小数点第1位までに丸めて差分を計算
+	// 合計を100%に調整する
 	adjustPercentageToHundred(calculatedSummaries, totalPercentage)
 
 	// Amountでソート
@@ -211,37 +211,31 @@ func adjustPercentageToHundred(summaries []CalculatedSummary, totalPercentage fl
 	difference := math.Round((100-totalPercentage)*10) / 10 // 小数点第1位で四捨五入して差分を計算
 
 	if difference > 0 {
-		// 100%未満の場合、一番割合が高い要素に加算
-		highestIdx := findHighestPercentageIdx(summaries)
-		summaries[highestIdx].Percentage += difference
+		// 100%未満の場合、中央値の要素に加算する
+		midIdx := findMidPercentageIdx(summaries)
+		summaries[midIdx].Percentage += difference
 	} else if difference < 0 {
-		// 100%を超えている場合、一番割合が低い要素から減算
-		lowestIdx := findLowestPercentageIdx(summaries)
-		summaries[lowestIdx].Percentage += difference // differenceは負の値なので減算される
+		// 100%を超えている場合、中央値の要素から減算する
+		midIdx := findMidPercentageIdx(summaries)
+		summaries[midIdx].Percentage += difference // differenceは負の値なので減算される
+	}
+
+	// 負のパーセンテージがないか確認
+	for i := range summaries {
+		if summaries[i].Percentage < 0 {
+			summaries[i].Percentage = 0 // 負のパーセンテージを0にする
+		}
 	}
 }
 
-// // パーセントを調整しても順序が変わらないようにしている ////
-// 最も割合が高い要素を見つける
-func findHighestPercentageIdx(summaries []CalculatedSummary) int {
-	highestIdx := 0
-	for i := range summaries {
-		if summaries[i].Percentage > summaries[highestIdx].Percentage {
-			highestIdx = i
-		}
+// 一番割合が中央値に近い要素のインデックスを見つける
+func findMidPercentageIdx(summaries []CalculatedSummary) int {
+	n := len(summaries)
+	if n == 0 {
+		return 0
 	}
-	return highestIdx
-}
-
-// 最も割合が低い要素を見つける
-func findLowestPercentageIdx(summaries []CalculatedSummary) int {
-	lowestIdx := 0
-	for i := range summaries {
-		if summaries[i].Percentage < summaries[lowestIdx].Percentage {
-			lowestIdx = i
-		}
-	}
-	return lowestIdx
+	// 中央付近のインデックスを返す（ソートされている前提で）
+	return n / 2
 }
 
 // ExpenseSummaryの処理
