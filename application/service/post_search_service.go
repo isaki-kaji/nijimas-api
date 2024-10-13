@@ -9,6 +9,8 @@ import (
 
 type PostSearchService interface {
 	GetPostsByUid(ctx context.Context, ownUid string, uid string) ([]PostResponse, error)
+	GetPostsByMainCategory(ctx context.Context, ownUid string, mainCategory string) ([]PostResponse, error)
+	GetPostsBySubCategory(ctx context.Context, ownUid string, subCategory string) ([]PostResponse, error)
 }
 
 func NewPostSearchService(repository db.Repository) PostSearchService {
@@ -26,6 +28,46 @@ func (s *PostSearchServiceImpl) GetPostsByUid(ctx context.Context, ownUid string
 	}
 
 	posts, err := s.repository.GetPostsByUid(ctx, getPostsByUidParam)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
+		return nil, err
+	}
+
+	postsResponse, err := transformPosts(posts)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to transform posts")
+		return nil, err
+	}
+	return postsResponse, nil
+}
+
+func (s *PostSearchServiceImpl) GetPostsByMainCategory(ctx context.Context, ownUid string, mainCategory string) ([]PostResponse, error) {
+	getPostsByMainCategoryParam := db.GetPostsByMainCategoryParams{
+		Uid:          ownUid,
+		MainCategory: mainCategory,
+	}
+
+	posts, err := s.repository.GetPostsByMainCategory(ctx, getPostsByMainCategoryParam)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
+		return nil, err
+	}
+
+	postsResponse, err := transformPosts(posts)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to transform posts")
+		return nil, err
+	}
+	return postsResponse, nil
+}
+
+func (s *PostSearchServiceImpl) GetPostsBySubCategory(ctx context.Context, ownUid string, subCategory string) ([]PostResponse, error) {
+	getPostsBySubCategoryParam := db.GetPostsBySubCategoryParams{
+		Uid:          ownUid,
+		CategoryName: subCategory,
+	}
+
+	posts, err := s.repository.GetPostsBySubCategory(ctx, getPostsBySubCategoryParam)
 	if err != nil {
 		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
 		return nil, err
