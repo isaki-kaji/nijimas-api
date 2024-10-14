@@ -26,7 +26,13 @@ func (p *PostSearchController) GetPostsByQuery(ctx *gin.Context) {
 	mainCategory := ctx.Query("main-category")
 	subCategory := ctx.Query("sub-category")
 
-	if uid != "" && mainCategory != "" && subCategory != "" {
+	if mainCategory != "" && subCategory != "" {
+		posts, err := p.service.GetPostsByMainCategoryAndSubCategory(ctx, ownUid, mainCategory, subCategory)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+			return
+		}
+		ctx.JSON(http.StatusOK, posts)
 		return
 	}
 
