@@ -69,5 +69,5 @@ func (u *UserController) UpdateUser(ctx *gin.Context) {
 		fmt.Print(err)
 		return
 	}
-	ctx.JSON(http.StatusOK, user)
+	ctx.JSON(http.StatusNoContent, user)
 }
