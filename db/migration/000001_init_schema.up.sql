@@ -48,37 +48,9 @@ CREATE TABLE "sub_categories" (
 
 CREATE TABLE "follows" (
   "uid" char(28),
-  "follow_uid" char(28),
+  "following_uid" char(28),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
-  PRIMARY KEY ("uid", "follow_uid")
-);
-
-CREATE TABLE "expense_summaries" (
-  "uid" char(28),
-  "year" integer NOT NULL,
-  "month" integer NOT NULL,
-  "main_category" varchar(20) NOT NULL,
-  "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month", "main_category")
-);
-
-CREATE TABLE "subcategory_summaries" (
-  "uid" char(28),
-  "year" integer NOT NULL,
-  "month" integer NOT NULL,
-  "category_id" uuid NOT NULL,
-  "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month", "category_id")
-);
-
-CREATE TABLE "daily_activity_summaries" (
-  "uid" char(28),
-  "year" integer NOT NULL,
-  "month" integer NOT NULL,
-  "day" integer NOT NULL,
-  "number" integer NOT NULL DEFAULT 0,
-  "amount" numeric(15,2) NOT NULL DEFAULT 0,
-  PRIMARY KEY ("uid", "year", "month", "day")
+  PRIMARY KEY ("uid", "following_uid")
 );
 
 CREATE INDEX ON "users" ("username");
@@ -106,16 +78,6 @@ ALTER TABLE "favorites" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 ALTER TABLE "follows" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("follow_uid") REFERENCES "users" ("uid");
-
-ALTER TABLE "expense_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
-
-ALTER TABLE "expense_summaries" ADD FOREIGN KEY ("main_category") REFERENCES "main_categories" ("category_name");
-
-ALTER TABLE "subcategory_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
-
-ALTER TABLE "subcategory_summaries" ADD FOREIGN KEY ("category_id") REFERENCES "sub_categories" ("category_id");
-
-ALTER TABLE "daily_activity_summaries" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
 INSERT INTO "main_categories" ("category_name") VALUES ('food');
 INSERT INTO "main_categories" ("category_name") VALUES ('hobbies');

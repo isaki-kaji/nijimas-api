@@ -66,11 +66,11 @@ Table sub_categories as SC {
 
 Table follows as FO {
   uid char(28) [ref: > U.uid, pk]
-  follow_uid char(28) [ref: > U.uid, pk]
+  following_uid char(28) [ref: > U.uid, pk]
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
-    (uid, follow_uid)
+    (uid, following_uid)
   }
 }
 

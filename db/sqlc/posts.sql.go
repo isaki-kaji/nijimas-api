@@ -236,6 +236,17 @@ func (q *Queries) GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByI
 	return i, err
 }
 
+const getPostsCount = `-- name: GetPostsCount :one
+SELECT COUNT(*) AS count FROM posts WHERE uid = $1
+`
+
+func (q *Queries) GetPostsCount(ctx context.Context, uid string) (int64, error) {
+	row := q.db.QueryRow(ctx, getPostsCount, uid)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const updatePost = `-- name: UpdatePost :one
 UPDATE posts SET
   main_category = COALESCE($1, main_category),

@@ -11,23 +11,6 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-type DailyActivitySummary struct {
-	Uid    string          `json:"uid"`
-	Year   int32           `json:"year"`
-	Month  int32           `json:"month"`
-	Day    int32           `json:"day"`
-	Number int32           `json:"number"`
-	Amount decimal.Decimal `json:"amount"`
-}
-
-type ExpenseSummary struct {
-	Uid          string          `json:"uid"`
-	Year         int32           `json:"year"`
-	Month        int32           `json:"month"`
-	MainCategory string          `json:"main_category"`
-	Amount       decimal.Decimal `json:"amount"`
-}
-
 type Favorite struct {
 	PostID    uuid.UUID `json:"post_id"`
 	Uid       string    `json:"uid"`
@@ -35,9 +18,9 @@ type Favorite struct {
 }
 
 type Follow struct {
-	Uid       string    `json:"uid"`
-	FollowUid string    `json:"follow_uid"`
-	CreatedAt time.Time `json:"created_at"`
+	Uid          string    `json:"uid"`
+	FollowingUid string    `json:"following_uid"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type MainCategory struct {
@@ -69,14 +52,6 @@ type SubCategory struct {
 	CategoryID   uuid.UUID `json:"category_id"`
 	CategoryName string    `json:"category_name"`
 	CreatedAt    time.Time `json:"created_at"`
-}
-
-type SubcategorySummary struct {
-	Uid        string          `json:"uid"`
-	Year       int32           `json:"year"`
-	Month      int32           `json:"month"`
-	CategoryID uuid.UUID       `json:"category_id"`
-	Amount     decimal.Decimal `json:"amount"`
 }
 
 type User struct {

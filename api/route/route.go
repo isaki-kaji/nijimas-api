@@ -18,6 +18,7 @@ func NewRouter(
 	FavoriteController *controller.FavoriteController,
 	SummaryController *controller.SummaryController,
 	PostSearchController *controller.PostSearchController,
+	FollowController *controller.FollowController,
 	AuthClient *auth.Client,
 ) *gin.Engine {
 	router := gin.Default()
@@ -28,6 +29,7 @@ func NewRouter(
 	NewFavoriteRouter(router, authRouter, FavoriteController)
 	NewSummaryRouter(router, authRouter, SummaryController)
 	NewPostSearchRouter(router, authRouter, PostSearchController)
+	NewFollowRouter(router, authRouter, FollowController)
 
 	return router
 }

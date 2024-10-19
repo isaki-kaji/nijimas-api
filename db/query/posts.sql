@@ -94,3 +94,6 @@ RETURNING *;
 -- name: DeletePost :exec
 DELETE FROM posts
 WHERE post_id = $1;
+
+-- name: GetPostsCount :one
+SELECT COUNT(*) AS count FROM posts WHERE uid = $1;

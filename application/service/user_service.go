@@ -12,7 +12,7 @@ import (
 
 type UserService interface {
 	CreateUser(ctx context.Context, arg CreateUserRequest) (db.User, error)
-	GetUserByUid(ctx context.Context, uid string) (db.User, error)
+	GetUserDetailByUid(ctx context.Context, uid string, ownUid string) (UserDetailResponse, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (db.User, error)
 }
 
@@ -53,17 +53,99 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, arg CreateUserRequest)
 	return newUser, nil
 }
 
-func (s *UserServiceImpl) GetUserByUid(ctx context.Context, uid string) (db.User, error) {
+type UserDetailResponse struct {
+	Uid             string  `json:"uid"`
+	Username        string  `json:"username"`
+	SelfIntro       *string `json:"self_intro"`
+	ProfileImageUrl *string `json:"profile_image_url"`
+	IsFollowing     bool    `json:"is_following"`
+	FollowingCount  int     `json:"following_count"`
+	FollowersCount  int     `json:"followers_count"`
+	PostCount       int     `json:"post_count"`
+}
+
+func (s *UserServiceImpl) GetUserDetailByUid(ctx context.Context, uid string, ownUid string) (UserDetailResponse, error) {
+
+	var follow db.GetFollowCountRow
+	var postCount int64
+
+	type followResult struct {
+		follow db.GetFollowCountRow
+		err    error
+	}
+
+	type postCountResult struct {
+		count int64
+		err   error
+	}
+
+	followChan := make(chan followResult)
+	postCountChan := make(chan postCountResult)
+
+	defer close(followChan)
+	defer close(postCountChan)
+
 	user, err := s.repository.GetUser(ctx, uid)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = apperror.DataNotFound.Wrap(err, "user not found")
-			return db.User{}, err
+		} else {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get user")
 		}
-		err = apperror.GetDataFailed.Wrap(err, "failed to get user")
-		return db.User{}, err
+		return UserDetailResponse{}, err
 	}
-	return user, nil
+
+	go func() {
+		getFollowCountParam := db.GetFollowCountParams{
+			FollowingUid: uid,
+			OwnUid:       ownUid,
+		}
+		follow, err := s.repository.GetFollowCount(ctx, getFollowCountParam)
+		if err != nil {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get follow count")
+			followChan <- followResult{follow: db.GetFollowCountRow{}, err: err}
+			return
+		}
+		followChan <- followResult{follow: follow, err: nil}
+	}()
+
+	go func() {
+		count, err := s.repository.GetPostsCount(ctx, uid)
+		if err != nil {
+			err = apperror.GetDataFailed.Wrap(err, "failed to get post count")
+			postCountChan <- postCountResult{count: 0, err: err}
+			return
+		}
+		postCountChan <- postCountResult{count: count, err: nil}
+	}()
+
+	for i := 0; i < 2; i++ {
+		select {
+		case fr := <-followChan:
+			if fr.err != nil {
+				return UserDetailResponse{}, fr.err
+			}
+			follow = fr.follow
+		case pr := <-postCountChan:
+			if pr.err != nil {
+				return UserDetailResponse{}, pr.err
+			}
+			postCount = pr.count
+		}
+	}
+
+	userDetailResponse := UserDetailResponse{
+		Uid:             user.Uid,
+		Username:        user.Username,
+		SelfIntro:       user.SelfIntro,
+		ProfileImageUrl: user.ProfileImageUrl,
+		IsFollowing:     follow.IsFollowing,
+		FollowingCount:  int(follow.FollowingCount),
+		FollowersCount:  int(follow.FollowersCount),
+		PostCount:       int(postCount),
+	}
+
+	return userDetailResponse, nil
 }
 
 type UpdateUserParams struct {

@@ -40,12 +40,15 @@ func (u *UserController) CreateUser(ctx *gin.Context) {
 
 func (u *UserController) GetUserByUid(ctx *gin.Context) {
 	uid := ctx.Param("uid")
+	ownUid, err := checkUid(ctx)
+	if err != nil {
+		return
+	}
 
-	user, err := u.service.GetUserByUid(ctx, uid)
+	user, err := u.service.GetUserDetailByUid(ctx, uid, ownUid)
 	if err != nil {
 		if apperror.DataNotFound.Equal(err) {
 			ctx.JSON(http.StatusNotFound, apperror.ErrorResponse(ctx, err))
-			fmt.Print(err)
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
