@@ -37,6 +37,7 @@ type Querier interface {
 	GetPostsCount(ctx context.Context, uid string) (int64, error)
 	GetSubCategoryByName(ctx context.Context, categoryName string) (SubCategory, error)
 	GetSubCategorySummaryByMonth(ctx context.Context, arg GetSubCategorySummaryByMonthParams) ([]GetSubCategorySummaryByMonthRow, error)
+	GetTimelinePosts(ctx context.Context, uid string) ([]GetTimelinePostsRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)

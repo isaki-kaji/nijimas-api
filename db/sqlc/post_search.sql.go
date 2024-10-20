@@ -41,7 +41,18 @@ LEFT JOIN (
 ) sc ON p.post_id = sc.post_id
 LEFT JOIN favorites f
   ON p.post_id = f.post_id AND f.uid = $1
-WHERE p.main_category = $2 AND p.public_type_no = '0'
+WHERE p.main_category = $2 AND 
+  (
+    p.public_type_no = '0'
+    OR (
+      p.public_type_no = '1'
+      AND EXISTS (
+        SELECT 1 
+        FROM follows 
+        WHERE uid = $1 AND following_uid = p.uid
+      )
+    )
+  )
 ORDER BY p.post_id DESC
 LIMIT 50
 `
@@ -132,7 +143,18 @@ JOIN (
 ) sc ON p.post_id = sc.post_id
 LEFT JOIN favorites f
   ON p.post_id = f.post_id AND f.uid = $1
-WHERE p.public_type_no = '0' AND p.main_category = $2
+WHERE p.main_category = $2 AND 
+  (
+    p.public_type_no = '0'
+    OR (
+      p.public_type_no = '1'
+      AND EXISTS (
+        SELECT 1 
+        FROM follows 
+        WHERE uid = $1 AND following_uid = p.uid
+      )
+    )
+  )
 ORDER BY p.post_id DESC
 LIMIT 50
 `
@@ -225,6 +247,14 @@ JOIN (
 LEFT JOIN favorites f
   ON p.post_id = f.post_id AND f.uid = $1
 WHERE p.public_type_no = '0'
+    OR (
+      p.public_type_no = '1'
+      AND EXISTS (
+        SELECT 1 
+        FROM follows 
+        WHERE uid = $1 AND following_uid = p.uid
+      )
+    )
 ORDER BY p.post_id DESC
 LIMIT 50
 `
@@ -312,7 +342,18 @@ LEFT JOIN (
 ) sc ON p.post_id = sc.post_id
 LEFT JOIN favorites f
   ON p.post_id = f.post_id AND f.uid = $1
-WHERE p.uid = $2 AND p.public_type_no = '0'
+WHERE p.uid = $2 
+  AND (
+    p.public_type_no = '0'
+    OR (
+      p.public_type_no = '1'
+      AND EXISTS (
+        SELECT 1 
+        FROM follows 
+        WHERE uid = $1 AND following_uid = p.uid
+      )
+    )
+  )
 ORDER BY p.post_id DESC
 LIMIT 50
 `

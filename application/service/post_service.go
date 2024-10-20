@@ -13,6 +13,7 @@ import (
 type PostService interface {
 	CreatePost(ctx context.Context, arg CreatePostRequest) (db.Post, error)
 	GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error)
+	GetTimelinePosts(ctx context.Context, uid string) ([]PostResponse, error)
 }
 
 func NewPostService(repository db.Repository) PostService {
@@ -68,6 +69,20 @@ func (s *PostServiceImpl) CreatePost(ctx context.Context, arg CreatePostRequest)
 
 func (s *PostServiceImpl) GetOwnPosts(ctx context.Context, uid string) ([]PostResponse, error) {
 	posts, err := s.repository.GetOwnPosts(ctx, uid)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
+		return nil, err
+	}
+	postsResponse, err := transformPosts(posts)
+	if err != nil {
+		err = apperror.GetDataFailed.Wrap(err, "failed to transform posts")
+		return nil, err
+	}
+	return postsResponse, nil
+}
+
+func (s *PostServiceImpl) GetTimelinePosts(ctx context.Context, uid string) ([]PostResponse, error) {
+	posts, err := s.repository.GetTimelinePosts(ctx, uid)
 	if err != nil {
 		err = apperror.GetDataFailed.Wrap(err, "failed to get posts")
 		return nil, err

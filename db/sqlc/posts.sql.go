@@ -247,6 +247,101 @@ func (q *Queries) GetPostsCount(ctx context.Context, uid string) (int64, error) 
 	return count, err
 }
 
+const getTimelinePosts = `-- name: GetTimelinePosts :many
+SELECT
+  p.post_id,
+  u.uid,
+  u.username,
+  u.profile_image_url,
+  p.main_category,
+  COALESCE(sc.sub_category1, '')::text AS subCategory1,
+  COALESCE(sc.sub_category2, '')::text AS subCategory2,
+  p.post_text,
+  p.photo_url,
+  p.expense,
+  p.location,
+  CASE WHEN f.uid IS NOT NULL THEN TRUE ELSE FALSE END AS is_favorite,
+  p.public_type_no,
+  p.created_at
+FROM posts p
+JOIN users u ON p.uid = u.uid
+LEFT JOIN (
+  SELECT
+    ps.post_id,
+    MAX(CASE WHEN ps.category_no = '1' THEN s.category_name ELSE NULL END) AS sub_category1,
+    MAX(CASE WHEN ps.category_no = '2' THEN s.category_name ELSE NULL END) AS sub_category2
+  FROM post_subcategories ps
+  JOIN sub_categories s ON ps.category_id = s.category_id
+  GROUP BY ps.post_id
+) sc ON p.post_id = sc.post_id
+LEFT JOIN favorites f
+  ON p.post_id = f.post_id AND f.uid = $1
+WHERE 
+  p.uid = $1
+  OR (
+    p.public_type_no IN ('0', '1') 
+    AND EXISTS (
+      SELECT 1 
+      FROM follows f
+      WHERE f.uid = $1 AND f.following_uid = p.uid
+    )
+  )
+ORDER BY p.post_id DESC
+LIMIT 50
+`
+
+type GetTimelinePostsRow struct {
+	PostID          uuid.UUID       `json:"post_id"`
+	Uid             string          `json:"uid"`
+	Username        string          `json:"username"`
+	ProfileImageUrl *string         `json:"profile_image_url"`
+	MainCategory    string          `json:"main_category"`
+	Subcategory1    string          `json:"subcategory1"`
+	Subcategory2    string          `json:"subcategory2"`
+	PostText        *string         `json:"post_text"`
+	PhotoUrl        *string         `json:"photo_url"`
+	Expense         decimal.Decimal `json:"expense"`
+	Location        *string         `json:"location"`
+	IsFavorite      bool            `json:"is_favorite"`
+	PublicTypeNo    string          `json:"public_type_no"`
+	CreatedAt       time.Time       `json:"created_at"`
+}
+
+func (q *Queries) GetTimelinePosts(ctx context.Context, uid string) ([]GetTimelinePostsRow, error) {
+	rows, err := q.db.Query(ctx, getTimelinePosts, uid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetTimelinePostsRow{}
+	for rows.Next() {
+		var i GetTimelinePostsRow
+		if err := rows.Scan(
+			&i.PostID,
+			&i.Uid,
+			&i.Username,
+			&i.ProfileImageUrl,
+			&i.MainCategory,
+			&i.Subcategory1,
+			&i.Subcategory2,
+			&i.PostText,
+			&i.PhotoUrl,
+			&i.Expense,
+			&i.Location,
+			&i.IsFavorite,
+			&i.PublicTypeNo,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updatePost = `-- name: UpdatePost :one
 UPDATE posts SET
   main_category = COALESCE($1, main_category),

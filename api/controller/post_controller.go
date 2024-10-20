@@ -45,3 +45,17 @@ func (p *PostController) GetOwnPosts(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, posts)
 }
+
+func (p *PostController) GetTimelinePosts(ctx *gin.Context) {
+	ownUid, err := checkUid(ctx)
+	if err != nil {
+		return
+	}
+
+	posts, err := p.service.GetTimelinePosts(ctx, ownUid)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+		return
+	}
+	ctx.JSON(http.StatusOK, posts)
+}
