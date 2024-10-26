@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	CreateFavorite(ctx context.Context, arg CreateFavoriteParams) (Favorite, error)
 	CreateFollow(ctx context.Context, arg CreateFollowParams) (Follow, error)
+	CreateFollowRequest(ctx context.Context, arg CreateFollowRequestParams) (FollowRequest, error)
 	CreatePost(ctx context.Context, arg CreatePostParams) (Post, error)
 	CreatePostSubCategory(ctx context.Context, arg CreatePostSubCategoryParams) (PostSubcategory, error)
 	CreateSubCategory(ctx context.Context, arg CreateSubCategoryParams) (SubCategory, error)
@@ -21,12 +22,14 @@ type Querier interface {
 	DeleteFollow(ctx context.Context, arg DeleteFollowParams) (Follow, error)
 	DeletePost(ctx context.Context, postID uuid.UUID) error
 	DeletePostSubCategory(ctx context.Context, arg DeletePostSubCategoryParams) error
+	DeleteRequest(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	DeleteSubCategory(ctx context.Context, categoryID uuid.UUID) error
 	GetDailyActivitySummaryByMonth(ctx context.Context, arg GetDailyActivitySummaryByMonthParams) ([]GetDailyActivitySummaryByMonthRow, error)
 	GetExpenseSummaryByMonth(ctx context.Context, arg GetExpenseSummaryByMonthParams) ([]GetExpenseSummaryByMonthRow, error)
 	GetFavorite(ctx context.Context, arg GetFavoriteParams) (Favorite, error)
 	GetFollow(ctx context.Context, arg GetFollowParams) (Follow, error)
 	GetFollowCount(ctx context.Context, arg GetFollowCountParams) (GetFollowCountRow, error)
+	GetFollowRequests(ctx context.Context, followingUid string) ([]GetFollowRequestsRow, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
 	GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error)
 	GetPostById(ctx context.Context, postID uuid.UUID) (GetPostByIdRow, error)
@@ -40,6 +43,8 @@ type Querier interface {
 	GetTimelinePosts(ctx context.Context, uid string) ([]GetTimelinePostsRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
+	UpdateRequestToApproved(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
+	UpdateRequestToRejected(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

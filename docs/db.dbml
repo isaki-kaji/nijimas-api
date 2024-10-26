@@ -6,6 +6,12 @@ Project Nijimas {
   '''
 }
 
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
 Table users as U {
   uid char(28) [pk]
   username varchar(255) [not null]
@@ -74,27 +80,18 @@ Table follows as FO {
   }
 }
 
-Table expense_summaries {
-  uid char(28) [ref: > U.uid, pk]
-  year integer [not null, pk]
-  month integer [not null, pk]
-  main_category varchar(20) [ref: > MC.category_name, not null]
-  amount numeric(15, 2) [not null, default: 0]
+Table follow_requests as FR {
+  request_id uuid [pk]
+  uid char(28) [not null, ref: > U.uid]
+  following_uid char(28) [not null, ref: > U.uid]
+  status char(1) [not null, note: '0:申請中, 1:承認済, 2:拒否済']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (uid, following_uid)
+  }
 }
 
-Table subcategory_summaries {
-  uid char(28) [ref: > U.uid, pk]
-  year integer [not null, pk]
-  month integer [not null, pk]
-  category_id uuid [ref: > SC.category_id, pk]
-  amount numeric(15, 2) [not null, default: 0]
-}
 
-Table daily_activity_summaries {
-  uid char(28) [ref: > U.uid, pk]
-  year integer [not null, pk]
-  month integer [not null, pk]
-  day integer [not null, pk]
-  number integer [not null, default: 0]
-  amount numeric(15, 2) [not null, default: 0]
-}
+

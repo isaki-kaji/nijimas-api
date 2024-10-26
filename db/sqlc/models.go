@@ -23,6 +23,16 @@ type Follow struct {
 	CreatedAt    time.Time `json:"created_at"`
 }
 
+type FollowRequest struct {
+	RequestID    uuid.UUID `json:"request_id"`
+	Uid          string    `json:"uid"`
+	FollowingUid string    `json:"following_uid"`
+	// 0:申請中, 1:承認済, 2:拒否済
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type MainCategory struct {
 	CategoryName string    `json:"category_name"`
 	CreatedAt    time.Time `json:"created_at"`

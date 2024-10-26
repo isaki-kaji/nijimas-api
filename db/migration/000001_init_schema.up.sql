@@ -53,15 +53,28 @@ CREATE TABLE "follows" (
   PRIMARY KEY ("uid", "following_uid")
 );
 
+CREATE TABLE "follow_requests" (
+  "request_id" uuid PRIMARY KEY,
+  "uid" char(28) NOT NULL,
+  "following_uid" char(28) NOT NULL,
+  "status" char(1) NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
 CREATE INDEX ON "users" ("username");
 
 CREATE INDEX ON "posts" ("uid");
 
 CREATE INDEX ON "favorites" ("post_id", "uid");
 
-CREATE INDEX ON "follows" ("uid", "follow_uid");
+CREATE INDEX ON "follows" ("uid", "following_uid");
+
+CREATE INDEX ON "follow_requests" ("uid", "following_uid");
 
 COMMENT ON COLUMN "posts"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
+
+COMMENT ON COLUMN "follow_requests"."status" IS '0:申請中, 1:承認済, 2:拒否済';
 
 ALTER TABLE "posts" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
@@ -77,7 +90,12 @@ ALTER TABLE "favorites" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "follows" ADD FOREIGN KEY ("follow_uid") REFERENCES "users" ("uid");
+ALTER TABLE "follows" ADD FOREIGN KEY ("following_uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "follow_requests" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "follow_requests" ADD FOREIGN KEY ("following_uid") REFERENCES "users" ("uid");
+
 
 INSERT INTO "main_categories" ("category_name") VALUES ('food');
 INSERT INTO "main_categories" ("category_name") VALUES ('hobbies');

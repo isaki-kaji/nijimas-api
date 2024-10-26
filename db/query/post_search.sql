@@ -80,6 +80,10 @@ WHERE p.main_category = $2 AND
         WHERE uid = $1 AND following_uid = p.uid
       )
     )
+    OR (
+      p.public_type_no IN ('1', '2')
+      AND p.uid = $1
+    )
   )
 ORDER BY p.post_id DESC
 LIMIT 50;
@@ -123,6 +127,10 @@ WHERE p.public_type_no = '0'
         FROM follows 
         WHERE uid = $1 AND following_uid = p.uid
       )
+    )
+    OR (
+      p.public_type_no IN ('1', '2')
+      AND p.uid = $1
     )
 ORDER BY p.post_id DESC
 LIMIT 50;
@@ -168,6 +176,10 @@ WHERE p.main_category = $2 AND
         FROM follows 
         WHERE uid = $1 AND following_uid = p.uid
       )
+    )
+    OR (
+      p.public_type_no IN ('1', '2')
+      AND p.uid = $1
     )
   )
 ORDER BY p.post_id DESC
