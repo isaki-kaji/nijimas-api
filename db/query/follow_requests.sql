@@ -8,6 +8,11 @@ INSERT INTO follow_requests (
   $1, $2, $3, '0'
 ) RETURNING *;
 
+-- name: GetFollowRequest :one
+SELECT * 
+FROM follow_requests
+WHERE uid = $1 AND following_uid = $2 AND status = '0';
+  
 -- name: GetFollowRequests :many
 SELECT
   fr.request_id,

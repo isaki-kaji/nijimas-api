@@ -62,6 +62,31 @@ func (q *Queries) DeleteRequest(ctx context.Context, requestID uuid.UUID) (Follo
 	return i, err
 }
 
+const getFollowRequest = `-- name: GetFollowRequest :one
+SELECT request_id, uid, following_uid, status, created_at, updated_at 
+FROM follow_requests
+WHERE uid = $1 AND following_uid = $2 AND status = '0'
+`
+
+type GetFollowRequestParams struct {
+	Uid          string `json:"uid"`
+	FollowingUid string `json:"following_uid"`
+}
+
+func (q *Queries) GetFollowRequest(ctx context.Context, arg GetFollowRequestParams) (FollowRequest, error) {
+	row := q.db.QueryRow(ctx, getFollowRequest, arg.Uid, arg.FollowingUid)
+	var i FollowRequest
+	err := row.Scan(
+		&i.RequestID,
+		&i.Uid,
+		&i.FollowingUid,
+		&i.Status,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getFollowRequests = `-- name: GetFollowRequests :many
 SELECT
   fr.request_id,

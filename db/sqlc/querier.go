@@ -29,6 +29,7 @@ type Querier interface {
 	GetFavorite(ctx context.Context, arg GetFavoriteParams) (Favorite, error)
 	GetFollow(ctx context.Context, arg GetFollowParams) (Follow, error)
 	GetFollowCount(ctx context.Context, arg GetFollowCountParams) (GetFollowCountRow, error)
+	GetFollowRequest(ctx context.Context, arg GetFollowRequestParams) (FollowRequest, error)
 	GetFollowRequests(ctx context.Context, followingUid string) ([]GetFollowRequestsRow, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)
 	GetOwnPosts(ctx context.Context, uid string) ([]GetOwnPostsRow, error)
