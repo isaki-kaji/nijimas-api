@@ -7,4 +7,5 @@ import (
 
 func NewFollowRequestRouter(router *gin.Engine, authRouter gin.IRoutes, controller *controller.FollowRequestController) {
 	authRouter.POST("/follow-request", controller.DoFollowRequest)
+	authRouter.DELETE("/follow-request", controller.CancelFollowRequest)
 }

@@ -32,3 +32,20 @@ func (c *FollowRequestController) DoFollowRequest(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, fr)
 }
+
+func (c *FollowRequestController) CancelFollowRequest(ctx *gin.Context) {
+	var req service.CancelFollowRequestParams
+	ownUid, err := checkPostReq(ctx, &req)
+	if err != nil {
+		return
+	}
+	req.Uid = ownUid
+
+	fr, err := c.service.CancelFollowRequest(ctx, req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, fr)
+}

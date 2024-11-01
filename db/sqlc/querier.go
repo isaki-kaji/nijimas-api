@@ -20,15 +20,15 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteFavorite(ctx context.Context, arg DeleteFavoriteParams) (Favorite, error)
 	DeleteFollow(ctx context.Context, arg DeleteFollowParams) (Follow, error)
+	DeleteFollowRequest(ctx context.Context, arg DeleteFollowRequestParams) (FollowRequest, error)
 	DeletePost(ctx context.Context, postID uuid.UUID) error
 	DeletePostSubCategory(ctx context.Context, arg DeletePostSubCategoryParams) error
-	DeleteRequest(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	DeleteSubCategory(ctx context.Context, categoryID uuid.UUID) error
 	GetDailyActivitySummaryByMonth(ctx context.Context, arg GetDailyActivitySummaryByMonthParams) ([]GetDailyActivitySummaryByMonthRow, error)
 	GetExpenseSummaryByMonth(ctx context.Context, arg GetExpenseSummaryByMonthParams) ([]GetExpenseSummaryByMonthRow, error)
 	GetFavorite(ctx context.Context, arg GetFavoriteParams) (Favorite, error)
 	GetFollow(ctx context.Context, arg GetFollowParams) (Follow, error)
-	GetFollowCount(ctx context.Context, arg GetFollowCountParams) (GetFollowCountRow, error)
+	GetFollowInfo(ctx context.Context, arg GetFollowInfoParams) (GetFollowInfoRow, error)
 	GetFollowRequest(ctx context.Context, arg GetFollowRequestParams) (FollowRequest, error)
 	GetFollowRequests(ctx context.Context, followingUid string) ([]GetFollowRequestsRow, error)
 	GetFollowUsers(ctx context.Context, uid string) ([]GetFollowUsersRow, error)

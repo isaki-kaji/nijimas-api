@@ -58,7 +58,7 @@ type UserDetailResponse struct {
 	Username        string  `json:"username"`
 	SelfIntro       *string `json:"self_intro"`
 	ProfileImageUrl *string `json:"profile_image_url"`
-	IsFollowing     bool    `json:"is_following"`
+	FollowingStatus string  `json:"following_status"`
 	FollowingCount  int     `json:"following_count"`
 	FollowersCount  int     `json:"followers_count"`
 	PostCount       int     `json:"post_count"`
@@ -66,12 +66,16 @@ type UserDetailResponse struct {
 
 func (s *UserServiceImpl) GetUserDetailByUid(ctx context.Context, uid string, ownUid string) (UserDetailResponse, error) {
 
-	var follow db.GetFollowCountRow
+	var followingCount int
+	var followersCount int
+	var followingStatus string
 	var postCount int64
 
 	type followResult struct {
-		follow db.GetFollowCountRow
-		err    error
+		followingCount  int64
+		followersCount  int64
+		followingStatus string
+		err             error
 	}
 
 	type postCountResult struct {
@@ -96,17 +100,42 @@ func (s *UserServiceImpl) GetUserDetailByUid(ctx context.Context, uid string, ow
 	}
 
 	go func() {
-		getFollowCountParam := db.GetFollowCountParams{
+		getFollowInfoParam := db.GetFollowInfoParams{
 			FollowingUid: uid,
 			OwnUid:       ownUid,
 		}
-		follow, err := s.repository.GetFollowCount(ctx, getFollowCountParam)
+
+		getFollowRequestParams := db.GetFollowRequestParams{
+			Uid:          ownUid,
+			FollowingUid: uid,
+		}
+
+		follow, err := s.repository.GetFollowInfo(ctx, getFollowInfoParam)
 		if err != nil {
 			err = apperror.GetDataFailed.Wrap(err, "failed to get follow count")
-			followChan <- followResult{follow: db.GetFollowCountRow{}, err: err}
+			followChan <- followResult{followingCount: 0, followersCount: 0, followingStatus: "", err: err}
 			return
 		}
-		followChan <- followResult{follow: follow, err: nil}
+
+		var followingStatus string
+		if follow.IsFollowing {
+			followingStatus = StatusFollowing
+		} else {
+			_, err := s.repository.GetFollowRequest(ctx, getFollowRequestParams)
+			if err != nil {
+				if errors.Is(err, pgx.ErrNoRows) {
+					followingStatus = StatusNotFollowing
+				} else {
+					err = apperror.GetDataFailed.Wrap(err, "failed to get follow request")
+					followChan <- followResult{followingCount: 0, followersCount: 0, followingStatus: "", err: err}
+					return
+				}
+			} else {
+				followingStatus = StatusRequested
+			}
+		}
+
+		followChan <- followResult{followingCount: follow.FollowingCount, followersCount: follow.FollowersCount, followingStatus: followingStatus, err: nil}
 	}()
 
 	go func() {
@@ -125,7 +154,9 @@ func (s *UserServiceImpl) GetUserDetailByUid(ctx context.Context, uid string, ow
 			if fr.err != nil {
 				return UserDetailResponse{}, fr.err
 			}
-			follow = fr.follow
+			followingCount = int(fr.followingCount)
+			followersCount = int(fr.followersCount)
+			followingStatus = fr.followingStatus
 		case pr := <-postCountChan:
 			if pr.err != nil {
 				return UserDetailResponse{}, pr.err
@@ -139,9 +170,9 @@ func (s *UserServiceImpl) GetUserDetailByUid(ctx context.Context, uid string, ow
 		Username:        user.Username,
 		SelfIntro:       user.SelfIntro,
 		ProfileImageUrl: user.ProfileImageUrl,
-		IsFollowing:     follow.IsFollowing,
-		FollowingCount:  int(follow.FollowingCount),
-		FollowersCount:  int(follow.FollowersCount),
+		FollowingCount:  followingCount,
+		FollowersCount:  followersCount,
+		FollowingStatus: followingStatus,
 		PostCount:       int(postCount),
 	}
 

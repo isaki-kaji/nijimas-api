@@ -12,6 +12,7 @@ import (
 
 type FollowRequestService interface {
 	DoFollowRequest(ctx context.Context, arg DoFollowRequestParams) (db.FollowRequest, error)
+	CancelFollowRequest(ctx context.Context, arg CancelFollowRequestParams) (db.FollowRequest, error)
 }
 
 func NewFollowRequestService(repository db.Repository) FollowRequestService {
@@ -51,7 +52,6 @@ func (s *FollowRequestServiceImpl) DoFollowRequest(ctx context.Context, arg DoFo
 	if err != nil {
 		return db.FollowRequest{}, apperror.OtherInternalErr.Wrap(err, "failed to generate follow request id")
 	}
-
 	createParams := db.CreateFollowRequestParams{
 		RequestID:    frId,
 		Uid:          arg.Uid,
@@ -61,6 +61,29 @@ func (s *FollowRequestServiceImpl) DoFollowRequest(ctx context.Context, arg DoFo
 	followRequest, err := s.repository.CreateFollowRequest(ctx, createParams)
 	if err != nil {
 		return db.FollowRequest{}, apperror.InsertDataFailed.Wrap(err, "failed to create follow request")
+	}
+
+	return followRequest, nil
+}
+
+type CancelFollowRequestParams struct {
+	Uid          string `json:"-"`
+	FollowingUid string `json:"following_uid" binding:"required"`
+}
+
+func (s *FollowRequestServiceImpl) CancelFollowRequest(ctx context.Context, arg CancelFollowRequestParams) (db.FollowRequest, error) {
+
+	gArg := db.GetFollowRequestParams(arg)
+	dArg := db.DeleteFollowRequestParams(arg)
+
+	_, err := s.repository.GetFollowRequest(ctx, gArg)
+	if err != nil {
+		return db.FollowRequest{}, apperror.GetDataFailed.Wrap(err, "failed to get follow request")
+	}
+
+	followRequest, err := s.repository.DeleteFollowRequest(ctx, dArg)
+	if err != nil {
+		return db.FollowRequest{}, apperror.DeleteDataFailed.Wrap(err, "failed to delete follow request")
 	}
 
 	return followRequest, nil

@@ -15,7 +15,7 @@ RETURNING *;
 SELECT * FROM follows
 WHERE uid = $1 AND following_uid = $2;
 
--- name: GetFollowCount :one
+-- name: GetFollowInfo :one
 SELECT 
 EXISTS (
         SELECT 1 

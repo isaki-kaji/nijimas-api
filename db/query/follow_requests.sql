@@ -36,7 +36,7 @@ SET status = '2'
 WHERE request_id = $1
 RETURNING *;
 
--- name: DeleteRequest :one
+-- name: DeleteFollowRequest :one
 DELETE FROM follow_requests
-WHERE request_id = $1
+WHERE following_uid = $2 AND uid = $1 AND status = '0'
 RETURNING *;

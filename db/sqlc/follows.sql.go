@@ -65,7 +65,7 @@ func (q *Queries) GetFollow(ctx context.Context, arg GetFollowParams) (Follow, e
 	return i, err
 }
 
-const getFollowCount = `-- name: GetFollowCount :one
+const getFollowInfo = `-- name: GetFollowInfo :one
 SELECT 
 EXISTS (
         SELECT 1 
@@ -78,20 +78,20 @@ FROM follows f
 WHERE f.uid = $1 or f.following_uid = $1
 `
 
-type GetFollowCountParams struct {
+type GetFollowInfoParams struct {
 	FollowingUid string `json:"following_uid"`
 	OwnUid       string `json:"own_uid"`
 }
 
-type GetFollowCountRow struct {
+type GetFollowInfoRow struct {
 	IsFollowing    bool  `json:"is_following"`
 	FollowingCount int64 `json:"following_count"`
 	FollowersCount int64 `json:"followers_count"`
 }
 
-func (q *Queries) GetFollowCount(ctx context.Context, arg GetFollowCountParams) (GetFollowCountRow, error) {
-	row := q.db.QueryRow(ctx, getFollowCount, arg.FollowingUid, arg.OwnUid)
-	var i GetFollowCountRow
+func (q *Queries) GetFollowInfo(ctx context.Context, arg GetFollowInfoParams) (GetFollowInfoRow, error) {
+	row := q.db.QueryRow(ctx, getFollowInfo, arg.FollowingUid, arg.OwnUid)
+	var i GetFollowInfoRow
 	err := row.Scan(&i.IsFollowing, &i.FollowingCount, &i.FollowersCount)
 	return i, err
 }

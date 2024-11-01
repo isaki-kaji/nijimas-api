@@ -42,14 +42,19 @@ func (q *Queries) CreateFollowRequest(ctx context.Context, arg CreateFollowReque
 	return i, err
 }
 
-const deleteRequest = `-- name: DeleteRequest :one
+const deleteFollowRequest = `-- name: DeleteFollowRequest :one
 DELETE FROM follow_requests
-WHERE request_id = $1
+WHERE following_uid = $2 AND uid = $1 AND status = '0'
 RETURNING request_id, uid, following_uid, status, created_at, updated_at
 `
 
-func (q *Queries) DeleteRequest(ctx context.Context, requestID uuid.UUID) (FollowRequest, error) {
-	row := q.db.QueryRow(ctx, deleteRequest, requestID)
+type DeleteFollowRequestParams struct {
+	Uid          string `json:"uid"`
+	FollowingUid string `json:"following_uid"`
+}
+
+func (q *Queries) DeleteFollowRequest(ctx context.Context, arg DeleteFollowRequestParams) (FollowRequest, error) {
+	row := q.db.QueryRow(ctx, deleteFollowRequest, arg.Uid, arg.FollowingUid)
 	var i FollowRequest
 	err := row.Scan(
 		&i.RequestID,
