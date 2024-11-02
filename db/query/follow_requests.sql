@@ -11,7 +11,9 @@ INSERT INTO follow_requests (
 -- name: GetFollowRequest :one
 SELECT * 
 FROM follow_requests
-WHERE uid = $1 AND following_uid = $2 AND status = '0';
+WHERE uid = $1 AND following_uid = $2 AND status = '0'
+ORDER BY request_id DESC
+LIMIT 1;
   
 -- name: GetFollowRequests :many
 SELECT
@@ -24,7 +26,7 @@ JOIN follow_requests fr
 ON u.uid = fr.following_uid
 WHERE fr.following_uid = $1 AND fr.status = '0';
 
--- name: UpdateRequestToApproved :one
+-- name: UpdateFollowRequestToAccepted :one
 UPDATE follow_requests
 SET status = '1'
 WHERE request_id = $1

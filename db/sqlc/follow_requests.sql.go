@@ -71,6 +71,8 @@ const getFollowRequest = `-- name: GetFollowRequest :one
 SELECT request_id, uid, following_uid, status, created_at, updated_at 
 FROM follow_requests
 WHERE uid = $1 AND following_uid = $2 AND status = '0'
+ORDER BY request_id DESC
+LIMIT 1
 `
 
 type GetFollowRequestParams struct {
@@ -136,15 +138,15 @@ func (q *Queries) GetFollowRequests(ctx context.Context, followingUid string) ([
 	return items, nil
 }
 
-const updateRequestToApproved = `-- name: UpdateRequestToApproved :one
+const updateFollowRequestToAccepted = `-- name: UpdateFollowRequestToAccepted :one
 UPDATE follow_requests
 SET status = '1'
 WHERE request_id = $1
 RETURNING request_id, uid, following_uid, status, created_at, updated_at
 `
 
-func (q *Queries) UpdateRequestToApproved(ctx context.Context, requestID uuid.UUID) (FollowRequest, error) {
-	row := q.db.QueryRow(ctx, updateRequestToApproved, requestID)
+func (q *Queries) UpdateFollowRequestToAccepted(ctx context.Context, requestID uuid.UUID) (FollowRequest, error) {
+	row := q.db.QueryRow(ctx, updateFollowRequestToAccepted, requestID)
 	var i FollowRequest
 	err := row.Scan(
 		&i.RequestID,

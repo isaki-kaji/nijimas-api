@@ -17,7 +17,7 @@ func NewFollowRequestController(service service.FollowRequestService) *FollowReq
 }
 
 func (c *FollowRequestController) DoFollowRequest(ctx *gin.Context) {
-	var req service.DoFollowRequestParams
+	var req service.FollowRequestParams
 	ownUid, err := checkPostReq(ctx, &req)
 	if err != nil {
 		return
@@ -34,7 +34,7 @@ func (c *FollowRequestController) DoFollowRequest(ctx *gin.Context) {
 }
 
 func (c *FollowRequestController) CancelFollowRequest(ctx *gin.Context) {
-	var req service.CancelFollowRequestParams
+	var req service.FollowRequestParams
 	ownUid, err := checkPostReq(ctx, &req)
 	if err != nil {
 		return
@@ -48,4 +48,37 @@ func (c *FollowRequestController) CancelFollowRequest(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusNoContent, fr)
+}
+
+func (c *FollowRequestController) HandleFollowRequest(ctx *gin.Context) {
+	status := ctx.Query("status")
+	var req service.FollowRequestParams
+	ownUid, err := checkPostReq(ctx, &req)
+	if err != nil {
+		return
+	}
+	req.Uid = ownUid
+
+	if status == "accept" {
+		f, err := c.service.AcceptFollowRequest(ctx, req)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+			return
+		}
+		ctx.JSON(http.StatusOK, f)
+		return
+	}
+
+	if status == "reject" {
+		fr, err := c.service.RejectFollowRequest(ctx, req)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+			return
+		}
+		ctx.JSON(http.StatusOK, fr)
+		return
+	}
+
+	err = apperror.BadQueryParam.Wrap(ErrInvalidStatus, "invalid status")
+	ctx.JSON(http.StatusBadRequest, apperror.ErrorResponse(ctx, err))
 }

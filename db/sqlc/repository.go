@@ -12,6 +12,7 @@ import (
 type Repository interface {
 	Querier
 	CreatePostTx(ctx context.Context, param CreatePostTxParam) (Post, error)
+	AcceptFollowRequestTx(ctx context.Context, param AcceptFollowRequestTxParams) (Follow, error)
 }
 
 type SQLRepository struct {

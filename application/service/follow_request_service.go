@@ -11,8 +11,10 @@ import (
 )
 
 type FollowRequestService interface {
-	DoFollowRequest(ctx context.Context, arg DoFollowRequestParams) (db.FollowRequest, error)
-	CancelFollowRequest(ctx context.Context, arg CancelFollowRequestParams) (db.FollowRequest, error)
+	DoFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
+	CancelFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
+	AcceptFollowRequest(ctx context.Context, arg FollowRequestParams) (db.Follow, error)
+	RejectFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
 }
 
 func NewFollowRequestService(repository db.Repository) FollowRequestService {
@@ -23,12 +25,12 @@ type FollowRequestServiceImpl struct {
 	repository db.Repository
 }
 
-type DoFollowRequestParams struct {
+type FollowRequestParams struct {
 	Uid          string `json:"-"`
 	FollowingUid string `json:"following_uid" binding:"required"`
 }
 
-func (s *FollowRequestServiceImpl) DoFollowRequest(ctx context.Context, arg DoFollowRequestParams) (db.FollowRequest, error) {
+func (s *FollowRequestServiceImpl) DoFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error) {
 	fArg := db.GetFollowParams(arg)
 	frArg := db.GetFollowRequestParams(arg)
 
@@ -66,12 +68,7 @@ func (s *FollowRequestServiceImpl) DoFollowRequest(ctx context.Context, arg DoFo
 	return followRequest, nil
 }
 
-type CancelFollowRequestParams struct {
-	Uid          string `json:"-"`
-	FollowingUid string `json:"following_uid" binding:"required"`
-}
-
-func (s *FollowRequestServiceImpl) CancelFollowRequest(ctx context.Context, arg CancelFollowRequestParams) (db.FollowRequest, error) {
+func (s *FollowRequestServiceImpl) CancelFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error) {
 
 	gArg := db.GetFollowRequestParams(arg)
 	dArg := db.DeleteFollowRequestParams(arg)
@@ -87,4 +84,60 @@ func (s *FollowRequestServiceImpl) CancelFollowRequest(ctx context.Context, arg 
 	}
 
 	return followRequest, nil
+}
+
+func (s *FollowRequestServiceImpl) AcceptFollowRequest(ctx context.Context, arg FollowRequestParams) (db.Follow, error) {
+	fArg := db.GetFollowParams(arg)
+	frArg := db.GetFollowRequestParams(arg)
+
+	_, err := s.repository.GetFollow(ctx, fArg)
+	if err == nil {
+		return db.Follow{}, apperror.DataConflict.Wrap(ErrFollowAlreadyExists, "follow already exists")
+	}
+	if !errors.Is(err, pgx.ErrNoRows) {
+		return db.Follow{}, apperror.GetDataFailed.Wrap(err, "failed to get follow")
+	}
+
+	request, err := s.repository.GetFollowRequest(ctx, frArg)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return db.Follow{}, apperror.DataNotFound.Wrap(err, "follow request not found")
+		}
+		return db.Follow{}, apperror.GetDataFailed.Wrap(err, "failed to get follow request")
+	}
+
+	acceptTxParams := db.AcceptFollowRequestTxParams{
+		RequestId:    request.RequestID,
+		Uid:          request.Uid,
+		FollowingUid: request.FollowingUid,
+	}
+
+	follow, err := s.repository.AcceptFollowRequestTx(ctx, acceptTxParams)
+	if err != nil {
+		return db.Follow{}, apperror.OtherInternalErr.Wrap(err, "failed to accept follow request")
+	}
+
+	return follow, nil
+}
+
+func (s *FollowRequestServiceImpl) RejectFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error) {
+	frArg := db.GetFollowRequestParams(arg)
+	request, err := s.repository.GetFollowRequest(ctx, frArg)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return db.FollowRequest{}, apperror.DataNotFound.Wrap(err, "follow request not found")
+		}
+		return db.FollowRequest{}, apperror.GetDataFailed.Wrap(err, "failed to get follow request")
+	}
+
+	if err != nil {
+		return db.FollowRequest{}, apperror.DeleteDataFailed.Wrap(err, "failed to delete follow request")
+	}
+
+	request, err = s.repository.UpdateRequestToRejected(ctx, request.RequestID)
+	if err != nil {
+		return db.FollowRequest{}, apperror.UpdateDataFailed.Wrap(err, "failed to update follow request")
+	}
+
+	return request, nil
 }

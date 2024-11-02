@@ -43,8 +43,8 @@ type Querier interface {
 	GetSubCategorySummaryByMonth(ctx context.Context, arg GetSubCategorySummaryByMonthParams) ([]GetSubCategorySummaryByMonthRow, error)
 	GetTimelinePosts(ctx context.Context, uid string) ([]GetTimelinePostsRow, error)
 	GetUser(ctx context.Context, uid string) (User, error)
+	UpdateFollowRequestToAccepted(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	UpdatePost(ctx context.Context, arg UpdatePostParams) (Post, error)
-	UpdateRequestToApproved(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	UpdateRequestToRejected(ctx context.Context, requestID uuid.UUID) (FollowRequest, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
