@@ -82,3 +82,18 @@ func (c *FollowRequestController) HandleFollowRequest(ctx *gin.Context) {
 	err = apperror.BadQueryParam.Wrap(ErrInvalidStatus, "invalid status")
 	ctx.JSON(http.StatusBadRequest, apperror.ErrorResponse(ctx, err))
 }
+
+func (c *FollowRequestController) GetFollowRequests(ctx *gin.Context) {
+	ownUid, err := checkUid(ctx)
+	if err != nil {
+		return
+	}
+
+	frs, err := c.service.GetFollowRequests(ctx, ownUid)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apperror.ErrorResponse(ctx, err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, frs)
+}

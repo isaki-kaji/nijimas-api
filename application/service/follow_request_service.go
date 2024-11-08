@@ -11,6 +11,7 @@ import (
 )
 
 type FollowRequestService interface {
+	GetFollowRequests(ctx context.Context, uid string) ([]db.GetFollowRequestsRow, error)
 	DoFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
 	CancelFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
 	AcceptFollowRequest(ctx context.Context, arg FollowRequestParams) (db.Follow, error)
@@ -140,4 +141,13 @@ func (s *FollowRequestServiceImpl) RejectFollowRequest(ctx context.Context, arg 
 	}
 
 	return request, nil
+}
+
+func (s *FollowRequestServiceImpl) GetFollowRequests(ctx context.Context, uid string) ([]db.GetFollowRequestsRow, error) {
+	requests, err := s.repository.GetFollowRequests(ctx, uid)
+	if err != nil {
+		return nil, apperror.GetDataFailed.Wrap(err, "failed to get follow requests")
+	}
+
+	return requests, nil
 }
