@@ -14,8 +14,8 @@ type FollowRequestService interface {
 	GetFollowRequests(ctx context.Context, uid string) ([]db.GetFollowRequestsRow, error)
 	DoFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
 	CancelFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
-	AcceptFollowRequest(ctx context.Context, arg FollowRequestParams) (db.Follow, error)
-	RejectFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error)
+	AcceptFollowRequest(ctx context.Context, arg HandleFollowRequestParams) (db.Follow, error)
+	RejectFollowRequest(ctx context.Context, arg HandleFollowRequestParams) (db.FollowRequest, error)
 }
 
 func NewFollowRequestService(repository db.Repository) FollowRequestService {
@@ -87,9 +87,21 @@ func (s *FollowRequestServiceImpl) CancelFollowRequest(ctx context.Context, arg 
 	return followRequest, nil
 }
 
-func (s *FollowRequestServiceImpl) AcceptFollowRequest(ctx context.Context, arg FollowRequestParams) (db.Follow, error) {
-	fArg := db.GetFollowParams(arg)
-	frArg := db.GetFollowRequestParams(arg)
+type HandleFollowRequestParams struct {
+	Uid           string `json:"-"`
+	RequestingUid string `json:"requesting_uid" binding:"required"`
+}
+
+func (s *FollowRequestServiceImpl) AcceptFollowRequest(ctx context.Context, arg HandleFollowRequestParams) (db.Follow, error) {
+	fArg := db.GetFollowParams{
+		Uid:          arg.RequestingUid,
+		FollowingUid: arg.Uid,
+	}
+
+	frArg := db.GetFollowRequestParams{
+		Uid:          arg.RequestingUid,
+		FollowingUid: arg.Uid,
+	}
 
 	_, err := s.repository.GetFollow(ctx, fArg)
 	if err == nil {
@@ -121,8 +133,12 @@ func (s *FollowRequestServiceImpl) AcceptFollowRequest(ctx context.Context, arg 
 	return follow, nil
 }
 
-func (s *FollowRequestServiceImpl) RejectFollowRequest(ctx context.Context, arg FollowRequestParams) (db.FollowRequest, error) {
-	frArg := db.GetFollowRequestParams(arg)
+func (s *FollowRequestServiceImpl) RejectFollowRequest(ctx context.Context, arg HandleFollowRequestParams) (db.FollowRequest, error) {
+	frArg := db.GetFollowRequestParams{
+		Uid:          arg.RequestingUid,
+		FollowingUid: arg.Uid,
+	}
+
 	request, err := s.repository.GetFollowRequest(ctx, frArg)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {

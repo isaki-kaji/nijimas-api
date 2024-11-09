@@ -52,7 +52,7 @@ func (c *FollowRequestController) CancelFollowRequest(ctx *gin.Context) {
 
 func (c *FollowRequestController) HandleFollowRequest(ctx *gin.Context) {
 	status := ctx.Query("status")
-	var req service.FollowRequestParams
+	var req service.HandleFollowRequestParams
 	ownUid, err := checkPostReq(ctx, &req)
 	if err != nil {
 		return

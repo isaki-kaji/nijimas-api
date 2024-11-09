@@ -23,7 +23,7 @@ SELECT
   u.profile_image_url
 FROM users u
 JOIN follow_requests fr
-ON u.uid = fr.following_uid
+ON u.uid = fr.uid
 WHERE fr.following_uid = $1 AND fr.status = '0';
 
 -- name: UpdateFollowRequestToAccepted :one
