@@ -6,17 +6,11 @@ Project Nijimas {
   '''
 }
 
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
-
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
-
 Table users as U {
   uid char(28) [pk]
   username varchar(255) [not null]
   self_intro text
-  profile_image_url varchar(2000)
+  profile_image_url text
   country_code char(2)
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
@@ -31,9 +25,9 @@ Table posts as P {
   uid char(28) [ref: > U.uid, not null]
   main_category varchar(20) [ref: > MC.category_name, not null]
   post_text text 
-  photo_url varchar(2000)
+  photo_url text
   expense numeric(15, 2) [not null, default: 0]
-  location varchar(2000)
+  location text
   public_type_no char(1) [not null, note: '0:公開、1:フォロワーにのみ公開、2:非公開']
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
@@ -51,12 +45,8 @@ Table post_subcategories as PS {
 
 Table favorites as FA {
   post_id uuid [ref: > P.post_id, pk]
-  uid varchar(255) [ref: > U.uid, pk]
+  uid char(28) [ref: > U.uid, pk]
   created_at timestamptz [not null, default: `now()`]
-
-   indexes {
-    (post_id, uid)
-  }
 }
 
 Table main_categories as MC {
@@ -93,5 +83,9 @@ Table follow_requests as FR {
   }
 }
 
-
-
+Table user_top_subcategories as UT {
+  uid char(28) [ref: > U.uid, pk]
+  category_no char(1) [pk]
+  category_id uuid [ref: > SC.category_id, not null]
+  created_at timestamptz [not null, default: `now()`]
+}

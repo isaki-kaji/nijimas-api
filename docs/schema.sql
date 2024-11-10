@@ -6,7 +6,7 @@ CREATE TABLE "users" (
   "uid" char(28) PRIMARY KEY,
   "username" varchar(255) NOT NULL,
   "self_intro" text,
-  "profile_image_url" varchar(2000),
+  "profile_image_url" text,
   "country_code" char(2),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
@@ -17,9 +17,9 @@ CREATE TABLE "posts" (
   "uid" char(28) NOT NULL,
   "main_category" varchar(20) NOT NULL,
   "post_text" text,
-  "photo_url" varchar(2000),
+  "photo_url" text,
   "expense" numeric(15,2) NOT NULL DEFAULT 0,
-  "location" varchar(2000),
+  "location" text,
   "public_type_no" char(1) NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
@@ -34,7 +34,7 @@ CREATE TABLE "post_subcategories" (
 
 CREATE TABLE "favorites" (
   "post_id" uuid,
-  "uid" varchar(255),
+  "uid" char(28),
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   PRIMARY KEY ("post_id", "uid")
 );
@@ -57,15 +57,34 @@ CREATE TABLE "follows" (
   PRIMARY KEY ("uid", "following_uid")
 );
 
+CREATE TABLE "follow_requests" (
+  "request_id" uuid PRIMARY KEY,
+  "uid" char(28) NOT NULL,
+  "following_uid" char(28) NOT NULL,
+  "status" char(1) NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE TABLE "user_top_subcategories" (
+  "uid" char(28),
+  "category_no" char(1),
+  "category_id" uuid NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  PRIMARY KEY ("uid", "category_no")
+);
+
 CREATE INDEX ON "users" ("username");
 
 CREATE INDEX ON "posts" ("uid");
 
-CREATE INDEX ON "favorites" ("post_id", "uid");
+CREATE INDEX ON "follows" ("uid", "following_uid");
 
-CREATE INDEX ON "follows" ("uid", "follow_uid");
+CREATE INDEX ON "follow_requests" ("uid", "following_uid");
 
 COMMENT ON COLUMN "posts"."public_type_no" IS '0:公開、1:フォロワーにのみ公開、2:非公開';
+
+COMMENT ON COLUMN "follow_requests"."status" IS '0:申請中, 1:承認済, 2:拒否済';
 
 ALTER TABLE "posts" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
@@ -81,4 +100,12 @@ ALTER TABLE "favorites" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
 ALTER TABLE "follows" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
 
-ALTER TABLE "follows" ADD FOREIGN KEY ("follow_uid") REFERENCES "users" ("uid");
+ALTER TABLE "follows" ADD FOREIGN KEY ("following_uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "follow_requests" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "follow_requests" ADD FOREIGN KEY ("following_uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "user_top_subcategories" ADD FOREIGN KEY ("uid") REFERENCES "users" ("uid");
+
+ALTER TABLE "user_top_subcategories" ADD FOREIGN KEY ("category_id") REFERENCES "sub_categories" ("category_id");
