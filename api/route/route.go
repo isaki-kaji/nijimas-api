@@ -20,6 +20,7 @@ func NewRouter(
 	PostSearchController *controller.PostSearchController,
 	FollowController *controller.FollowController,
 	FollowRequestController *controller.FollowRequestController,
+	SubCategoryController *controller.SubCategoryController,
 	AuthClient *auth.Client,
 ) *gin.Engine {
 	router := gin.Default()
@@ -32,6 +33,7 @@ func NewRouter(
 	NewPostSearchRouter(router, authRouter, PostSearchController)
 	NewFollowRouter(router, authRouter, FollowController)
 	NewFollowRequestRouter(router, authRouter, FollowRequestController)
+	NewSubCategoryRouter(router, authRouter, SubCategoryController)
 
 	return router
 }

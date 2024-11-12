@@ -12,4 +12,5 @@ var Module = fx.Options(
 	fx.Provide(NewPostSearchController),
 	fx.Provide(NewFollowController),
 	fx.Provide(NewFollowRequestController),
+	fx.Provide(NewSubCategoryController),
 )

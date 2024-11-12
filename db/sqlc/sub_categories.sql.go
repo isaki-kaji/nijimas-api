@@ -53,3 +53,43 @@ func (q *Queries) GetSubCategoryByName(ctx context.Context, categoryName string)
 	err := row.Scan(&i.CategoryID, &i.CategoryName, &i.CreatedAt)
 	return i, err
 }
+
+const getUserUsedSubCategories = `-- name: GetUserUsedSubCategories :many
+SELECT s.category_name, s.category_id
+  FROM sub_categories s
+  JOIN (
+    SELECT ps.category_id, COUNT(*) AS post_count
+      FROM posts p
+      JOIN post_subcategories ps ON p.post_id = ps.post_id
+     WHERE p.uid = $1
+     GROUP BY ps.category_id
+     ORDER BY post_count DESC
+     LIMIT 20
+  ) AS top_categories ON s.category_id = top_categories.category_id
+ORDER BY top_categories.post_count DESC
+`
+
+type GetUserUsedSubCategoriesRow struct {
+	CategoryName string    `json:"category_name"`
+	CategoryID   uuid.UUID `json:"category_id"`
+}
+
+func (q *Queries) GetUserUsedSubCategories(ctx context.Context, uid string) ([]GetUserUsedSubCategoriesRow, error) {
+	rows, err := q.db.Query(ctx, getUserUsedSubCategories, uid)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetUserUsedSubCategoriesRow{}
+	for rows.Next() {
+		var i GetUserUsedSubCategoriesRow
+		if err := rows.Scan(&i.CategoryName, &i.CategoryID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

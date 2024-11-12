@@ -12,4 +12,5 @@ var Module = fx.Options(
 	fx.Provide(NewPostSearchService),
 	fx.Provide(NewFollowService),
 	fx.Provide(NewFollowRequestService),
+	fx.Provide(NewSubCategoryService),
 )

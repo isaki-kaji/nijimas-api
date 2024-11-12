@@ -73,3 +73,10 @@ type User struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 }
+
+type UserTopSubcategory struct {
+	Uid        string    `json:"uid"`
+	CategoryNo string    `json:"category_no"`
+	CategoryID uuid.UUID `json:"category_id"`
+	CreatedAt  time.Time `json:"created_at"`
+}
